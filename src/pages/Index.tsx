@@ -91,104 +91,43 @@ const Index = () => {
     const particles = orbContainer.querySelectorAll('.particle');
 
     // ============================================
-    // THE PARTICLE DISPERSION - Animation Sequence
+    // UNIFIED ORB - Position & Glow Animation
     // ============================================
 
-    // PHASE 1: Load Animation - Particles Clustered (Solid Orb Appearance)
-    const loadTL = gsap.timeline({ delay: 0.2 });
-
-    // Initial state - all particles at center, invisible
-    gsap.set(particles, {
-      opacity: 0,
-      x: 0,
-      y: 0,
-    });
-
+    // Initial state
     gsap.set(core, { opacity: 0, scale: 0.5 });
     gsap.set(coreGlow, { opacity: 0, scale: 0.3 });
+    gsap.set(particles, { opacity: 0 });
 
+    // LOAD ANIMATION
+    const loadTL = gsap.timeline({ delay: 0.2 });
     loadTL
-      // Core fades in
-      .to(core, { 
-        opacity: 1, 
-        scale: 1,
-        duration: 1.5, 
-        ease: 'power2.out' 
-      })
-      .to(coreGlow, { 
-        opacity: 0.6, 
-        scale: 1,
-        duration: 1.2, 
-        ease: 'power2.out' 
-      }, '-=1')
-      // Hero text reveals
-      .to('.hero-char', { 
-        opacity: 1, 
-        y: 0, 
-        stagger: 0.05, 
-        duration: 0.8, 
-        ease: 'power2.out' 
-      }, '-=0.8')
-      .to(scrollIndicatorRef.current, { 
-        opacity: 0.5, 
-        duration: 1 
-      }, '-=0.5');
+      .to(core, { opacity: 1, scale: 1, duration: 1.5, ease: 'power2.out' })
+      .to(coreGlow, { opacity: 0.6, scale: 1, duration: 1.2, ease: 'power2.out' }, '-=1')
+      .to('.hero-char', { opacity: 1, y: 0, stagger: 0.05, duration: 0.8, ease: 'power2.out' }, '-=0.8')
+      .to(scrollIndicatorRef.current, { opacity: 0.5, duration: 1 }, '-=0.5');
 
-    // Add breathing after load
-    setTimeout(() => {
-      orbContainer.classList.add('breathing');
-    }, 2000);
+    setTimeout(() => orbContainer.classList.add('breathing'), 2000);
 
-    // PHASE 2: Hero Scroll - Subtle movement
+    // HERO - Fade out text, orb stays center
     gsap.to('.hero-name', {
       y: -100,
       opacity: 0,
-      scrollTrigger: {
-        trigger: '#hero',
-        start: 'top top',
-        end: 'bottom center',
-        scrub: 1.5,
-      },
+      scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom center', scrub: 1.5 },
     });
 
+    // POSITIONING - Move orb to top-right, slight dim
     gsap.to(orbContainer, {
-      y: 50,
-      scrollTrigger: {
-        trigger: '#hero',
-        start: 'top top',
-        end: 'bottom center',
-        scrub: 1.5,
-      },
+      top: '25%',
+      left: '75%',
+      scale: 0.8,
+      scrollTrigger: { trigger: '#positioning', start: 'top 80%', end: 'center center', scrub: 1.5 },
     });
 
-    // PHASE 3: Positioning Section - Particles Start Vibrating/Separating
-    const positioningTL = gsap.timeline({
-      scrollTrigger: {
-        trigger: '#positioning',
-        start: 'top 80%',
-        end: 'bottom center',
-        scrub: 1.5,
-      },
+    gsap.to(coreGlow, {
+      opacity: 0.4,
+      scrollTrigger: { trigger: '#positioning', start: 'top 80%', end: 'center center', scrub: 1.5 },
     });
-
-    // Core shrinks slightly, particles begin appearing at edges
-    positioningTL.to(core, {
-      scale: 0.85,
-      opacity: 0.9,
-      ease: 'power2.inOut',
-    });
-
-    // Particles start appearing and separating slightly
-    positioningTL.to(particles, {
-      opacity: (i) => 0.3 + Math.random() * 0.3,
-      x: (i) => Math.cos((i / 60) * Math.PI * 2) * (30 + Math.random() * 20),
-      y: (i) => Math.sin((i / 60) * Math.PI * 2) * (30 + Math.random() * 20),
-      stagger: {
-        each: 0.01,
-        from: 'random',
-      },
-      ease: 'power2.out',
-    }, '<');
 
     // Text reveals in positioning
     gsap.utils.toArray('.reveal-text').forEach((el, i) => {
@@ -196,121 +135,51 @@ const Index = () => {
         opacity: 1,
         y: 0,
         duration: 1,
-        scrollTrigger: {
-          trigger: '#positioning',
-          start: `top ${60 - i * 10}%`,
-          end: `top ${40 - i * 10}%`,
-          scrub: true,
-        },
+        scrollTrigger: { trigger: '#positioning', start: `top ${60 - i * 10}%`, end: `top ${40 - i * 10}%`, scrub: true },
       });
     });
 
     gsap.to('.reveal-sub', {
       opacity: 1,
-      scrollTrigger: {
-        trigger: '#positioning',
-        start: 'top 40%',
-        end: 'center center',
-        scrub: true,
-      },
+      scrollTrigger: { trigger: '#positioning', start: 'top 40%', end: 'center center', scrub: true },
     });
 
-    // PHASE 4: Projects Section - THE FULL DISPERSION (The Woah Moment!)
-    const projectsTL = gsap.timeline({
-      scrollTrigger: {
-        trigger: '#projects',
-        start: 'top 70%',
-        end: 'top 10%',
-        scrub: 1.5,
-        onEnter: () => orbContainer.classList.remove('breathing'),
-        onLeaveBack: () => orbContainer.classList.add('breathing'),
-      },
+    // PROJECTS - THE WOAH MOMENT! Orb goes center-right, MAXIMUM GLOW
+    gsap.to(orbContainer, {
+      top: '50%',
+      left: '80%',
+      scale: 1.3,
+      scrollTrigger: { trigger: '#projects', start: 'top 70%', end: 'top 20%', scrub: 1.5 },
     });
 
-    // Core fades and shrinks
-    projectsTL.to(core, {
-      scale: 0.2,
-      opacity: 0,
-      ease: 'power2.inOut',
+    gsap.to(core, {
+      boxShadow: '0 0 120px 60px hsl(var(--primary))',
+      scrollTrigger: { trigger: '#projects', start: 'top 70%', end: 'top 20%', scrub: 1.5 },
     });
 
-    projectsTL.to(coreGlow, {
-      scale: 0.3,
-      opacity: 0,
-      ease: 'power2.inOut',
-    }, '<');
-
-    // FULL PARTICLE EXPLOSION!
-    projectsTL.to(particles, {
-      opacity: (i) => 0.5 + Math.random() * 0.5,
-      x: (i) => {
-        const angle = (i / 60) * Math.PI * 2;
-        const distance = 150 + Math.random() * 250;
-        return Math.cos(angle + (Math.random() - 0.5) * 0.5) * distance;
-      },
-      y: (i) => {
-        const angle = (i / 60) * Math.PI * 2;
-        const distance = 150 + Math.random() * 250;
-        return Math.sin(angle + (Math.random() - 0.5) * 0.5) * distance;
-      },
-      scale: (i) => 0.8 + Math.random() * 0.8,
-      stagger: {
-        each: 0.02,
-        from: 'center',
-      },
-      ease: 'power3.out',
-    }, '<0.1');
-
-    // Particles drift while in projects section
-    gsap.to(particles, {
-      x: (i, target) => {
-        const current = gsap.getProperty(target, 'x') as number;
-        return current + (Math.random() - 0.5) * 100;
-      },
-      y: (i, target) => {
-        const current = gsap.getProperty(target, 'y') as number;
-        return current + 50 + Math.random() * 50;
-      },
-      scrollTrigger: {
-        trigger: '#projects',
-        start: 'top 10%',
-        end: 'bottom bottom',
-        scrub: 2,
-      },
+    gsap.to(coreGlow, {
+      opacity: 1,
+      scale: 2,
+      scrollTrigger: { trigger: '#projects', start: 'top 70%', end: 'top 20%', scrub: 1.5 },
     });
 
-    // PHASE 5: Experience Section - Particles Stream to Timeline
-    const expTL = gsap.timeline({
-      scrollTrigger: {
-        trigger: '#experience',
-        start: 'top 70%',
-        end: 'top 20%',
-        scrub: 1.5,
-      },
+    // EXPERIENCE - Move orb to left side, smaller
+    gsap.to(orbContainer, {
+      top: '50%',
+      left: '15%',
+      scale: 0.6,
+      scrollTrigger: { trigger: '#experience', start: 'top 70%', end: 'top 20%', scrub: 1.5 },
     });
 
-    // Particles stream to the left and form vertical constellation
-    expTL.to(particles, {
-      x: () => -window.innerWidth * 0.35 + (Math.random() - 0.5) * 60,
-      y: (i) => -200 + (i / 60) * 500,
-      opacity: (i) => 0.3 + (i % 5 === 0 ? 0.5 : 0),
-      scale: (i) => (i % 5 === 0 ? 1.2 : 0.6),
-      stagger: {
-        each: 0.01,
-        from: 'start',
-      },
-      ease: 'power2.inOut',
+    gsap.to(core, {
+      boxShadow: '0 0 60px 30px hsl(var(--primary))',
+      scrollTrigger: { trigger: '#experience', start: 'top 70%', end: 'top 20%', scrub: 1.5 },
     });
 
-    // Particles flow down with experience scroll
-    gsap.to(particles, {
-      y: '+=300',
-      scrollTrigger: {
-        trigger: '#experience',
-        start: 'top 20%',
-        end: 'bottom bottom',
-        scrub: 1,
-      },
+    gsap.to(coreGlow, {
+      opacity: 0.5,
+      scale: 1,
+      scrollTrigger: { trigger: '#experience', start: 'top 70%', end: 'top 20%', scrub: 1.5 },
     });
 
     // Timeline item activation
@@ -339,81 +208,38 @@ const Index = () => {
       });
     });
 
-    // PHASE 6: Philosophy Section - The Convergence (Particles Spiral Inward)
-    const philoTL = gsap.timeline({
-      scrollTrigger: {
-        trigger: '#philosophy',
-        start: 'top 80%',
-        end: 'center center',
-        scrub: 1.5,
-      },
-    });
-
-    // Particles spiral back toward center
-    philoTL.to(particles, {
-      x: (i) => Math.cos((i / 60) * Math.PI * 4) * (40 + Math.random() * 30),
-      y: (i) => Math.sin((i / 60) * Math.PI * 4) * (40 + Math.random() * 30),
-      opacity: 0.6,
-      scale: 1,
-      stagger: {
-        each: 0.015,
-        from: 'edges',
-      },
-      ease: 'power2.inOut',
-    });
-
-    // Core begins reappearing
-    philoTL.to(core, {
-      scale: 0.8,
-      opacity: 0.7,
-      ease: 'power2.inOut',
-    }, '<0.3');
-
-    philoTL.to(coreGlow, {
+    // PHILOSOPHY - Move to center-left, medium glow
+    gsap.to(orbContainer, {
+      top: '50%',
+      left: '30%',
       scale: 0.9,
-      opacity: 0.4,
-      ease: 'power2.inOut',
-    }, '<');
-
-    // PHASE 7: Contact Section - Full Reformation (Triumphant Return)
-    const contactTL = gsap.timeline({
-      scrollTrigger: {
-        trigger: '#contact',
-        start: 'top 70%',
-        end: 'center center',
-        scrub: 1.5,
-        onEnter: () => {
-          setTimeout(() => orbContainer.classList.add('breathing'), 500);
-        },
-        onLeaveBack: () => orbContainer.classList.remove('breathing'),
-      },
+      scrollTrigger: { trigger: '#philosophy', start: 'top 80%', end: 'center center', scrub: 1.5 },
     });
 
-    // Particles collapse to center
-    contactTL.to(particles, {
-      x: 0,
-      y: 0,
-      opacity: 0,
-      scale: 0.5,
-      stagger: {
-        each: 0.01,
-        from: 'edges',
-      },
-      ease: 'power3.inOut',
+    gsap.to(coreGlow, {
+      opacity: 0.7,
+      scale: 1.3,
+      scrollTrigger: { trigger: '#philosophy', start: 'top 80%', end: 'center center', scrub: 1.5 },
     });
 
-    // Core returns BIGGER and BRIGHTER
-    contactTL.to(core, {
-      scale: 1.4,
+    // CONTACT - Return to center, BIGGEST and BRIGHTEST
+    gsap.to(orbContainer, {
+      top: '50%',
+      left: '50%',
+      scale: 1.5,
+      scrollTrigger: { trigger: '#contact', start: 'top 70%', end: 'center center', scrub: 1.5 },
+    });
+
+    gsap.to(core, {
+      boxShadow: '0 0 150px 80px hsl(var(--primary))',
+      scrollTrigger: { trigger: '#contact', start: 'top 70%', end: 'center center', scrub: 1.5 },
+    });
+
+    gsap.to(coreGlow, {
       opacity: 1,
-      ease: 'power2.out',
-    }, '<0.2');
-
-    contactTL.to(coreGlow, {
-      scale: 1.6,
-      opacity: 0.8,
-      ease: 'power2.out',
-    }, '<');
+      scale: 2.5,
+      scrollTrigger: { trigger: '#contact', start: 'top 70%', end: 'center center', scrub: 1.5 },
+    });
 
     // Contact text reveals
     gsap.utils.toArray('.contact-reveal').forEach((el, i) => {
@@ -422,10 +248,7 @@ const Index = () => {
         opacity: 1,
         duration: 1,
         delay: i * 0.1,
-        scrollTrigger: {
-          trigger: '#contact',
-          start: 'top 60%',
-        },
+        scrollTrigger: { trigger: '#contact', start: 'top 60%' },
       });
     });
 
