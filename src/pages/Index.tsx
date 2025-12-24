@@ -109,14 +109,26 @@ const Index = () => {
     });
 
     // Fade out orb as hero scrolls away (before positioning section)
-    gsap.to(mainOrbRef.current, {
-      opacity: 0,
-      scale: 0.8,
-      scrollTrigger: {
-        trigger: '#hero',
-        start: 'center top',
-        end: 'bottom top',
-        scrub: 1,
+    ScrollTrigger.create({
+      trigger: '#hero',
+      start: 'center top',
+      end: 'bottom top',
+      scrub: 1,
+      onUpdate: (self) => {
+        if (mainOrbRef.current) {
+          // Remove breathing animation so GSAP can control opacity
+          mainOrbRef.current.classList.remove('breathing');
+          const progress = self.progress;
+          gsap.set(mainOrbRef.current, {
+            opacity: 0.9 - (progress * 0.9),
+            scale: 1 - (progress * 0.2),
+          });
+        }
+      },
+      onLeave: () => {
+        if (mainOrbRef.current) {
+          gsap.set(mainOrbRef.current, { opacity: 0, scale: 0.8 });
+        }
       },
     });
 
