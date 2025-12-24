@@ -119,16 +119,16 @@
     mix-blend-mode: normal;
   }
 
-  /* Orb Styles */
+  /* Orb Styles - The Morphing Path */
   .orb {
     --size: clamp(200px, 30vw, 400px);
     --orb-core: #ffb340;
     --orb-mid: #ff9f0a;
     --orb-edge: #ff7b00;
+    --glow-intensity: 1;
     
     width: var(--size);
     height: var(--size);
-    border-radius: 50%;
     position: fixed;
     top: 50%;
     left: 50%;
@@ -136,38 +136,61 @@
     pointer-events: none;
     z-index: 10;
     mix-blend-mode: screen;
-    will-change: transform, opacity, filter;
+    will-change: transform, opacity, filter, clip-path, border-radius;
+    
+    /* Base gradient */
     background: 
-      radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.2) 0%, transparent 40%),
+      radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.25) 0%, transparent 40%),
       radial-gradient(circle at 50% 50%, var(--orb-core) 0%, var(--orb-mid) 30%, var(--orb-edge) 60%, transparent 70%);
+    
+    /* Dynamic glow using CSS variable */
     box-shadow: 
-      0 0 40px 10px rgba(255, 159, 10, 0.3),
-      0 0 80px 30px rgba(255, 159, 10, 0.15),
-      0 0 120px 60px rgba(255, 159, 10, 0.05);
+      0 0 calc(40px * var(--glow-intensity)) 10px rgba(255, 159, 10, 0.3),
+      0 0 calc(80px * var(--glow-intensity)) 30px rgba(255, 159, 10, 0.15),
+      0 0 calc(120px * var(--glow-intensity)) 60px rgba(255, 159, 10, 0.05);
+    
     filter: blur(0.5px);
     opacity: 0;
+    border-radius: 50%;
+    
+    /* Default clip-path for circle */
+    clip-path: ellipse(50% 50% at 50% 50%);
+  }
+
+  .orb-core {
+    position: absolute;
+    inset: 20%;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--orb-core) 0%, transparent 70%);
+    opacity: 0.6;
+    filter: blur(10px);
+  }
+
+  .orb-glow {
+    position: absolute;
+    inset: -50%;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 159, 10, 0.15) 0%, transparent 60%);
+    opacity: 0.5;
+    pointer-events: none;
   }
 
   .orb.breathing {
     animation: breathe 5s ease-in-out infinite;
   }
 
-  .orb.purple {
-    --orb-core: #d8b4fe;
-    --orb-mid: #a855f7;
-    --orb-edge: #7e22ce;
-    box-shadow: 
-      0 0 40px 10px rgba(168, 85, 247, 0.3),
-      0 0 80px 30px rgba(168, 85, 247, 0.15);
+  /* Morphed states - applied via GSAP */
+  .orb.ellipse {
+    border-radius: 50%;
   }
 
-  .orb.blue {
-    --orb-core: #93c5fd;
-    --orb-mid: #3b82f6;
-    --orb-edge: #1d4ed8;
-    box-shadow: 
-      0 0 40px 10px rgba(59, 130, 246, 0.3),
-      0 0 80px 30px rgba(59, 130, 246, 0.15);
+  .orb.arc {
+    clip-path: ellipse(45% 80% at 20% 50%);
+  }
+
+  .orb.beam {
+    border-radius: 100px;
+    clip-path: ellipse(8% 100% at 50% 50%);
   }
 
   /* Links */
