@@ -18,8 +18,6 @@ gsap.registerPlugin(ScrollTrigger);
 const Index = () => {
   const cursorRef = useRef<HTMLDivElement>(null);
   const mainOrbRef = useRef<HTMLDivElement>(null);
-  const purpleOrbRef = useRef<HTMLDivElement>(null);
-  const blueOrbRef = useRef<HTMLDivElement>(null);
   const heroRef = useRef<HTMLElement>(null);
   const heroNameRef = useRef<HTMLHeadingElement>(null);
   const scrollIndicatorRef = useRef<HTMLDivElement>(null);
@@ -98,7 +96,7 @@ const Index = () => {
       mainOrbRef.current?.classList.add('breathing');
     }, 2000);
 
-    // Hero Scroll Out
+    // Hero Scroll Out - fade out both text and orb
     gsap.to('.hero-name', {
       y: -100,
       opacity: 0,
@@ -110,19 +108,19 @@ const Index = () => {
       },
     });
 
-    // Positioning Section
+    // Fade out orb as hero scrolls away (before positioning section)
     gsap.to(mainOrbRef.current, {
-      top: '80%',
-      scale: 1.2,
-      ease: 'power1.inOut',
+      opacity: 0,
+      scale: 0.8,
       scrollTrigger: {
-        trigger: '#positioning',
-        start: 'top 70%',
-        end: 'bottom bottom',
-        scrub: 1.5,
+        trigger: '#hero',
+        start: 'center top',
+        end: 'bottom top',
+        scrub: 1,
       },
     });
 
+    // Positioning Section text reveals
     gsap.utils.toArray('.reveal-text').forEach((el, i) => {
       gsap.to(el as Element, {
         opacity: 1,
@@ -145,80 +143,6 @@ const Index = () => {
         end: 'center center',
         scrub: true,
       },
-    });
-
-    // Projects Section - Orb Split
-    const splitTL = gsap.timeline({
-      scrollTrigger: {
-        trigger: '#projects',
-        start: 'top 80%',
-        end: 'bottom 20%',
-        scrub: 1,
-      },
-    });
-
-    splitTL.to(mainOrbRef.current, {
-      top: '30vh',
-      left: '50%',
-      scale: 0.8,
-      opacity: 0.6,
-    });
-
-    splitTL.to([purpleOrbRef.current, blueOrbRef.current], {
-      opacity: 0.8,
-      scale: 0.8,
-      duration: 0.5,
-    }, '<');
-
-    splitTL.to(mainOrbRef.current, {
-      top: '20vh',
-      left: '70%',
-      opacity: 1,
-      scale: 0.5,
-    }, 'drift');
-
-    splitTL.to(purpleOrbRef.current, {
-      top: '45vh',
-      left: '20%',
-      opacity: 1,
-      scale: 0.5,
-    }, 'drift');
-
-    splitTL.to(blueOrbRef.current, {
-      top: '70vh',
-      left: '80%',
-      opacity: 1,
-      scale: 0.5,
-    }, 'drift');
-
-    // Experience Section
-    const expTL = gsap.timeline({
-      scrollTrigger: {
-        trigger: '#experience',
-        start: 'top center',
-        end: 'bottom bottom',
-        scrub: 1,
-      },
-    });
-
-    expTL.to([purpleOrbRef.current, blueOrbRef.current], { opacity: 0, scale: 0, duration: 0.5 }, 0);
-    expTL.to(
-      mainOrbRef.current,
-      {
-        left: '24px',
-        top: '30vh',
-        scale: 0.15,
-        opacity: 1,
-        boxShadow: '0 0 20px 5px rgba(255, 159, 10, 0.8)',
-        duration: 1,
-      },
-      0
-    );
-
-    expTL.to(mainOrbRef.current, {
-      top: '80vh',
-      ease: 'none',
-      duration: 3,
     });
 
     // Timeline item activation
@@ -245,25 +169,6 @@ const Index = () => {
           item.querySelector('.timeline-content')?.classList.remove('active');
         },
       });
-    });
-
-    // Philosophy & Contact
-    const endTL = gsap.timeline({
-      scrollTrigger: {
-        trigger: '#philosophy',
-        start: 'top bottom',
-        end: 'bottom top',
-        scrub: 1.5,
-      },
-    });
-
-    endTL.to(mainOrbRef.current, {
-      left: '50%',
-      top: '50%',
-      scale: 1.5,
-      opacity: 1,
-      boxShadow: '0 0 100px 40px rgba(255, 159, 10, 0.2)',
-      duration: 1,
     });
 
     // Contact Reveal
@@ -293,10 +198,8 @@ const Index = () => {
       <GrainOverlay />
       <CustomCursor cursorRef={cursorRef} />
 
-      {/* Orbs */}
+      {/* Orb */}
       <Orb ref={mainOrbRef} className="breathing" />
-      <Orb ref={purpleOrbRef} variant="purple" className="opacity-0 scale-0" />
-      <Orb ref={blueOrbRef} variant="blue" className="opacity-0 scale-0" />
 
       {/* Scroll Wrapper */}
       <div id="smooth-wrapper">
