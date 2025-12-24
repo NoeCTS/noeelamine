@@ -5,7 +5,7 @@ import Lenis from 'lenis';
 
 import GrainOverlay from '@/components/GrainOverlay';
 import CustomCursor from '@/components/CustomCursor';
-import ParticleOrb from '@/components/ParticleOrb';
+import Orb from '@/components/Orb';
 import HeroSection from '@/components/HeroSection';
 import PositioningSection from '@/components/PositioningSection';
 import ProjectsSection from '@/components/ProjectsSection';
@@ -17,7 +17,9 @@ gsap.registerPlugin(ScrollTrigger);
 
 const Index = () => {
   const cursorRef = useRef<HTMLDivElement>(null);
-  const particleOrbRef = useRef<HTMLDivElement>(null);
+  const mainOrbRef = useRef<HTMLDivElement>(null);
+  const purpleOrbRef = useRef<HTMLDivElement>(null);
+  const blueOrbRef = useRef<HTMLDivElement>(null);
   const heroRef = useRef<HTMLElement>(null);
   const heroNameRef = useRef<HTMLHeadingElement>(null);
   const scrollIndicatorRef = useRef<HTMLDivElement>(null);
@@ -83,93 +85,140 @@ const Index = () => {
         .join('');
     }
 
-    const orbContainer = particleOrbRef.current;
-    if (!orbContainer) return;
-
-    const core = orbContainer.querySelector('.particle-core') as HTMLElement;
-    const coreGlow = orbContainer.querySelector('.particle-core-glow') as HTMLElement;
-    const particles = orbContainer.querySelectorAll('.particle');
-
-    // ============================================
-    // UNIFIED ORB - Position & Glow Animation
-    // ============================================
-
-    // Initial state
-    gsap.set(core, { opacity: 0, scale: 0.5 });
-    gsap.set(coreGlow, { opacity: 0, scale: 0.3 });
-    gsap.set(particles, { opacity: 0 });
-
-    // LOAD ANIMATION
+    // Load Animation Sequence
     const loadTL = gsap.timeline({ delay: 0.2 });
+
     loadTL
-      .to(core, { opacity: 1, scale: 1, duration: 1.5, ease: 'power2.out' })
-      .to(coreGlow, { opacity: 0.6, scale: 1, duration: 1.2, ease: 'power2.out' }, '-=1')
-      .to('.hero-char', { opacity: 1, y: 0, stagger: 0.05, duration: 0.8, ease: 'power2.out' }, '-=0.8')
+      .to(mainOrbRef.current, { opacity: 0.9, duration: 2, ease: 'power2.out' })
+      .to('.hero-char', { opacity: 1, y: 0, stagger: 0.05, duration: 0.8, ease: 'power2.out' }, '-=1.5')
       .to(scrollIndicatorRef.current, { opacity: 0.5, duration: 1 }, '-=0.5');
 
-    setTimeout(() => orbContainer.classList.add('breathing'), 2000);
+    // Add breathing class after load
+    setTimeout(() => {
+      mainOrbRef.current?.classList.add('breathing');
+    }, 2000);
 
-    // HERO - Fade out text, orb stays center
+    // Hero Scroll Out
     gsap.to('.hero-name', {
       y: -100,
       opacity: 0,
-      scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom center', scrub: 1.5 },
+      scrollTrigger: {
+        trigger: '#hero',
+        start: 'top top',
+        end: 'bottom center',
+        scrub: 1.5,
+      },
     });
 
-    // POSITIONING - Move orb to top-right, slight dim
-    gsap.to(orbContainer, {
-      top: '25%',
-      left: '75%',
-      scale: 0.8,
-      scrollTrigger: { trigger: '#positioning', start: 'top 80%', end: 'center center', scrub: 1.5 },
+    // Positioning Section
+    gsap.to(mainOrbRef.current, {
+      top: '80%',
+      scale: 1.2,
+      ease: 'power1.inOut',
+      scrollTrigger: {
+        trigger: '#positioning',
+        start: 'top 70%',
+        end: 'bottom bottom',
+        scrub: 1.5,
+      },
     });
 
-    gsap.to(coreGlow, {
-      opacity: 0.4,
-      scrollTrigger: { trigger: '#positioning', start: 'top 80%', end: 'center center', scrub: 1.5 },
-    });
-
-    // Text reveals in positioning
     gsap.utils.toArray('.reveal-text').forEach((el, i) => {
       gsap.to(el as Element, {
         opacity: 1,
         y: 0,
         duration: 1,
-        scrollTrigger: { trigger: '#positioning', start: `top ${60 - i * 10}%`, end: `top ${40 - i * 10}%`, scrub: true },
+        scrollTrigger: {
+          trigger: '#positioning',
+          start: `top ${60 - i * 10}%`,
+          end: `top ${40 - i * 10}%`,
+          scrub: true,
+        },
       });
     });
 
     gsap.to('.reveal-sub', {
       opacity: 1,
-      scrollTrigger: { trigger: '#positioning', start: 'top 40%', end: 'center center', scrub: true },
+      scrollTrigger: {
+        trigger: '#positioning',
+        start: 'top 40%',
+        end: 'center center',
+        scrub: true,
+      },
     });
 
-    // PROJECTS - THE WOAH MOMENT! Orb goes center-right, MAXIMUM GLOW
-    gsap.to(orbContainer, {
-      top: '50%',
-      left: '80%',
-      scale: 1.3,
-      scrollTrigger: { trigger: '#projects', start: 'top 70%', end: 'top 20%', scrub: 1.5 },
+    // Projects Section - Orb Split
+    const splitTL = gsap.timeline({
+      scrollTrigger: {
+        trigger: '#projects',
+        start: 'top 80%',
+        end: 'bottom 20%',
+        scrub: 1,
+      },
     });
 
-    gsap.to(coreGlow, {
+    splitTL.to(mainOrbRef.current, {
+      top: '30vh',
+      left: '50%',
+      scale: 0.8,
+      opacity: 0.6,
+    });
+
+    splitTL.to([purpleOrbRef.current, blueOrbRef.current], {
+      opacity: 0.8,
+      scale: 0.8,
+      duration: 0.5,
+    }, '<');
+
+    splitTL.to(mainOrbRef.current, {
+      top: '20vh',
+      left: '70%',
       opacity: 1,
-      scale: 2.5,
-      scrollTrigger: { trigger: '#projects', start: 'top 70%', end: 'top 20%', scrub: 1.5 },
+      scale: 0.5,
+    }, 'drift');
+
+    splitTL.to(purpleOrbRef.current, {
+      top: '45vh',
+      left: '20%',
+      opacity: 1,
+      scale: 0.5,
+    }, 'drift');
+
+    splitTL.to(blueOrbRef.current, {
+      top: '70vh',
+      left: '80%',
+      opacity: 1,
+      scale: 0.5,
+    }, 'drift');
+
+    // Experience Section
+    const expTL = gsap.timeline({
+      scrollTrigger: {
+        trigger: '#experience',
+        start: 'top center',
+        end: 'bottom bottom',
+        scrub: 1,
+      },
     });
 
-    // EXPERIENCE - Move orb to left side, smaller
-    gsap.to(orbContainer, {
-      top: '50%',
-      left: '15%',
-      scale: 0.6,
-      scrollTrigger: { trigger: '#experience', start: 'top 70%', end: 'top 20%', scrub: 1.5 },
-    });
+    expTL.to([purpleOrbRef.current, blueOrbRef.current], { opacity: 0, scale: 0, duration: 0.5 }, 0);
+    expTL.to(
+      mainOrbRef.current,
+      {
+        left: '24px',
+        top: '30vh',
+        scale: 0.15,
+        opacity: 1,
+        boxShadow: '0 0 20px 5px rgba(255, 159, 10, 0.8)',
+        duration: 1,
+      },
+      0
+    );
 
-    gsap.to(coreGlow, {
-      opacity: 0.5,
-      scale: 1,
-      scrollTrigger: { trigger: '#experience', start: 'top 70%', end: 'top 20%', scrub: 1.5 },
+    expTL.to(mainOrbRef.current, {
+      top: '80vh',
+      ease: 'none',
+      duration: 3,
     });
 
     // Timeline item activation
@@ -198,42 +247,36 @@ const Index = () => {
       });
     });
 
-    // PHILOSOPHY - Move to center-left, medium glow
-    gsap.to(orbContainer, {
-      top: '50%',
-      left: '30%',
-      scale: 0.9,
-      scrollTrigger: { trigger: '#philosophy', start: 'top 80%', end: 'center center', scrub: 1.5 },
+    // Philosophy & Contact
+    const endTL = gsap.timeline({
+      scrollTrigger: {
+        trigger: '#philosophy',
+        start: 'top bottom',
+        end: 'bottom top',
+        scrub: 1.5,
+      },
     });
 
-    gsap.to(coreGlow, {
-      opacity: 0.7,
-      scale: 1.3,
-      scrollTrigger: { trigger: '#philosophy', start: 'top 80%', end: 'center center', scrub: 1.5 },
-    });
-
-    // CONTACT - Return to center, BIGGEST and BRIGHTEST
-    gsap.to(orbContainer, {
-      top: '50%',
+    endTL.to(mainOrbRef.current, {
       left: '50%',
+      top: '50%',
       scale: 1.5,
-      scrollTrigger: { trigger: '#contact', start: 'top 70%', end: 'center center', scrub: 1.5 },
-    });
-
-    gsap.to(coreGlow, {
       opacity: 1,
-      scale: 3,
-      scrollTrigger: { trigger: '#contact', start: 'top 70%', end: 'center center', scrub: 1.5 },
+      boxShadow: '0 0 100px 40px rgba(255, 159, 10, 0.2)',
+      duration: 1,
     });
 
-    // Contact text reveals
+    // Contact Reveal
     gsap.utils.toArray('.contact-reveal').forEach((el, i) => {
       gsap.to(el as Element, {
         y: 0,
         opacity: 1,
         duration: 1,
         delay: i * 0.1,
-        scrollTrigger: { trigger: '#contact', start: 'top 60%' },
+        scrollTrigger: {
+          trigger: '#contact',
+          start: 'top 60%',
+        },
       });
     });
 
@@ -250,8 +293,10 @@ const Index = () => {
       <GrainOverlay />
       <CustomCursor cursorRef={cursorRef} />
 
-      {/* Particle Orb System */}
-      <ParticleOrb ref={particleOrbRef} particleCount={60} />
+      {/* Orbs */}
+      <Orb ref={mainOrbRef} className="breathing" />
+      <Orb ref={purpleOrbRef} variant="purple" className="opacity-0 scale-0" />
+      <Orb ref={blueOrbRef} variant="blue" className="opacity-0 scale-0" />
 
       {/* Scroll Wrapper */}
       <div id="smooth-wrapper">
