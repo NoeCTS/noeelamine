@@ -152,14 +152,9 @@ const Index = () => {
       scrollTrigger: { trigger: '#projects', start: 'top 70%', end: 'top 20%', scrub: 1.5 },
     });
 
-    gsap.to(core, {
-      boxShadow: '0 0 120px 60px hsl(var(--primary))',
-      scrollTrigger: { trigger: '#projects', start: 'top 70%', end: 'top 20%', scrub: 1.5 },
-    });
-
     gsap.to(coreGlow, {
       opacity: 1,
-      scale: 2,
+      scale: 2.5,
       scrollTrigger: { trigger: '#projects', start: 'top 70%', end: 'top 20%', scrub: 1.5 },
     });
 
@@ -168,11 +163,6 @@ const Index = () => {
       top: '50%',
       left: '15%',
       scale: 0.6,
-      scrollTrigger: { trigger: '#experience', start: 'top 70%', end: 'top 20%', scrub: 1.5 },
-    });
-
-    gsap.to(core, {
-      boxShadow: '0 0 60px 30px hsl(var(--primary))',
       scrollTrigger: { trigger: '#experience', start: 'top 70%', end: 'top 20%', scrub: 1.5 },
     });
 
@@ -230,14 +220,9 @@ const Index = () => {
       scrollTrigger: { trigger: '#contact', start: 'top 70%', end: 'center center', scrub: 1.5 },
     });
 
-    gsap.to(core, {
-      boxShadow: '0 0 150px 80px hsl(var(--primary))',
-      scrollTrigger: { trigger: '#contact', start: 'top 70%', end: 'center center', scrub: 1.5 },
-    });
-
     gsap.to(coreGlow, {
       opacity: 1,
-      scale: 2.5,
+      scale: 3,
       scrollTrigger: { trigger: '#contact', start: 'top 70%', end: 'center center', scrub: 1.5 },
     });
 
