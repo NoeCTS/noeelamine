@@ -1,18 +1,20 @@
 import { forwardRef } from 'react';
 
 interface OrbProps {
-  variant?: 'default' | 'purple' | 'blue';
   className?: string;
 }
 
-const Orb = forwardRef<HTMLDivElement, OrbProps>(({ variant = 'default', className = '' }, ref) => {
-  const variantClass = variant === 'purple' ? 'purple' : variant === 'blue' ? 'blue' : '';
-  
+const Orb = forwardRef<HTMLDivElement, OrbProps>(({ className = '' }, ref) => {
   return (
     <div 
       ref={ref}
-      className={`orb ${variantClass} ${className}`}
-    />
+      className={`orb ${className}`}
+    >
+      {/* Inner core for additional glow effects */}
+      <div className="orb-core" />
+      {/* Outer glow layer */}
+      <div className="orb-glow" />
+    </div>
   );
 });
 
