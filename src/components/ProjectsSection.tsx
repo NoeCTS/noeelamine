@@ -1,9 +1,13 @@
-import { forwardRef } from 'react';
+import { forwardRef, useEffect, useRef } from 'react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import aubeDashboard from '@/assets/aube-dashboard.png';
 import betterideFlyer1 from '@/assets/betteride-flyer-1.jpg';
 import betterideFlyer2 from '@/assets/betteride-flyer-2.jpg';
 import betterideFlyer3 from '@/assets/betteride-flyer-3.png';
 import claudeClub from '@/assets/claude-club.jpeg';
+
+gsap.registerPlugin(ScrollTrigger);
 
 interface Project {
   id: string;
@@ -59,50 +63,70 @@ const projects: Project[] = [
 ];
 
 const ProjectsSection = forwardRef<HTMLElement>((_, ref) => {
-  return (
-    <section ref={ref} id="projects" className="relative py-section w-full">
-      <div className="container mx-auto px-6 max-w-[1400px]">
-        <div className="flex flex-col md:flex-row gap-24">
-          {/* Sticky Label */}
-          <div className="md:w-1/4">
-            <div className="sticky top-32 text-sm font-medium tracking-wide text-secondary uppercase">
-              What I worked on
-            </div>
-          </div>
+  const containerRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-          {/* Project List */}
-          <div className="md:w-3/4 flex flex-col gap-[30vh]">
-            {projects.map((project) => (
-              <div 
-                key={project.id}
-                id={project.id}
-                className="project-card group relative"
-              >
-                <div className="mb-8">
-                  <span className="text-sm font-medium tracking-wide text-accent uppercase mb-2 block">
-                    {project.role}
-                  </span>
-                  <h3 className="text-headline font-semibold tracking-tighter mb-3">
-                    {project.name}
-                  </h3>
-                  <p className="text-body text-secondary max-w-lg mb-6">
-                    {project.description}
-                  </p>
-                  <ul className="space-y-2">
-                    {project.highlights.map((highlight, i) => (
-                      <li key={i} className="text-sm text-tertiary flex items-start gap-2">
-                        <span className="text-accent mt-1">→</span>
-                        {highlight}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                
-                {/* Multiple images grid */}
+  useEffect(() => {
+    if (!containerRef.current || !scrollContainerRef.current) return;
+
+    const scrollContainer = scrollContainerRef.current;
+    const scrollWidth = scrollContainer.scrollWidth;
+    const viewportWidth = window.innerWidth;
+
+    const tween = gsap.to(scrollContainer, {
+      x: -(scrollWidth - viewportWidth + 100),
+      ease: 'none',
+      scrollTrigger: {
+        trigger: containerRef.current,
+        start: 'top top',
+        end: () => `+=${scrollWidth - viewportWidth + 100}`,
+        scrub: 1,
+        pin: true,
+        anticipatePin: 1,
+        invalidateOnRefresh: true,
+      },
+    });
+
+    return () => {
+      tween.kill();
+      ScrollTrigger.getAll().forEach((st) => {
+        if (st.trigger === containerRef.current) {
+          st.kill();
+        }
+      });
+    };
+  }, []);
+
+  return (
+    <section ref={ref} id="projects" className="relative w-full overflow-hidden">
+      <div ref={containerRef} className="h-screen flex items-center">
+        {/* Section Label */}
+        <div className="absolute top-8 left-6 md:left-12 z-10">
+          <span className="text-sm font-medium tracking-wide text-secondary uppercase">
+            What I worked on
+          </span>
+        </div>
+
+        {/* Horizontal Scroll Container */}
+        <div 
+          ref={scrollContainerRef} 
+          className="flex gap-8 md:gap-16 pl-6 md:pl-12 pr-[50vw] items-start pt-20"
+        >
+          {projects.map((project, index) => (
+            <div 
+              key={project.id}
+              id={project.id}
+              className="project-card group flex-shrink-0 w-[85vw] md:w-[60vw] lg:w-[50vw] max-w-[800px]"
+              style={{ 
+                transform: `translateY(${index % 2 === 1 ? '40px' : '0'})`,
+              }}
+            >
+              {/* Image First */}
+              <div className="mb-6">
                 {project.images ? (
-                  <div className="grid grid-cols-3 gap-4">
+                  <div className="grid grid-cols-3 gap-3">
                     {project.images.map((img, i) => (
-                      <div key={i} className="relative bg-elevated rounded-xl overflow-hidden border border-foreground/5 group-hover:border-accent/20 transition-colors">
+                      <div key={i} className="relative bg-elevated rounded-xl overflow-hidden border border-foreground/5 group-hover:border-accent/20 transition-colors duration-500">
                         <img 
                           src={img} 
                           alt={`${project.name} - ${i + 1}`}
@@ -112,7 +136,7 @@ const ProjectsSection = forwardRef<HTMLElement>((_, ref) => {
                     ))}
                   </div>
                 ) : (
-                  <div className="relative bg-elevated rounded-2xl overflow-hidden border border-foreground/5 group-hover:border-accent/20 transition-colors">
+                  <div className="relative bg-elevated rounded-2xl overflow-hidden border border-foreground/5 group-hover:border-accent/20 transition-colors duration-500">
                     {project.image ? (
                       <img 
                         src={project.image} 
@@ -127,7 +151,35 @@ const ProjectsSection = forwardRef<HTMLElement>((_, ref) => {
                   </div>
                 )}
               </div>
-            ))}
+
+              {/* Content */}
+              <div>
+                <span className="text-sm font-medium tracking-wide text-accent uppercase mb-2 block">
+                  {project.role}
+                </span>
+                <h3 className="text-3xl md:text-4xl font-semibold tracking-tighter mb-3">
+                  {project.name}
+                </h3>
+                <p className="text-body text-secondary max-w-lg mb-4">
+                  {project.description}
+                </p>
+                <ul className="space-y-2">
+                  {project.highlights.map((highlight, i) => (
+                    <li key={i} className="text-sm text-tertiary flex items-start gap-2">
+                      <span className="text-accent mt-1">→</span>
+                      {highlight}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Scroll Progress Indicator */}
+        <div className="absolute bottom-8 left-6 md:left-12 right-6 md:right-12">
+          <div className="h-[1px] bg-foreground/10 w-full overflow-hidden">
+            <div className="h-full bg-accent/50 w-0 scroll-progress-bar" />
           </div>
         </div>
       </div>
