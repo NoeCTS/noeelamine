@@ -244,11 +244,11 @@ const Index = () => {
             scrollIndicatorRef={scrollIndicatorRef}
           />
           <PositioningSection ref={positioningRef} />
+          <NothingCTASection />
           <ProjectsSection ref={projectsRef} />
           <ConceptCampaignsSection ref={conceptCampaignsRef} />
           <ExperienceSection ref={experienceRef} />
           <EducationSection ref={educationRef} />
-          <NothingCTASection />
           <PhilosophySection ref={philosophyRef} />
           <ContactSection ref={contactRef} />
         </div>
