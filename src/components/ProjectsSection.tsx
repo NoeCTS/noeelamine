@@ -1,6 +1,8 @@
 import { forwardRef } from 'react';
 import aubeDashboard from '@/assets/aube-dashboard.png';
-import betterideFlyer from '@/assets/betteride-flyer.png';
+import betterideFlyer1 from '@/assets/betteride-flyer-1.jpg';
+import betterideFlyer2 from '@/assets/betteride-flyer-2.jpg';
+import betterideFlyer3 from '@/assets/betteride-flyer-3.png';
 
 interface Project {
   id: string;
@@ -10,6 +12,7 @@ interface Project {
   highlights: string[];
   letter: string;
   image?: string;
+  images?: string[];
 }
 
 const projects: Project[] = [
@@ -37,7 +40,7 @@ const projects: Project[] = [
       'Designed insight-driven creative for Berlin culture',
     ],
     letter: 'B',
-    image: betterideFlyer,
+    images: [betterideFlyer1, betterideFlyer2, betterideFlyer3],
   },
   {
     id: 'project-claude',
@@ -92,20 +95,36 @@ const ProjectsSection = forwardRef<HTMLElement>((_, ref) => {
                     ))}
                   </ul>
                 </div>
-                <div className="relative aspect-[16/9] bg-elevated rounded-2xl overflow-hidden border border-foreground/5 group-hover:border-accent/20 transition-colors">
-                  {project.image ? (
-                    <img 
-                      src={project.image} 
-                      alt={project.name}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="absolute inset-0 flex items-center justify-center text-foreground/10 text-9xl font-bold select-none">
-                      {project.letter}
-                    </div>
-                  )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-background/50 to-transparent" />
-                </div>
+                
+                {/* Multiple images grid */}
+                {project.images ? (
+                  <div className="grid grid-cols-3 gap-4">
+                    {project.images.map((img, i) => (
+                      <div key={i} className="relative aspect-[3/4] bg-elevated rounded-xl overflow-hidden border border-foreground/5 group-hover:border-accent/20 transition-colors">
+                        <img 
+                          src={img} 
+                          alt={`${project.name} - ${i + 1}`}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="relative aspect-[16/9] bg-elevated rounded-2xl overflow-hidden border border-foreground/5 group-hover:border-accent/20 transition-colors">
+                    {project.image ? (
+                      <img 
+                        src={project.image} 
+                        alt={project.name}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="absolute inset-0 flex items-center justify-center text-foreground/10 text-9xl font-bold select-none">
+                        {project.letter}
+                      </div>
+                    )}
+                    <div className="absolute inset-0 bg-gradient-to-t from-background/50 to-transparent" />
+                  </div>
+                )}
               </div>
             ))}
           </div>
