@@ -254,8 +254,8 @@ const Index = () => {
             scrollIndicatorRef={scrollIndicatorRef}
           />
           <PositioningSection ref={positioningRef} />
-          <ProjectsSection ref={projectsRef} />
           <ConceptCampaignsSection ref={conceptCampaignsRef} />
+          <ProjectsSection ref={projectsRef} />
           <ExperienceSection ref={experienceRef} />
           <EducationSection ref={educationRef} />
           <PhilosophySection ref={philosophyRef} />
