@@ -219,31 +219,7 @@ const Index = () => {
       },
     });
 
-    // Timeline item activation
-    document.querySelectorAll('.exp-item').forEach((item) => {
-      ScrollTrigger.create({
-        trigger: item,
-        start: 'top 60%',
-        end: 'bottom 40%',
-        toggleActions: 'play reverse play reverse',
-        onEnter: () => {
-          item.querySelector('.timeline-year')?.classList.add('active');
-          item.querySelector('.timeline-content')?.classList.add('active');
-        },
-        onLeave: () => {
-          item.querySelector('.timeline-year')?.classList.remove('active');
-          item.querySelector('.timeline-content')?.classList.remove('active');
-        },
-        onEnterBack: () => {
-          item.querySelector('.timeline-year')?.classList.add('active');
-          item.querySelector('.timeline-content')?.classList.add('active');
-        },
-        onLeaveBack: () => {
-          item.querySelector('.timeline-year')?.classList.remove('active');
-          item.querySelector('.timeline-content')?.classList.remove('active');
-        },
-      });
-    });
+    // Timeline items are now always visible - no scroll animation needed
 
     // Contact Reveal
     gsap.utils.toArray('.contact-reveal').forEach((el, i) => {

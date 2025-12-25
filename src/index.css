@@ -203,25 +203,15 @@
     transform-origin: left;
   }
 
-  /* Timeline States */
-  .timeline-year.active {
+  /* Timeline States - always visible */
+  .timeline-year {
     color: hsl(var(--foreground));
     opacity: 1;
   }
 
-  .timeline-year {
-    transition: color 0.5s ease, opacity 0.5s ease;
-  }
-
-  .timeline-content.active {
+  .timeline-content {
     opacity: 1;
     transform: translateX(0);
-  }
-
-  .timeline-content {
-    opacity: 0.3;
-    transform: translateX(10px);
-    transition: all 0.5s ease;
   }
 
   /* Hero Character */
