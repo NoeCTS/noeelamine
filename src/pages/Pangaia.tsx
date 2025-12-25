@@ -24,6 +24,7 @@ const Pangaia = () => {
   const problemRef = useRef<HTMLElement>(null);
   const galleryRef = useRef<HTMLElement>(null);
   const resultsRef = useRef<HTMLElement>(null);
+  const flowerCursorRef = useRef<HTMLDivElement>(null);
   const { navigateWithTransition } = usePageTransition();
 
   // Particle state for animations
@@ -41,6 +42,21 @@ const Pangaia = () => {
       delay: Math.random() * 2,
     }));
     setParticles(newParticles);
+
+    // Flower cursor movement
+    const handleMouseMove = (e: MouseEvent) => {
+      if (flowerCursorRef.current) {
+        gsap.to(flowerCursorRef.current, {
+          x: e.clientX,
+          y: e.clientY,
+          duration: 0.3,
+          ease: 'power2.out',
+        });
+      }
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
   useEffect(() => {
@@ -115,13 +131,38 @@ const Pangaia = () => {
   return (
     <div
       ref={containerRef}
-      className="min-h-screen overflow-x-hidden"
+      className="min-h-screen overflow-x-hidden cursor-none"
       style={{
         fontFamily: "'Georgia', serif",
         backgroundColor: '#1A2F1A',
         color: '#F5F0E8',
       }}
     >
+      {/* Flower Cursor */}
+      <div
+        ref={flowerCursorRef}
+        className="fixed pointer-events-none z-[100] -translate-x-1/2 -translate-y-1/2"
+        style={{ left: 0, top: 0 }}
+      >
+        <svg width="32" height="32" viewBox="0 0 32 32" className="animate-spin-slow">
+          {/* Petals */}
+          {[0, 60, 120, 180, 240, 300].map((angle, i) => (
+            <ellipse
+              key={i}
+              cx="16"
+              cy="8"
+              rx="4"
+              ry="7"
+              fill={i % 2 === 0 ? '#FFB6C1' : '#F5F0E8'}
+              opacity="0.9"
+              transform={`rotate(${angle} 16 16)`}
+            />
+          ))}
+          {/* Center */}
+          <circle cx="16" cy="16" r="5" fill="#F4C430" />
+          <circle cx="16" cy="16" r="3" fill="#DAA520" />
+        </svg>
+      </div>
       {/* Grain overlay */}
       <div
         className="fixed inset-0 pointer-events-none z-50"
@@ -404,7 +445,7 @@ const Pangaia = () => {
         </div>
       </footer>
 
-      {/* Float animation */}
+      {/* Animations */}
       <style>{`
         @keyframes float {
           0%, 100% { transform: translateY(0) rotate(0deg); }
@@ -413,6 +454,13 @@ const Pangaia = () => {
         @keyframes pulse {
           0%, 100% { opacity: 0.2; }
           50% { opacity: 0.4; }
+        }
+        @keyframes spin-slow {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+        .animate-spin-slow {
+          animation: spin-slow 8s linear infinite;
         }
       `}</style>
     </div>
