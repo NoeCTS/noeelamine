@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import nothingAd1 from '@/assets/nothing-ad-1.jpg';
 import nothingAd2 from '@/assets/nothing-ad-2.jpg';
-import nothingHeadphone from '@/assets/nothing-headphone-hq.avif';
+
 
 const Nothing = () => {
   const [loaded, setLoaded] = useState(false);
@@ -42,6 +42,15 @@ const Nothing = () => {
       className="min-h-screen text-neutral-900 overflow-x-hidden cursor-auto"
       style={{ fontFamily: "'Courier New', monospace", backgroundColor: '#d8d8d8' }}
     >
+      {/* Dot pattern overlay */}
+      <div className="fixed inset-0 pointer-events-none z-10"
+        style={{
+          backgroundImage: 'radial-gradient(circle, #888 1.5px, transparent 1.5px)',
+          backgroundSize: '32px 32px',
+          opacity: 0.4
+        }}
+      />
+
       {/* Header */}
       <header className={`fixed top-0 left-0 right-0 z-40 flex justify-between items-center p-6 md:p-8 transition-all duration-1000 ${loaded ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-8'}`}>
         <div className="flex items-center gap-2">
@@ -63,22 +72,12 @@ const Nothing = () => {
           <h1 className="text-4xl md:text-6xl lg:text-8xl font-light tracking-tight mb-8">
             Headphone <span className="opacity-30">(1)</span>
           </h1>
+          <p className="text-lg md:text-xl text-neutral-600 tracking-wide">
+            nothing <span className="mx-4">feels</span> different.
+          </p>
         </div>
 
-        {/* Headphone image */}
-        <div className={`transition-all duration-1000 delay-500 ${loaded ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}>
-          <img 
-            src={nothingHeadphone} 
-            alt="Nothing Headphone (1)" 
-            className="w-full max-w-2xl h-auto"
-          />
-        </div>
-
-        <p className={`text-lg md:text-xl text-neutral-600 tracking-wide mt-8 transition-all duration-1000 delay-700 ${loaded ? 'opacity-100' : 'opacity-0'}`}>
-          nothing <span className="mx-4">feels</span> different.
-        </p>
-
-        <div className={`absolute bottom-12 transition-all duration-1000 delay-900 ${loaded ? 'opacity-100' : 'opacity-0'}`}>
+        <div className={`absolute bottom-12 transition-all duration-1000 delay-700 ${loaded ? 'opacity-100' : 'opacity-0'}`}>
           <div className="flex flex-col items-center gap-2">
             <span className="text-[10px] tracking-[0.3em] uppercase text-neutral-500">Scroll</span>
             <div className="w-px h-12 bg-gradient-to-b from-neutral-500 to-transparent" />
