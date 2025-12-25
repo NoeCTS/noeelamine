@@ -1,6 +1,6 @@
 import { forwardRef, useRef, useEffect, useCallback } from 'react';
-import { Link } from 'react-router-dom';
 import gsap from 'gsap';
+import { usePageTransition } from './PageTransition';
 
 const GLITCH_CHARS = '█▓▒░╔╗╚╝┃━┏┓┗┛▀▄▌▐■□▪▫';
 const TEXT = 'DO YOU WORK AT NOTHING?';
@@ -13,13 +13,14 @@ const NothingCTASection = forwardRef<HTMLElement>((_, ref) => {
   const isHovering = useRef(false);
   const glitchLoop = useRef<gsap.core.Timeline | null>(null);
   const ctx = useRef<gsap.Context | null>(null);
+  const { navigateWithTransition } = usePageTransition();
 
   // Character scramble effect
   const scrambleText = useCallback((element: HTMLSpanElement, duration: number = 0.3) => {
     const originalText = TEXT;
     const chars = originalText.split('');
     let iteration = 0;
-    const totalIterations = duration * 60; // ~60fps
+    const totalIterations = duration * 60;
 
     const interval = setInterval(() => {
       element.textContent = chars
@@ -48,7 +49,6 @@ const NothingCTASection = forwardRef<HTMLElement>((_, ref) => {
     const slices = slicesRef.current.filter(Boolean) as HTMLSpanElement[];
     
     ctx.current.add(() => {
-      // Random slice distortion
       slices.forEach((slice, i) => {
         const direction = Math.random() > 0.5 ? 1 : -1;
         const intensity = Math.random() * 15 + 5;
@@ -68,7 +68,6 @@ const NothingCTASection = forwardRef<HTMLElement>((_, ref) => {
           },
         });
 
-        // RGB split on random slices
         if (Math.random() > 0.5) {
           gsap.to(slice, {
             textShadow: `${direction * 3}px 0 #ff0040, ${-direction * 3}px 0 #00ffff`,
@@ -83,7 +82,6 @@ const NothingCTASection = forwardRef<HTMLElement>((_, ref) => {
         }
       });
 
-      // Container flicker
       if (containerRef.current && Math.random() > 0.7) {
         gsap.to(containerRef.current, {
           opacity: 0.7,
@@ -100,7 +98,6 @@ const NothingCTASection = forwardRef<HTMLElement>((_, ref) => {
       }
     });
 
-    // Schedule next glitch at random interval
     if (isHovering.current) {
       const delay = Math.random() * 400 + 150;
       setTimeout(microGlitch, delay);
@@ -114,11 +111,9 @@ const NothingCTASection = forwardRef<HTMLElement>((_, ref) => {
     const slices = slicesRef.current.filter(Boolean) as HTMLSpanElement[];
     
     ctx.current.add(() => {
-      // Kill any existing animations
       gsap.killTweensOf(slices);
       gsap.killTweensOf(containerRef.current);
 
-      // Container shake
       gsap.to(containerRef.current, {
         x: 'random(-5, 5)',
         y: 'random(-2, 2)',
@@ -131,7 +126,6 @@ const NothingCTASection = forwardRef<HTMLElement>((_, ref) => {
         },
       });
 
-      // Explosive slice scatter
       slices.forEach((slice, i) => {
         const direction = i % 2 === 0 ? 1 : -1;
         
@@ -151,14 +145,12 @@ const NothingCTASection = forwardRef<HTMLElement>((_, ref) => {
           }
         );
 
-        // Heavy RGB split that fades
         gsap.fromTo(slice,
           { textShadow: `${direction * 8}px 0 #ff0040, ${-direction * 8}px 0 #00ffff` },
           { textShadow: 'none', duration: 0.3, delay: 0.1 }
         );
       });
 
-      // Scramble text effect
       if (textRef.current) {
         scrambleText(textRef.current, 0.4);
       }
@@ -172,7 +164,6 @@ const NothingCTASection = forwardRef<HTMLElement>((_, ref) => {
     const slices = slicesRef.current.filter(Boolean) as HTMLSpanElement[];
     
     ctx.current.add(() => {
-      // Final glitch burst
       slices.forEach((slice, i) => {
         const direction = i % 2 === 0 ? 1 : -1;
         
@@ -204,6 +195,11 @@ const NothingCTASection = forwardRef<HTMLElement>((_, ref) => {
     triggerExitBurst();
   }, [triggerExitBurst]);
 
+  const handleClick = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    navigateWithTransition('/nothing');
+  }, [navigateWithTransition]);
+
   useEffect(() => {
     ctx.current = gsap.context(() => {});
     
@@ -215,7 +211,6 @@ const NothingCTASection = forwardRef<HTMLElement>((_, ref) => {
     };
   }, []);
 
-  // Calculate clip path for each slice
   const getSliceStyle = (index: number): React.CSSProperties => {
     const sliceHeight = 100 / SLICE_COUNT;
     return {
@@ -235,9 +230,9 @@ const NothingCTASection = forwardRef<HTMLElement>((_, ref) => {
   return (
     <section ref={ref} id="nothing-cta" className="relative py-24 md:py-32 w-full">
       <div className="container mx-auto px-6 max-w-[1400px]">
-        <Link 
-          to="/nothing"
-          className="group block w-full max-w-3xl mx-auto"
+        <button 
+          onClick={handleClick}
+          className="group block w-full max-w-3xl mx-auto text-left"
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
         >
@@ -257,7 +252,6 @@ const NothingCTASection = forwardRef<HTMLElement>((_, ref) => {
 
             {/* Glitch slices container */}
             <div className="relative h-[2em] md:h-[2.5em] flex items-center justify-center">
-              {/* Slice layers for glitch effect */}
               {Array.from({ length: SLICE_COUNT }).map((_, i) => (
                 <span
                   key={i}
@@ -270,7 +264,6 @@ const NothingCTASection = forwardRef<HTMLElement>((_, ref) => {
                 </span>
               ))}
               
-              {/* Main text (for accessibility and scramble effect) */}
               <span 
                 ref={textRef}
                 className="text-xl md:text-2xl lg:text-3xl font-medium tracking-[0.3em] uppercase text-secondary group-hover:text-foreground transition-colors duration-500 opacity-0 pointer-events-none whitespace-nowrap"
@@ -285,7 +278,7 @@ const NothingCTASection = forwardRef<HTMLElement>((_, ref) => {
             <div className="absolute bottom-0 left-0 w-4 h-4 border-l border-b border-secondary/40 group-hover:border-foreground/60 transition-colors duration-500" />
             <div className="absolute bottom-0 right-0 w-4 h-4 border-r border-b border-secondary/40 group-hover:border-foreground/60 transition-colors duration-500" />
           </div>
-        </Link>
+        </button>
       </div>
 
       <style>{`
