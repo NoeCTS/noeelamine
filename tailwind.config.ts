@@ -49,9 +49,16 @@ export default {
         },
         tertiary: "hsl(var(--tertiary))",
         elevated: "hsl(var(--elevated))",
+        // Berlin nightlife colors
+        "neon-red": "hsl(var(--neon-red))",
+        "neon-blue": "hsl(var(--neon-blue))",
+        "berlin-black": "hsl(var(--berlin-black))",
+        "berlin-deep": "hsl(var(--berlin-deep))",
       },
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
+        bebas: ['Bebas Neue', 'sans-serif'],
+        mono: ['Space Mono', 'monospace'],
       },
       letterSpacing: {
         tighter: '-0.03em',

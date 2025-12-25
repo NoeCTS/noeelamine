@@ -38,6 +38,16 @@
     --tertiary: 240 3% 45%;
     --elevated: 0 0% 4%;
     --accent-glow: 36 100% 52%;
+
+    /* Berlin nightlife colors */
+    --neon-red: 345 100% 50%;
+    --neon-blue: 186 100% 50%;
+    --berlin-black: 0 0% 4%;
+    --berlin-deep: 0 0% 2%;
+    --sky-day: 197 71% 73%;
+    --sky-dusk: 240 33% 14%;
+    --orange-glow: 16 100% 60%;
+    --purple-haze: 311 55% 18%;
   }
 
   .dark {
@@ -282,4 +292,226 @@
   25% { filter: hue-rotate(90deg); transform: translate(-2px, 1px); }
   50% { filter: invert(0.1); transform: translate(1px, -1px); }
   75% { filter: hue-rotate(-90deg); transform: translate(2px, 0); }
+}
+
+/* ================================ */
+/* BERLIN NIGHTLIFE PROJECT STYLES  */
+/* ================================ */
+
+/* Heavy grain for Berlin page (6-8% opacity) */
+.grain-heavy {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 1000;
+  opacity: 0.07;
+  mix-blend-mode: overlay;
+}
+
+/* CRT Scanlines */
+.scanlines {
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.03) 2px,
+    rgba(0, 0, 0, 0.03) 4px
+  );
+  pointer-events: none;
+  z-index: 999;
+}
+
+/* Video scanlines overlay */
+.video-scanlines::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.15) 2px,
+    rgba(0, 0, 0, 0.15) 4px
+  );
+  pointer-events: none;
+}
+
+/* Chromatic aberration text effect */
+.glitch-text {
+  position: relative;
+}
+
+.glitch-text::before,
+.glitch-text::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.glitch-text::before {
+  color: hsl(var(--neon-red));
+  clip-path: inset(0 0 50% 0);
+  transform: translateX(-2px);
+  animation: glitch-chromatic-1 2s infinite linear alternate-reverse;
+}
+
+.glitch-text::after {
+  color: hsl(var(--neon-blue));
+  clip-path: inset(50% 0 0 0);
+  transform: translateX(2px);
+  animation: glitch-chromatic-2 3s infinite linear alternate-reverse;
+}
+
+@keyframes glitch-chromatic-1 {
+  0%, 100% { transform: translateX(-2px); opacity: 0.8; }
+  25% { transform: translateX(-3px) skewX(-1deg); }
+  50% { transform: translateX(-1px); opacity: 0.6; }
+  75% { transform: translateX(-4px) skewX(1deg); }
+}
+
+@keyframes glitch-chromatic-2 {
+  0%, 100% { transform: translateX(2px); opacity: 0.8; }
+  33% { transform: translateX(3px) skewX(1deg); }
+  66% { transform: translateX(1px); opacity: 0.6; }
+}
+
+/* Bass pulse background effect */
+.bass-pulse {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at center, hsl(var(--neon-red) / 0.08), transparent 70%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.bass-pulse.active {
+  animation: bass-throb var(--bass-duration, 0.5s) ease-in-out infinite;
+}
+
+@keyframes bass-throb {
+  0%, 100% { 
+    transform: scale(1); 
+    opacity: 0.3;
+  }
+  50% { 
+    transform: scale(1.02); 
+    opacity: 1;
+  }
+}
+
+/* Pulsing video border */
+.video-pulse-border {
+  position: relative;
+  border: 2px solid transparent;
+  animation: pulse-border var(--pulse-duration, 0.5s) ease-in-out infinite;
+}
+
+@keyframes pulse-border {
+  0%, 100% { border-color: hsl(var(--neon-red) / 0.3); box-shadow: 0 0 20px hsl(var(--neon-red) / 0.1); }
+  50% { border-color: hsl(var(--neon-red)); box-shadow: 0 0 40px hsl(var(--neon-red) / 0.4); }
+}
+
+/* Berlin hero text with outline stroke */
+.berlin-hero-text {
+  font-size: clamp(15vw, 20vw, 25vw);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  color: transparent;
+  -webkit-text-stroke: 2px hsl(var(--foreground) / 0.8);
+  text-stroke: 2px hsl(var(--foreground) / 0.8);
+  mix-blend-mode: difference;
+}
+
+/* Horizontal scrolling text */
+.horizontal-scroll-text {
+  font-size: clamp(15vw, 20vw, 25vw);
+  white-space: nowrap;
+  text-transform: uppercase;
+  font-weight: 400;
+  color: hsl(var(--berlin-black));
+  -webkit-text-stroke: 1px hsl(var(--foreground) / 0.3);
+  text-stroke: 1px hsl(var(--foreground) / 0.3);
+}
+
+/* Metadata line wipe */
+.metadata-row {
+  position: relative;
+  overflow: hidden;
+}
+
+.metadata-row::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 1px;
+  background: hsl(var(--foreground) / 0.2);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.metadata-row.visible::after {
+  transform: scaleX(1);
+}
+
+/* Waveform visualization */
+.waveform {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  height: 40px;
+}
+
+.waveform-bar {
+  width: 3px;
+  background: hsl(var(--neon-red));
+  border-radius: 2px;
+}
+
+.waveform-bar.animate {
+  animation: wave var(--wave-duration, 0.5s) ease-in-out infinite;
+}
+
+@keyframes wave {
+  0%, 100% { transform: scaleY(0.3); }
+  50% { transform: scaleY(1); }
+}
+
+/* Strobe effect (very subtle) */
+.strobe {
+  position: fixed;
+  inset: 0;
+  background: white;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 9998;
+  transition: opacity 0.05s;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .glitch-text::before,
+  .glitch-text::after,
+  .bass-pulse,
+  .video-pulse-border,
+  .waveform-bar,
+  .strobe {
+    animation: none !important;
+  }
+  
+  .glitch-text::before,
+  .glitch-text::after {
+    display: none;
+  }
 }
