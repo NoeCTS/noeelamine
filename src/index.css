@@ -500,7 +500,7 @@
   transition: opacity 0.05s;
 }
 
-/* Berlin custom cursor */
+/* Berlin custom cursor - GPU accelerated */
 .berlin-cursor {
   width: 16px;
   height: 16px;
@@ -512,10 +512,9 @@
   left: 0;
   pointer-events: none;
   z-index: 9999;
+  will-change: transform;
   transform: translate(-50%, -50%);
-  transition: width 0.2s ease, height 0.2s ease, background 0.2s ease, border-color 0.2s ease;
-  mix-blend-mode: difference;
-  box-shadow: 0 0 10px hsl(var(--neon-red) / 0.5), 0 0 20px hsl(var(--neon-red) / 0.3);
+  box-shadow: 0 0 10px hsl(var(--neon-red) / 0.5);
 }
 
 .berlin-cursor.hovering {
@@ -523,7 +522,8 @@
   height: 50px;
   background: hsl(var(--neon-red) / 0.2);
   border-color: hsl(var(--neon-blue));
-  box-shadow: 0 0 20px hsl(var(--neon-blue) / 0.6), 0 0 40px hsl(var(--neon-blue) / 0.4);
+  box-shadow: 0 0 20px hsl(var(--neon-blue) / 0.6);
+  transition: width 0.15s, height 0.15s, background 0.15s, border-color 0.15s, box-shadow 0.15s;
 }
 
 /* Reduced motion */

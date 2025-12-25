@@ -8,9 +8,9 @@ const lerpColor = (c1: THREE.Color, c2: THREE.Color, t: number) => {
   return new THREE.Color().lerpColors(c1, c2, t);
 };
 
-// 1. Concrete Texture with Noise
+// 1. Simplified Concrete Texture (reduced iterations for performance)
 function createConcreteTexture() {
-  const size = 1024;
+  const size = 512; // Reduced from 1024
   const canvas = document.createElement('canvas');
   canvas.width = size;
   canvas.height = size;
@@ -19,21 +19,20 @@ function createConcreteTexture() {
   ctx.fillStyle = '#8c8c8c';
   ctx.fillRect(0, 0, size, size);
   
-  for (let i = 0; i < 200000; i++) {
+  // Reduced noise iterations from 200000 to 20000
+  for (let i = 0; i < 20000; i++) {
     ctx.fillStyle = Math.random() > 0.5 ? '#707070' : '#a0a0a0';
     ctx.globalAlpha = 0.15;
     const x = Math.random() * size;
     const y = Math.random() * size;
-    const w = Math.random() * 3;
-    const h = Math.random() * 3;
-    ctx.fillRect(x, y, w, h);
+    ctx.fillRect(x, y, 2, 2);
   }
   
   ctx.globalAlpha = 0.05;
   ctx.fillStyle = '#404040';
-  for (let i = 0; i < 100; i++) {
+  for (let i = 0; i < 30; i++) {
     const x = Math.random() * size;
-    const w = Math.random() * 20 + 5;
+    const w = Math.random() * 15 + 5;
     ctx.fillRect(x, 0, w, size);
   }
   
@@ -43,10 +42,10 @@ function createConcreteTexture() {
   return texture;
 }
 
-// 2. Sphere Panel Texture (Metal plates + Windows)
+// 2. Simplified Sphere Panel Texture
 function createSphereTexture() {
-  const width = 2048;
-  const height = 1024;
+  const width = 1024; // Reduced from 2048
+  const height = 512; // Reduced from 1024
   const canvas = document.createElement('canvas');
   canvas.width = width;
   canvas.height = height;
@@ -273,18 +272,19 @@ const Fernsehturm = ({ progress }: { progress: number }) => {
   );
 };
 
-// City Buildings
+// City Buildings - Simplified (reduced count, no individual lights)
 const Buildings = ({ progress }: { progress: number }) => {
   const buildings = useMemo(() => {
     const result: { pos: [number, number, number]; scale: [number, number, number] }[] = [];
-    for (let i = 0; i < 150; i++) {
+    // Reduced from 150 to 60 buildings
+    for (let i = 0; i < 60; i++) {
       const angle = Math.random() * Math.PI * 2;
-      const dist = 100 + Math.random() * 800;
+      const dist = 100 + Math.random() * 600;
       const x = Math.cos(angle) * dist;
       const z = Math.sin(angle) * dist;
-      const w = 10 + Math.random() * 30;
-      const d = 10 + Math.random() * 30;
-      const h = 20 + Math.random() * 60;
+      const w = 10 + Math.random() * 25;
+      const d = 10 + Math.random() * 25;
+      const h = 20 + Math.random() * 50;
       
       result.push({
         pos: [x, h / 2, z],
@@ -294,40 +294,34 @@ const Buildings = ({ progress }: { progress: number }) => {
     return result;
   }, []);
   
-  // Window lights intensity based on progress
-  const windowIntensity = Math.max(0, (progress - 0.3) / 0.4);
+  // Simple emissive for night instead of point lights
+  const nightIntensity = Math.max(0, (progress - 0.3) / 0.4);
   
   return (
     <group>
       {buildings.map((b, i) => (
-        <group key={i}>
-          <mesh position={b.pos} scale={b.scale} castShadow receiveShadow>
-            <boxGeometry args={[1, 1, 1]} />
-            <meshStandardMaterial color="#707070" roughness={0.8} />
-          </mesh>
-          {/* Window lights at night */}
-          {windowIntensity > 0 && i % 3 === 0 && (
-            <pointLight
-              position={[b.pos[0], b.pos[1] + b.scale[1] * 0.3, b.pos[2]]}
-              color="#ffaa00"
-              intensity={windowIntensity * 0.15}
-              distance={40}
-              decay={2}
-            />
-          )}
-        </group>
+        <mesh key={i} position={b.pos} scale={b.scale} castShadow receiveShadow>
+          <boxGeometry args={[1, 1, 1]} />
+          <meshStandardMaterial 
+            color="#707070" 
+            roughness={0.8}
+            emissive="#ffaa00"
+            emissiveIntensity={nightIntensity * 0.02}
+          />
+        </mesh>
       ))}
     </group>
   );
 };
 
-// Trees
+// Trees - Simplified (reduced count)
 const Trees = () => {
   const trees = useMemo(() => {
     const result: { x: number; z: number }[] = [];
-    for (let i = 0; i < 80; i++) {
+    // Reduced from 80 to 30 trees
+    for (let i = 0; i < 30; i++) {
       const angle = Math.random() * Math.PI * 2;
-      const dist = 60 + Math.random() * 300;
+      const dist = 60 + Math.random() * 200;
       result.push({
         x: Math.cos(angle) * dist,
         z: Math.sin(angle) * dist,
@@ -340,13 +334,11 @@ const Trees = () => {
     <group>
       {trees.map((t, i) => (
         <group key={i}>
-          {/* Trunk */}
-          <mesh position={[t.x, 2.5, t.z]} castShadow>
-            <cylinderGeometry args={[1, 1.5, 5, 6]} />
+          <mesh position={[t.x, 2.5, t.z]}>
+            <cylinderGeometry args={[1, 1.5, 5, 4]} />
             <meshStandardMaterial color="#4a3c31" />
           </mesh>
-          {/* Leaves */}
-          <mesh position={[t.x, 7, t.z]} scale={[1, 1.5, 1]} castShadow>
+          <mesh position={[t.x, 7, t.z]} scale={[1, 1.5, 1]}>
             <dodecahedronGeometry args={[4]} />
             <meshStandardMaterial color="#1e4d2b" />
           </mesh>
@@ -356,21 +348,23 @@ const Trees = () => {
   );
 };
 
-// Clouds
+// Clouds - Simplified (reduced count and spheres)
 const Clouds = () => {
   const clouds = useMemo(() => {
     const result: { pos: [number, number, number]; spheres: { offset: [number, number, number]; scale: [number, number, number] }[] }[] = [];
     
-    for (let i = 0; i < 10; i++) {
+    // Reduced from 10 to 5 clouds
+    for (let i = 0; i < 5; i++) {
       const spheres: { offset: [number, number, number]; scale: [number, number, number] }[] = [];
-      for (let j = 0; j < 4; j++) {
+      // Reduced from 4 to 2 spheres per cloud
+      for (let j = 0; j < 2; j++) {
         spheres.push({
-          offset: [(Math.random() - 0.5) * 50, (Math.random() - 0.5) * 20, (Math.random() - 0.5) * 50],
+          offset: [(Math.random() - 0.5) * 40, (Math.random() - 0.5) * 15, (Math.random() - 0.5) * 40],
           scale: [1 + Math.random(), 0.6, 1 + Math.random()],
         });
       }
       result.push({
-        pos: [(Math.random() - 0.5) * 2000, 300 + Math.random() * 200, (Math.random() - 0.5) * 2000],
+        pos: [(Math.random() - 0.5) * 1500, 300 + Math.random() * 150, (Math.random() - 0.5) * 1500],
         spheres,
       });
     }
@@ -383,8 +377,8 @@ const Clouds = () => {
         <group key={i} position={cloud.pos}>
           {cloud.spheres.map((s, j) => (
             <mesh key={j} position={s.offset} scale={s.scale}>
-              <sphereGeometry args={[40, 16, 16]} />
-              <meshBasicMaterial color="#ffffff" transparent opacity={0.6} />
+              <sphereGeometry args={[40, 8, 8]} />
+              <meshBasicMaterial color="#ffffff" transparent opacity={0.5} />
             </mesh>
           ))}
         </group>
