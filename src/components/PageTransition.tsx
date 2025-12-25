@@ -58,6 +58,10 @@ export const PageTransitionProvider: React.FC<{ children: React.ReactNode }> = (
   const navigateWithTransition = useCallback((to: string) => {
     if (isTransitioning || to === location.pathname) return;
 
+    // Disable scroll during transition
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+
     const type = to === '/pangaia' || location.pathname === '/pangaia' ? 'organic' : 'glitch';
     setTransitionType(type);
     setTargetPath(to);
@@ -126,6 +130,9 @@ export const PageTransitionProvider: React.FC<{ children: React.ReactNode }> = (
           setIsTransitioning(false);
           setTargetPath(null);
           gsap.set(overlay, { display: 'none' });
+          // Re-enable scroll
+          document.body.style.overflow = '';
+          document.documentElement.style.overflow = '';
         },
       });
 
@@ -239,6 +246,9 @@ export const PageTransitionProvider: React.FC<{ children: React.ReactNode }> = (
           petals.forEach((petal) => {
             gsap.set(petal, { x: 0, y: 0, rotation: 0, scale: 1, opacity: 0 });
           });
+          // Re-enable scroll
+          document.body.style.overflow = '';
+          document.documentElement.style.overflow = '';
         },
       });
 
