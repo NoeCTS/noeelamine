@@ -20,7 +20,8 @@ const PangaiaCTASection = forwardRef<HTMLElement>((_, ref) => {
     if (!ctx.current) return;
 
     const letters = lettersRef.current.filter(Boolean) as HTMLSpanElement[];
-    
+    if (!letters.length) return;
+
     ctx.current.add(() => {
       breatheAnim.current = gsap.to(letters, {
         y: (i) => Math.sin(i * 0.5) * 3,

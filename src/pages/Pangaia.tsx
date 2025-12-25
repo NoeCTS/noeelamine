@@ -84,16 +84,19 @@ const Pangaia = () => {
         },
       });
 
-      // Results - Stats animation
-      gsap.from('.result-stat', {
-        y: 50,
-        opacity: 0,
-        stagger: 0.2,
-        scrollTrigger: {
-          trigger: resultsRef.current,
-          start: 'top 60%',
-        },
-      });
+      // Results - Stats animation (guarded)
+      const resultStats = document.querySelectorAll('.result-stat');
+      if (resultStats.length) {
+        gsap.from(resultStats, {
+          y: 50,
+          opacity: 0,
+          stagger: 0.2,
+          scrollTrigger: {
+            trigger: resultsRef.current,
+            start: 'top 60%',
+          },
+        });
+      }
 
       gsap.from('.final-quote-line', {
         y: 30,
