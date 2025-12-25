@@ -262,3 +262,12 @@
 .animate-scroll-down {
   animation: scroll-down 2s cubic-bezier(0.77, 0, 0.175, 1) infinite;
 }
+
+@keyframes glitch {
+  0% { transform: translate(0); filter: hue-rotate(0deg); }
+  20% { transform: translate(-5px, 5px); filter: hue-rotate(90deg); }
+  40% { transform: translate(-5px, -5px); filter: hue-rotate(180deg) invert(1); }
+  60% { transform: translate(5px, 5px); filter: hue-rotate(270deg); }
+  80% { transform: translate(5px, -5px); filter: hue-rotate(360deg); }
+  100% { transform: translate(0); filter: hue-rotate(0deg) invert(0); opacity: 0; }
+}
