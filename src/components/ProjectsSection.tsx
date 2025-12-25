@@ -70,21 +70,58 @@ const ProjectsSection = forwardRef<HTMLElement>((_, ref) => {
     if (!containerRef.current || !scrollContainerRef.current) return;
 
     const scrollContainer = scrollContainerRef.current;
+    const cards = scrollContainer.querySelectorAll('.project-card');
+    const images = scrollContainer.querySelectorAll('.project-image');
     const scrollWidth = scrollContainer.scrollWidth;
     const viewportWidth = window.innerWidth;
 
+    // Main horizontal scroll
     const tween = gsap.to(scrollContainer, {
-      x: -(scrollWidth - viewportWidth + 100),
+      x: -(scrollWidth - viewportWidth + 200),
       ease: 'none',
       scrollTrigger: {
         trigger: containerRef.current,
         start: 'top top',
-        end: () => `+=${scrollWidth - viewportWidth + 100}`,
-        scrub: 1,
+        end: () => `+=${scrollWidth - viewportWidth + 200}`,
+        scrub: 1.5,
         pin: true,
         anticipatePin: 1,
         invalidateOnRefresh: true,
       },
+    });
+
+    // Parallax effect on images - they move slower creating depth
+    images.forEach((img, i) => {
+      gsap.to(img, {
+        x: -80 - (i * 20),
+        ease: 'none',
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: 'top top',
+          end: () => `+=${scrollWidth - viewportWidth + 200}`,
+          scrub: 2 + (i * 0.3),
+          invalidateOnRefresh: true,
+        },
+      });
+    });
+
+    // Scale and opacity based on position
+    cards.forEach((card, i) => {
+      gsap.fromTo(card, 
+        { opacity: 0.4, scale: 0.92 },
+        {
+          opacity: 1,
+          scale: 1,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: () => `top+=${i * (scrollWidth / cards.length) * 0.5} top`,
+            end: () => `top+=${i * (scrollWidth / cards.length) * 0.5 + viewportWidth * 0.5} top`,
+            scrub: 1,
+            invalidateOnRefresh: true,
+          },
+        }
+      );
     });
 
     return () => {
@@ -110,7 +147,7 @@ const ProjectsSection = forwardRef<HTMLElement>((_, ref) => {
         {/* Horizontal Scroll Container */}
         <div 
           ref={scrollContainerRef} 
-          className="flex gap-8 md:gap-16 pl-6 md:pl-12 pr-[50vw] items-start pt-20"
+          className="flex gap-16 md:gap-32 lg:gap-48 pl-6 md:pl-12 pr-[50vw] items-start pt-20"
         >
           {projects.map((project, index) => (
             <div 
@@ -122,7 +159,7 @@ const ProjectsSection = forwardRef<HTMLElement>((_, ref) => {
               }}
             >
               {/* Image First */}
-              <div className="mb-6">
+              <div className="project-image mb-6 will-change-transform">
                 {project.images ? (
                   <div className="grid grid-cols-3 gap-3">
                     {project.images.map((img, i) => (
