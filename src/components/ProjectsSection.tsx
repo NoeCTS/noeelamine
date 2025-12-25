@@ -66,7 +66,7 @@ const ProjectsSection = forwardRef<HTMLElement>((_, ref) => {
           {/* Sticky Label */}
           <div className="md:w-1/4">
             <div className="sticky top-32 text-sm font-medium tracking-wide text-secondary uppercase">
-              What I build
+              What I worked on
             </div>
           </div>
 
