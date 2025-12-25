@@ -76,16 +76,25 @@ const Index = () => {
 
     window.addEventListener('mousemove', handleMouseMove);
 
-    // Cursor hover effect
-    const links = document.querySelectorAll('a, .project-card');
-    links.forEach((link) => {
-      link.addEventListener('mouseenter', () => {
+    // Cursor hover effect using event delegation (works with dynamically rendered elements)
+    const handleMouseOver = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (target.closest('a, .project-card')) {
         cursorRef.current?.classList.add('hovering');
-      });
-      link.addEventListener('mouseleave', () => {
+      }
+    };
+    
+    const handleMouseOut = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      const relatedTarget = e.relatedTarget as HTMLElement | null;
+      // Only remove hovering if we're not moving to another hoverable element
+      if (target.closest('a, .project-card') && !relatedTarget?.closest('a, .project-card')) {
         cursorRef.current?.classList.remove('hovering');
-      });
-    });
+      }
+    };
+    
+    document.addEventListener('mouseover', handleMouseOver);
+    document.addEventListener('mouseout', handleMouseOut);
 
     // Split Hero Text (preserve mobile line break)
     // SECURITY NOTE: Only use hardcoded strings here - never user input
@@ -151,37 +160,38 @@ const Index = () => {
       },
     });
 
-    // Fade out orb as hero scrolls away (before positioning section)
+    // Fade out orb as hero scrolls away - pure progress-based opacity (no onEnterBack flash)
     ScrollTrigger.create({
       trigger: '#hero',
       start: 'center top',
       end: 'bottom top',
-      scrub: 0.5,
+      scrub: 0.3,
       fastScrollEnd: true,
+      preventOverlaps: true,
       onUpdate: (self) => {
         if (!mainOrbRef.current) return;
 
-        // If the user scrolls quickly during the intro tween, ensure scroll-driven state wins.
+        // Kill any intro animation tweens to ensure scroll-driven state wins
         gsap.killTweensOf(mainOrbRef.current);
-        mainOrbRef.current.classList.remove('breathing');
-
+        
         const progress = Math.min(1, Math.max(0, self.progress));
-        mainOrbRef.current.style.opacity = String(0.9 - progress * 0.9);
-        mainOrbRef.current.style.transform = `translate(-50%, -50%) scale(${1 - progress * 0.2})`;
-      },
-      onLeave: () => {
-        if (!mainOrbRef.current) return;
-        gsap.killTweensOf(mainOrbRef.current);
-        mainOrbRef.current.classList.remove('breathing');
-        mainOrbRef.current.style.opacity = '0';
-        mainOrbRef.current.style.transform = 'translate(-50%, -50%) scale(0.8)';
-      },
-      onEnterBack: () => {
-        if (!mainOrbRef.current) return;
-        gsap.killTweensOf(mainOrbRef.current);
-        mainOrbRef.current.style.opacity = '0.9';
-        mainOrbRef.current.style.transform = 'translate(-50%, -50%) scale(1)';
-        mainOrbRef.current.classList.add('breathing');
+        
+        // Remove breathing during scroll
+        if (progress > 0) {
+          mainOrbRef.current.classList.remove('breathing');
+        }
+        
+        // Pure progress-based opacity and scale
+        const opacity = 0.9 - progress * 0.9;
+        const scale = 1 - progress * 0.2;
+        
+        mainOrbRef.current.style.opacity = String(Math.max(0, opacity));
+        mainOrbRef.current.style.transform = `translate(-50%, -50%) scale(${scale})`;
+        
+        // Re-add breathing only when fully visible at top
+        if (progress === 0) {
+          mainOrbRef.current.classList.add('breathing');
+        }
       },
     });
 
@@ -253,6 +263,8 @@ const Index = () => {
     return () => {
       window.clearTimeout(breathingTimeoutId);
       window.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseover', handleMouseOver);
+      document.removeEventListener('mouseout', handleMouseOut);
       ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
       lenis.destroy();
     };
