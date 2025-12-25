@@ -52,6 +52,11 @@ export const PageTransitionProvider: React.FC<{ children: React.ReactNode }> = (
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({
         onComplete: () => {
+          // Scroll to top before navigating
+          window.scrollTo(0, 0);
+          document.documentElement.scrollTop = 0;
+          document.body.scrollTop = 0;
+          
           navigate(targetPath);
           setTimeout(() => runGlitchEntry(), 100);
         },
@@ -123,6 +128,11 @@ export const PageTransitionProvider: React.FC<{ children: React.ReactNode }> = (
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({
         onComplete: () => {
+          // Scroll to top before navigating
+          window.scrollTo(0, 0);
+          document.documentElement.scrollTop = 0;
+          document.body.scrollTop = 0;
+          
           navigate(targetPath);
           setTimeout(() => runOrganicEntry(), 100);
         },
