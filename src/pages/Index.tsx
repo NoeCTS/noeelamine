@@ -88,20 +88,42 @@ const Index = () => {
     });
 
     // Split Hero Text (preserve mobile line break)
+    // SECURITY NOTE: Only use hardcoded strings here - never user input
     if (heroNameRef.current) {
       const firstPart = 'NOE';
       const secondPart = 'ELAMINE';
       
-      const splitChars = (str: string) => str
-        .split('')
-        .map((char) => `<span class="hero-char inline-block">${char}</span>`)
-        .join('');
+      // Safe DOM manipulation - uses textContent which auto-escapes
+      const createCharSpans = (text: string): DocumentFragment => {
+        const fragment = document.createDocumentFragment();
+        text.split('').forEach(char => {
+          const span = document.createElement('span');
+          span.className = 'hero-char inline-block';
+          span.textContent = char; // Safe - automatically escapes content
+          fragment.appendChild(span);
+        });
+        return fragment;
+      };
       
-      heroNameRef.current.innerHTML = 
-        splitChars(firstPart) + 
-        '<br class="md:hidden" />' +
-        '<span class="inline-block w-4 hidden md:inline-block">&nbsp;</span>' +
-        splitChars(secondPart);
+      // Clear existing content safely
+      heroNameRef.current.textContent = '';
+      
+      // Append first part
+      heroNameRef.current.appendChild(createCharSpans(firstPart));
+      
+      // Add mobile line break
+      const br = document.createElement('br');
+      br.className = 'md:hidden';
+      heroNameRef.current.appendChild(br);
+      
+      // Add desktop spacer
+      const spacer = document.createElement('span');
+      spacer.className = 'inline-block w-4 hidden md:inline-block';
+      spacer.innerHTML = '&nbsp;'; // Safe - hardcoded non-breaking space
+      heroNameRef.current.appendChild(spacer);
+      
+      // Append second part
+      heroNameRef.current.appendChild(createCharSpans(secondPart));
     }
 
     // Load Animation Sequence
