@@ -18,6 +18,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 const Pangaia = () => {
   const [loaded, setLoaded] = useState(false);
+  const [lightboxImage, setLightboxImage] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const heroRef = useRef<HTMLElement>(null);
   const problemRef = useRef<HTMLElement>(null);
@@ -264,56 +265,56 @@ const Pangaia = () => {
 
           {/* Gallery grid - optimized for full visibility */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div className="gallery-image rounded-2xl overflow-hidden relative group cursor-pointer">
+            <div className="gallery-image rounded-2xl overflow-hidden relative group cursor-pointer" onClick={() => setLightboxImage(wildflowerWomanImg)}>
               <img
                 src={wildflowerWomanImg}
                 alt="Wildflower Woman"
                 className="w-full h-auto object-contain transition-transform duration-700 group-hover:scale-105"
               />
             </div>
-            <div className="gallery-image rounded-2xl overflow-hidden relative group cursor-pointer">
+            <div className="gallery-image rounded-2xl overflow-hidden relative group cursor-pointer" onClick={() => setLightboxImage(manFieldImg)}>
               <img
                 src={manFieldImg}
                 alt="Man in Field"
                 className="w-full h-auto object-contain transition-transform duration-700 group-hover:scale-105"
               />
             </div>
-            <div className="gallery-image rounded-2xl overflow-hidden relative group cursor-pointer">
+            <div className="gallery-image rounded-2xl overflow-hidden relative group cursor-pointer" onClick={() => setLightboxImage(twoModelsImg)}>
               <img
                 src={twoModelsImg}
                 alt="Two Models"
                 className="w-full h-auto object-contain transition-transform duration-700 group-hover:scale-105"
               />
             </div>
-            <div className="gallery-image rounded-2xl overflow-hidden relative group cursor-pointer md:col-span-2 lg:col-span-2">
+            <div className="gallery-image rounded-2xl overflow-hidden relative group cursor-pointer md:col-span-2 lg:col-span-2" onClick={() => setLightboxImage(busStopImg)}>
               <img
                 src={busStopImg}
                 alt="London Bus Stop OOH"
                 className="w-full h-auto object-contain transition-transform duration-700 group-hover:scale-105"
               />
             </div>
-            <div className="gallery-image rounded-2xl overflow-hidden relative group cursor-pointer">
+            <div className="gallery-image rounded-2xl overflow-hidden relative group cursor-pointer" onClick={() => setLightboxImage(dyeScienceImg)}>
               <img
                 src={dyeScienceImg}
                 alt="Sustainable Dye"
                 className="w-full h-auto object-contain transition-transform duration-700 group-hover:scale-105"
               />
             </div>
-            <div className="gallery-image rounded-2xl overflow-hidden relative group cursor-pointer">
+            <div className="gallery-image rounded-2xl overflow-hidden relative group cursor-pointer" onClick={() => setLightboxImage(footprintImg)}>
               <img
                 src={footprintImg}
                 alt="The Footprint"
                 className="w-full h-auto object-contain transition-transform duration-700 group-hover:scale-105"
               />
             </div>
-            <div className="gallery-image rounded-2xl overflow-hidden relative group cursor-pointer">
+            <div className="gallery-image rounded-2xl overflow-hidden relative group cursor-pointer" onClick={() => setLightboxImage(boxImg)}>
               <img
                 src={boxImg}
                 alt="Packaging"
                 className="w-full h-auto object-contain transition-transform duration-700 group-hover:scale-105"
               />
             </div>
-            <div className="gallery-image rounded-2xl overflow-hidden relative group cursor-pointer md:col-span-2 lg:col-span-1">
+            <div className="gallery-image rounded-2xl overflow-hidden relative group cursor-pointer md:col-span-2 lg:col-span-1" onClick={() => setLightboxImage(adImg)}>
               <img
                 src={adImg}
                 alt="Campaign Ad"
@@ -323,6 +324,27 @@ const Pangaia = () => {
           </div>
         </div>
       </section>
+
+      {/* Lightbox Modal */}
+      {lightboxImage && (
+        <div 
+          className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center p-4 cursor-pointer"
+          onClick={() => setLightboxImage(null)}
+        >
+          <button
+            className="absolute top-6 right-6 text-white/80 hover:text-white text-4xl font-light transition-colors"
+            onClick={() => setLightboxImage(null)}
+          >
+            ×
+          </button>
+          <img
+            src={lightboxImage}
+            alt="Full view"
+            className="max-w-full max-h-full object-contain"
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+      )}
 
       {/* Section 4: Results & Close */}
       <section ref={resultsRef} className="min-h-screen py-32 px-6 md:px-12 lg:px-24" style={{ backgroundColor: '#F5F0E8' }}>
