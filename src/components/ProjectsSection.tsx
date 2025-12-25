@@ -49,9 +49,9 @@ const projects: Project[] = [
     role: 'AI Ethics & Impact Co-Lead',
     description: "Grew Imperial's largest student organisation and the biggest Claude society worldwide to 1,000+ members.",
     highlights: [
-      'Organised 100-person AI safety hackathon',
-      'Focus on nuclear emergency detection',
-      'Led ethics discussions and flagship events',
+      'Organised 100-person Anthropic hackathon on AI safety in nuclear infrastructure',
+      'Curated speaker series with leading AI ethics academics (TUM Institute for Ethics in AI)',
+      "Translated Anthropic's safety research into practical frameworks for student builders",
     ],
     letter: 'C',
     image: claudeClub,
