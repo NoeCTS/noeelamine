@@ -71,38 +71,32 @@ const Nothing = () => {
       </section>
 
       {/* Campaign Images */}
-      <section className="py-16">
-        <div className="relative">
+      <section className="py-16 px-6 md:px-12 lg:px-24">
+        <div className="max-w-6xl mx-auto space-y-16">
           {/* First image */}
-          <div className="relative h-[80vh] md:h-screen overflow-hidden">
+          <div className="relative">
+            <p className="text-xs tracking-[0.3em] uppercase text-neutral-400 mb-4">01 / London Underground</p>
             <img 
               src={nothingAd1} 
               alt="Nothing Headphone Campaign - London Underground" 
-              className="w-full h-full object-cover"
+              className="w-full h-auto"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/50" />
-            <div className="absolute bottom-8 left-8 md:bottom-16 md:left-16">
-              <p className="text-xs tracking-[0.3em] uppercase text-neutral-400 mb-2">01 / London Underground</p>
-              <p className="text-sm md:text-base text-neutral-500 max-w-md">
-                Standing apart in the crowd. The daily commute becomes a personal sanctuary.
-              </p>
-            </div>
+            <p className="text-sm text-neutral-500 max-w-md mt-4">
+              Standing apart in the crowd. The daily commute becomes a personal sanctuary.
+            </p>
           </div>
 
           {/* Second image */}
-          <div className="relative h-[80vh] md:h-screen overflow-hidden mt-1">
+          <div className="relative">
+            <p className="text-xs tracking-[0.3em] uppercase text-neutral-400 mb-4">02 / Rush Hour</p>
             <img 
               src={nothingAd2} 
               alt="Nothing Headphone Campaign - Rush Hour" 
-              className="w-full h-full object-cover"
+              className="w-full h-auto"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/50" />
-            <div className="absolute bottom-8 right-8 md:bottom-16 md:right-16 text-right">
-              <p className="text-xs tracking-[0.3em] uppercase text-neutral-400 mb-2">02 / Rush Hour</p>
-              <p className="text-sm md:text-base text-neutral-500 max-w-md">
-                Find clarity in chaos. When everyone looks down, you look forward.
-              </p>
-            </div>
+            <p className="text-sm text-neutral-500 max-w-md mt-4">
+              Find clarity in chaos. When everyone looks down, you look forward.
+            </p>
           </div>
         </div>
       </section>
