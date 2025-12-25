@@ -30,11 +30,23 @@ const Index = () => {
   const contactRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
+    // Scroll to top on mount
+    window.scrollTo(0, 0);
+    
+    // Reset orb state on mount
+    if (mainOrbRef.current) {
+      mainOrbRef.current.style.opacity = '0';
+      mainOrbRef.current.classList.remove('breathing');
+    }
+
     // Initialize Lenis smooth scroll
     const lenis = new Lenis({
       duration: 1.5,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
     });
+
+    // Scroll lenis to top as well
+    lenis.scrollTo(0, { immediate: true });
 
     function raf(time: number) {
       lenis.raf(time);
@@ -218,7 +230,7 @@ const Index = () => {
       <CustomCursor cursorRef={cursorRef} />
 
       {/* Orb */}
-      <Orb ref={mainOrbRef} className="breathing" />
+      <Orb ref={mainOrbRef} />
 
       {/* Scroll Wrapper */}
       <div id="smooth-wrapper">
