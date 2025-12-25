@@ -115,21 +115,26 @@ const Index = () => {
       trigger: '#hero',
       start: 'center top',
       end: 'bottom top',
-      scrub: 1,
+      scrub: 0.5,
       onUpdate: (self) => {
         if (mainOrbRef.current) {
-          // Remove breathing animation so GSAP can control opacity
           mainOrbRef.current.classList.remove('breathing');
           const progress = self.progress;
-          gsap.set(mainOrbRef.current, {
-            opacity: 0.9 - (progress * 0.9),
-            scale: 1 - (progress * 0.2),
-          });
+          mainOrbRef.current.style.opacity = String(0.9 - (progress * 0.9));
+          mainOrbRef.current.style.transform = `translate(-50%, -50%) scale(${1 - (progress * 0.2)})`;
         }
       },
       onLeave: () => {
         if (mainOrbRef.current) {
-          gsap.set(mainOrbRef.current, { opacity: 0, scale: 0.8 });
+          mainOrbRef.current.style.opacity = '0';
+          mainOrbRef.current.style.transform = 'translate(-50%, -50%) scale(0.8)';
+        }
+      },
+      onEnterBack: () => {
+        if (mainOrbRef.current) {
+          mainOrbRef.current.style.opacity = '0.9';
+          mainOrbRef.current.style.transform = 'translate(-50%, -50%) scale(1)';
+          mainOrbRef.current.classList.add('breathing');
         }
       },
     });
