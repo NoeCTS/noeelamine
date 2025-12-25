@@ -87,16 +87,21 @@ const Index = () => {
       });
     });
 
-    // Split Hero Text
+    // Split Hero Text (preserve mobile line break)
     if (heroNameRef.current) {
-      const text = heroNameRef.current.textContent?.trim() || '';
-      heroNameRef.current.innerHTML = text
+      const firstPart = 'NOE';
+      const secondPart = 'ELAMINE';
+      
+      const splitChars = (str: string) => str
         .split('')
-        .map((char) => {
-          if (char === ' ') return '<span class="inline-block w-4">&nbsp;</span>';
-          return `<span class="hero-char inline-block">${char}</span>`;
-        })
+        .map((char) => `<span class="hero-char inline-block">${char}</span>`)
         .join('');
+      
+      heroNameRef.current.innerHTML = 
+        splitChars(firstPart) + 
+        '<br class="md:hidden" />' +
+        '<span class="inline-block w-4 hidden md:inline-block">&nbsp;</span>' +
+        splitChars(secondPart);
     }
 
     // Load Animation Sequence
