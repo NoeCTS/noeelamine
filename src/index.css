@@ -271,3 +271,15 @@
   80% { transform: translate(5px, -5px); filter: hue-rotate(360deg); }
   100% { transform: translate(0); filter: hue-rotate(0deg) invert(0); opacity: 0; }
 }
+
+/* Glitch hover effect */
+.glitch-hover {
+  animation: glitch-subtle 0.1s infinite;
+}
+
+@keyframes glitch-subtle {
+  0%, 100% { filter: none; transform: translate(0); }
+  25% { filter: hue-rotate(90deg); transform: translate(-2px, 1px); }
+  50% { filter: invert(0.1); transform: translate(1px, -1px); }
+  75% { filter: hue-rotate(-90deg); transform: translate(2px, 0); }
+}

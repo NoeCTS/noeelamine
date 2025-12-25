@@ -38,15 +38,13 @@ const ContactSection = forwardRef<HTMLElement>((_, ref) => {
       <div className="absolute bottom-24 contact-reveal opacity-0">
         <button
           onClick={handleEasterEgg}
-          className={`text-xs tracking-widest uppercase transition-all duration-500 group ${
-            easterEggTriggered 
-              ? 'text-foreground scale-110' 
-              : 'text-tertiary/30 hover:text-tertiary hover:tracking-[0.3em]'
+          onMouseEnter={() => document.body.classList.add('glitch-hover')}
+          onMouseLeave={() => document.body.classList.remove('glitch-hover')}
+          className={`text-sm tracking-[0.2em] uppercase transition-all duration-300 px-6 py-3 border border-tertiary/40 hover:border-foreground hover:bg-foreground hover:text-background ${
+            easterEggTriggered ? 'text-foreground scale-110' : 'text-tertiary'
           }`}
         >
-          <span className="opacity-0 group-hover:opacity-100 transition-opacity">→ </span>
           Do you work at Nothing?
-          <span className="opacity-0 group-hover:opacity-100 transition-opacity"> ←</span>
         </button>
       </div>
       
