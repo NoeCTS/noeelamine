@@ -23,34 +23,43 @@ const Berlin = () => {
   const [isMuted, setIsMuted] = useState(true);
   const { navigateWithTransition } = usePageTransition();
 
-  // Calculate BPM for CSS animations
-  const bpm = useMemo(() => 60 + scrollProgress * 80, [scrollProgress]);
-  const pulseDuration = useMemo(() => 60 / bpm, [bpm]);
+  // Throttled scroll progress for performance
+  const lastUpdateRef = useRef(0);
+  const progressRef = useRef(0);
 
+  // Only update CSS variables when progress changes significantly
   useEffect(() => {
+    const bpm = 60 + scrollProgress * 80;
+    const pulseDuration = 60 / bpm;
     document.documentElement.style.setProperty('--bass-duration', `${pulseDuration}s`);
     document.documentElement.style.setProperty('--pulse-duration', `${pulseDuration}s`);
     document.documentElement.style.setProperty('--wave-duration', `${pulseDuration}s`);
-  }, [pulseDuration]);
+  }, [Math.round(scrollProgress * 10)]); // Only update every 10%
 
-  // Custom cursor effect
+  // Lightweight cursor using direct DOM manipulation
   useEffect(() => {
     const cursor = cursorRef.current;
     if (!cursor) return;
 
+    let rafId: number;
+    let mouseX = 0;
+    let mouseY = 0;
+
     const moveCursor = (e: MouseEvent) => {
-      gsap.to(cursor, {
-        x: e.clientX,
-        y: e.clientY,
-        duration: 0.15,
-        ease: 'power2.out'
-      });
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+    };
+
+    const updateCursor = () => {
+      cursor.style.transform = `translate(${mouseX}px, ${mouseY}px) translate(-50%, -50%)`;
+      rafId = requestAnimationFrame(updateCursor);
     };
 
     const handleMouseEnter = () => cursor.classList.add('hovering');
     const handleMouseLeave = () => cursor.classList.remove('hovering');
 
-    window.addEventListener('mousemove', moveCursor);
+    window.addEventListener('mousemove', moveCursor, { passive: true });
+    rafId = requestAnimationFrame(updateCursor);
     
     const interactiveElements = document.querySelectorAll('a, button, video');
     interactiveElements.forEach(el => {
@@ -60,6 +69,7 @@ const Berlin = () => {
 
     return () => {
       window.removeEventListener('mousemove', moveCursor);
+      cancelAnimationFrame(rafId);
       interactiveElements.forEach(el => {
         el.removeEventListener('mouseenter', handleMouseEnter);
         el.removeEventListener('mouseleave', handleMouseLeave);
@@ -69,15 +79,23 @@ const Berlin = () => {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Master scroll progress
+      // Master scroll progress - throttled updates
       ScrollTrigger.create({
         trigger: containerRef.current,
         start: 'top top',
         end: 'bottom bottom',
-        scrub: 0.5,
+        scrub: 1,
         onUpdate: (self) => {
           const progress = self.progress;
-          setScrollProgress(progress);
+          const now = Date.now();
+          // Throttle state updates to every 50ms
+          if (now - lastUpdateRef.current > 50) {
+            setScrollProgress(progress);
+            lastUpdateRef.current = now;
+          }
+          // Always update the scene ref directly (no React re-render)
+          progressRef.current = progress;
+          sceneRef.current?.setProgress(progress);
           sceneRef.current?.setProgress(progress);
         }
       });
