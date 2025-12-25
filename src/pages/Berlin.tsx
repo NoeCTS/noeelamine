@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { ArrowLeft, Play, Pause, Instagram, Mail, Video } from 'lucide-react';
+import { ArrowLeft, Play, Pause, Instagram, Mail, Video, Volume2, VolumeX } from 'lucide-react';
 import BerlinScene, { BerlinSceneHandle } from '@/components/BerlinScene';
 import { usePageTransition } from '@/components/PageTransition';
 import berlinVideo from '@/assets/berlin-night-video.mp4';
@@ -12,6 +12,7 @@ gsap.registerPlugin(ScrollTrigger);
 const Berlin = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const sceneRef = useRef<BerlinSceneHandle>(null);
+  const cursorRef = useRef<HTMLDivElement>(null);
   const heroTextRef = useRef<HTMLHeadingElement>(null);
   const horizontalTextRef = useRef<HTMLDivElement>(null);
   const videoSectionRef = useRef<HTMLDivElement>(null);
@@ -19,6 +20,7 @@ const Berlin = () => {
   const detailsRef = useRef<HTMLDivElement>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
   const { navigateWithTransition } = usePageTransition();
 
   // Calculate BPM for CSS animations
@@ -30,6 +32,40 @@ const Berlin = () => {
     document.documentElement.style.setProperty('--pulse-duration', `${pulseDuration}s`);
     document.documentElement.style.setProperty('--wave-duration', `${pulseDuration}s`);
   }, [pulseDuration]);
+
+  // Custom cursor effect
+  useEffect(() => {
+    const cursor = cursorRef.current;
+    if (!cursor) return;
+
+    const moveCursor = (e: MouseEvent) => {
+      gsap.to(cursor, {
+        x: e.clientX,
+        y: e.clientY,
+        duration: 0.15,
+        ease: 'power2.out'
+      });
+    };
+
+    const handleMouseEnter = () => cursor.classList.add('hovering');
+    const handleMouseLeave = () => cursor.classList.remove('hovering');
+
+    window.addEventListener('mousemove', moveCursor);
+    
+    const interactiveElements = document.querySelectorAll('a, button, video');
+    interactiveElements.forEach(el => {
+      el.addEventListener('mouseenter', handleMouseEnter);
+      el.addEventListener('mouseleave', handleMouseLeave);
+    });
+
+    return () => {
+      window.removeEventListener('mousemove', moveCursor);
+      interactiveElements.forEach(el => {
+        el.removeEventListener('mouseenter', handleMouseEnter);
+        el.removeEventListener('mouseleave', handleMouseLeave);
+      });
+    };
+  }, []);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -128,7 +164,10 @@ const Berlin = () => {
   );
 
   return (
-    <div ref={containerRef} className="relative bg-berlin-black">
+    <div ref={containerRef} className="relative bg-berlin-black font-orbitron">
+      {/* Custom cursor */}
+      <div ref={cursorRef} className="berlin-cursor" />
+
       {/* Fixed Three.js background */}
       <BerlinScene
         ref={sceneRef}
@@ -217,9 +256,9 @@ const Berlin = () => {
               <video
                 ref={videoRef}
                 src={berlinVideo}
-                className="absolute inset-0 w-full h-full object-cover"
+                className="absolute inset-0 w-full h-full object-cover cursor-pointer"
                 loop
-                muted
+                muted={isMuted}
                 playsInline
                 onClick={() => {
                   if (videoRef.current) {
@@ -232,6 +271,23 @@ const Berlin = () => {
                   }
                 }}
               />
+              
+              {/* Volume control */}
+              <button
+                onClick={() => {
+                  if (videoRef.current) {
+                    videoRef.current.muted = !isMuted;
+                    setIsMuted(!isMuted);
+                  }
+                }}
+                className="absolute top-4 right-4 z-10 p-2 rounded-full bg-background/40 backdrop-blur-sm border border-foreground/20 hover:border-neon-red hover:bg-neon-red/10 transition-all"
+              >
+                {isMuted ? (
+                  <VolumeX className="w-5 h-5 text-foreground/60 hover:text-neon-red" />
+                ) : (
+                  <Volume2 className="w-5 h-5 text-neon-red" />
+                )}
+              </button>
               
               {/* Gradient overlay */}
               <div className="absolute inset-0 bg-gradient-to-br from-neon-red/5 via-transparent to-neon-blue/5 pointer-events-none" />
