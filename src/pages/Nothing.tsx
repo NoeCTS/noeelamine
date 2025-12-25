@@ -39,7 +39,7 @@ const Nothing = () => {
   return (
     <div 
       ref={containerRef}
-      className="min-h-screen text-neutral-900 overflow-x-hidden"
+      className="min-h-screen text-neutral-900 overflow-x-hidden cursor-auto"
       style={{ fontFamily: "'Courier New', monospace", backgroundColor: '#d8d8d8' }}
     >
       {/* Header */}
