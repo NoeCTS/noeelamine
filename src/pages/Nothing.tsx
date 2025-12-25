@@ -1,20 +1,31 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import gsap from 'gsap';
 import nothingAd1 from '@/assets/nothing-ad-1.jpg';
 import nothingAd2 from '@/assets/nothing-ad-2.jpg';
 import nothingBillboard1 from '@/assets/nothing-billboard-1.png';
 import nothingBillboard2 from '@/assets/nothing-billboard-2.png';
+import { usePageTransition } from '@/components/PageTransition';
 
 const Nothing = () => {
   const [loaded, setLoaded] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const [visibleSections, setVisibleSections] = useState<Set<string>>(new Set());
+  const { navigateWithTransition } = usePageTransition();
 
   useEffect(() => {
-    // Scroll to top on mount
     window.scrollTo(0, 0);
-    // Trigger entrance animation
+    
+    // GSAP entry animation
+    const ctx = gsap.context(() => {
+      gsap.fromTo(containerRef.current,
+        { opacity: 0 },
+        { opacity: 1, duration: 0.5, ease: 'power2.out' }
+      );
+    });
+
     setTimeout(() => setLoaded(true), 100);
+    
+    return () => ctx.revert();
   }, []);
 
   useEffect(() => {
@@ -37,6 +48,11 @@ const Nothing = () => {
 
   const isVisible = (id: string) => visibleSections.has(id);
 
+  const handleBackClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    navigateWithTransition('/');
+  };
+
   return (
     <div 
       ref={containerRef}
@@ -58,12 +74,12 @@ const Nothing = () => {
           <span className="text-sm tracking-[0.3em] uppercase font-medium">Nothing</span>
           <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
         </div>
-        <Link 
-          to="/" 
+        <button 
+          onClick={handleBackClick}
           className="text-xs tracking-[0.2em] uppercase text-neutral-500 hover:text-neutral-900 transition-colors"
         >
           ← Back to portfolio
-        </Link>
+        </button>
       </header>
 
       {/* Hero */}
@@ -224,12 +240,12 @@ const Nothing = () => {
           <p className="text-xs text-neutral-700 text-center">
             This is a speculative campaign created for portfolio purposes. Not affiliated with Nothing Technology Ltd.
           </p>
-          <Link 
-            to="/" 
+          <button 
+            onClick={handleBackClick}
             className="text-xs tracking-[0.2em] uppercase text-neutral-600 hover:text-white transition-colors"
           >
             Back to portfolio
-          </Link>
+          </button>
         </div>
       </footer>
     </div>
