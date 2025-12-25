@@ -3,10 +3,18 @@ import { Link } from 'react-router-dom';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-gsap.registerPlugin(ScrollTrigger);
+// Import assets
+import heroVideo from '@/assets/pangaia-hero-video.mp4';
+import busStopImg from '@/assets/pangaia-bus-stop.png';
+import wildflowerWomanImg from '@/assets/pangaia-wildflower-woman.png';
+import manFieldImg from '@/assets/pangaia-man-field.jpg';
+import dyeScienceImg from '@/assets/pangaia-dye-science.png';
+import footprintImg from '@/assets/pangaia-footprint.png';
+import boxImg from '@/assets/pangaia-box.jpg';
+import adImg from '@/assets/pangaia-ad.jpg';
+import twoModelsImg from '@/assets/pangaia-2-models.jpg';
 
-// Placeholder images - replace with actual uploads
-const placeholderImage = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="800" height="600" fill="%231A2F1A"%3E%3Crect width="100%25" height="100%25"/%3E%3Ctext x="50%25" y="50%25" fill="%238B9A7A" font-family="sans-serif" font-size="24" text-anchor="middle" dy=".3em"%3EImage Placeholder%3C/text%3E%3C/svg%3E';
+gsap.registerPlugin(ScrollTrigger);
 
 const Pangaia = () => {
   const [loaded, setLoaded] = useState(false);
@@ -66,19 +74,16 @@ const Pangaia = () => {
           stagger: 0.1,
         }, '-=0.3');
 
-      // Problem Section - Waste mountain
-      const problemTL = gsap.timeline({
+      // Video section - simple fade in
+      gsap.from('.gallery-image', {
+        opacity: 0,
+        y: 30,
+        stagger: 0.1,
         scrollTrigger: {
-          trigger: problemRef.current,
-          start: 'top center',
-          end: 'bottom center',
-          scrub: 1,
+          trigger: galleryRef.current,
+          start: 'top 80%',
         },
       });
-
-      problemTL
-        .from('.waste-mountain', { scaleY: 0, transformOrigin: 'bottom', duration: 1 })
-        .to('.truck-counter', { textContent: 1, snap: { textContent: 1 }, duration: 1 }, '-=0.5');
 
       // Solution Section - T-shirt reveal
       const solutionTL = gsap.timeline({
@@ -110,21 +115,6 @@ const Pangaia = () => {
         },
       });
 
-      // Gallery - Scattered to assembled
-      gsap.from('.gallery-image', {
-        scale: 0.3,
-        rotation: () => gsap.utils.random(-30, 30),
-        x: () => gsap.utils.random(-200, 200),
-        y: () => gsap.utils.random(-200, 200),
-        opacity: 0,
-        stagger: 0.1,
-        scrollTrigger: {
-          trigger: galleryRef.current,
-          start: 'top 80%',
-          end: 'center center',
-          scrub: 1,
-        },
-      });
 
       // Framework - Circular diagram
       const frameworkTL = gsap.timeline({
@@ -297,37 +287,20 @@ const Pangaia = () => {
         </div>
       </section>
 
-      {/* Section 2: The Problem */}
-      <section ref={problemRef} className="min-h-screen py-32 px-6 md:px-12 lg:px-24 relative" style={{ backgroundColor: '#0a0a0a' }}>
-        <div className="max-w-6xl mx-auto">
-          <p className="text-xs tracking-[0.5em] uppercase mb-8" style={{ color: '#5C4033' }}>
-            The Problem
-          </p>
-          <h2 className="text-3xl md:text-5xl font-light leading-relaxed mb-16" style={{ color: '#F5F0E8' }}>
-            Every second, a truck fills with textile waste
-          </h2>
-
-          {/* Waste mountain visualization */}
-          <div className="relative h-[50vh] flex items-end justify-center">
-            <div
-              className="waste-mountain w-full max-w-2xl"
-              style={{
-                height: '100%',
-                background: 'linear-gradient(to top, #5C4033 0%, #3a2820 50%, transparent 100%)',
-                clipPath: 'polygon(20% 100%, 0% 100%, 30% 30%, 50% 0%, 70% 30%, 100% 100%, 80% 100%)',
-              }}
+      {/* Section 2: Hero Video */}
+      <section ref={problemRef} className="min-h-screen py-16 px-6 md:px-12 lg:px-24 relative flex items-center" style={{ backgroundColor: '#0a0a0a' }}>
+        <div className="max-w-6xl mx-auto w-full">
+          <div className="relative w-full aspect-[9/16] md:aspect-video max-w-4xl mx-auto rounded-2xl overflow-hidden">
+            <video
+              src={heroVideo}
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="w-full h-full object-cover"
             />
-            <div className="absolute bottom-8 text-center">
-              <span className="truck-counter text-6xl md:text-8xl font-bold" style={{ color: '#E84B3C' }}>
-                1
-              </span>
-              <p className="text-lg mt-2" style={{ color: '#8B9A7A' }}>EVERY SECOND</p>
-            </div>
+            <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent pointer-events-none" />
           </div>
-
-          <p className="text-center mt-16 text-xl" style={{ color: '#8B9A7A' }}>
-            97% of materials: "middle of the pack"
-          </p>
         </div>
       </section>
 
@@ -541,12 +514,14 @@ const Pangaia = () => {
           {/* Masonry gallery grid */}
           <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
             {[
-              { span: 'col-span-2 md:col-span-1', aspect: 'aspect-[4/5]', label: 'Wildflower Field' },
-              { span: 'col-span-1', aspect: 'aspect-square', label: 'Ceramic Pot' },
-              { span: 'col-span-1', aspect: 'aspect-[3/4]', label: 'PANGAIA Tee' },
-              { span: 'col-span-2', aspect: 'aspect-video', label: 'London Bus Stop OOH' },
-              { span: 'col-span-1', aspect: 'aspect-square', label: 'Dye Research' },
-              { span: 'col-span-1', aspect: 'aspect-square', label: 'Wool Sourcing' },
+              { span: 'col-span-2 md:col-span-1', aspect: 'aspect-[4/5]', label: 'Wildflower Field', image: wildflowerWomanImg },
+              { span: 'col-span-1', aspect: 'aspect-square', label: 'PANGAIA Campaign', image: manFieldImg },
+              { span: 'col-span-1', aspect: 'aspect-[3/4]', label: 'Two Models', image: twoModelsImg },
+              { span: 'col-span-2', aspect: 'aspect-video', label: 'London Bus Stop OOH', image: busStopImg },
+              { span: 'col-span-1', aspect: 'aspect-[9/16]', label: 'Sustainable Dye', image: dyeScienceImg },
+              { span: 'col-span-1', aspect: 'aspect-[9/16]', label: 'The Footprint', image: footprintImg },
+              { span: 'col-span-2', aspect: 'aspect-video', label: 'Packaging', image: boxImg },
+              { span: 'col-span-1 md:col-span-3', aspect: 'aspect-[4/3]', label: 'Campaign Ad', image: adImg },
             ].map((item, i) => (
               <div
                 key={i}
@@ -554,7 +529,7 @@ const Pangaia = () => {
                 style={{ backgroundColor: 'rgba(139, 154, 122, 0.2)' }}
               >
                 <img
-                  src={placeholderImage}
+                  src={item.image}
                   alt={item.label}
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />
