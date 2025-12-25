@@ -59,6 +59,8 @@ export default {
         sans: ['Inter', 'sans-serif'],
         bebas: ['Bebas Neue', 'sans-serif'],
         mono: ['Space Mono', 'monospace'],
+        archivo: ['Archivo Black', 'sans-serif'],
+        orbitron: ['Orbitron', 'sans-serif'],
       },
       letterSpacing: {
         tighter: '-0.03em',
