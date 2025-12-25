@@ -4,7 +4,7 @@ import gsap from 'gsap';
 
 const SLICE_COUNT = 8;
 const GLITCH_CHARS = '█▓▒░╔╗╚╝┃━▀▄■□';
-const VINE_COUNT = 12;
+const PETAL_COUNT = 60;
 
 interface TransitionContextType {
   navigateWithTransition: (to: string) => void;
@@ -18,6 +18,29 @@ const TransitionContext = createContext<TransitionContextType>({
 
 export const usePageTransition = () => useContext(TransitionContext);
 
+// Petal SVG shapes
+const petalShapes = [
+  // Rose petal
+  'M0,0 C5,-10 15,-10 20,0 C15,10 5,10 0,0',
+  // Daisy petal
+  'M0,0 C3,-8 7,-15 10,-20 C13,-15 17,-8 20,0 C17,8 13,15 10,20 C7,15 3,8 0,0',
+  // Leaf
+  'M10,0 Q20,10 10,30 Q0,10 10,0',
+  // Round petal
+  'M10,0 C20,5 20,25 10,30 C0,25 0,5 10,0',
+];
+
+const petalColors = [
+  '#E84B3C', // Poppy red
+  '#F4C430', // Yellow
+  '#6495ED', // Cornflower blue
+  '#FFB6C1', // Pink
+  '#DDA0DD', // Plum
+  '#98D8C8', // Mint
+  '#F5F0E8', // Cream
+  '#FFD700', // Gold
+];
+
 export const PageTransitionProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [targetPath, setTargetPath] = useState<string | null>(null);
@@ -26,7 +49,7 @@ export const PageTransitionProvider: React.FC<{ children: React.ReactNode }> = (
   const slicesRef = useRef<(HTMLDivElement | null)[]>([]);
   const textRef = useRef<HTMLDivElement>(null);
   const organicOverlayRef = useRef<HTMLDivElement>(null);
-  const vinesRef = useRef<(HTMLDivElement | null)[]>([]);
+  const petalsRef = useRef<(SVGSVGElement | null)[]>([]);
   const organicTextRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const location = useLocation();
@@ -34,7 +57,6 @@ export const PageTransitionProvider: React.FC<{ children: React.ReactNode }> = (
   const navigateWithTransition = useCallback((to: string) => {
     if (isTransitioning || to === location.pathname) return;
     
-    // Determine transition type based on destination
     const type = to === '/pangaia' || location.pathname === '/pangaia' ? 'organic' : 'glitch';
     setTransitionType(type);
     setIsTransitioning(true);
@@ -52,7 +74,6 @@ export const PageTransitionProvider: React.FC<{ children: React.ReactNode }> = (
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({
         onComplete: () => {
-          // Scroll to top before navigating
           window.scrollTo(0, 0);
           document.documentElement.scrollTop = 0;
           document.body.scrollTop = 0;
@@ -117,18 +138,17 @@ export const PageTransitionProvider: React.FC<{ children: React.ReactNode }> = (
     return () => ctx.revert();
   }, []);
 
-  // ORGANIC TRANSITION (for PANGAIA)
+  // ORGANIC PETAL STORM TRANSITION (for PANGAIA)
   useEffect(() => {
     if (!isTransitioning || !targetPath || transitionType !== 'organic' || !organicOverlayRef.current) return;
 
     const overlay = organicOverlayRef.current;
-    const vines = vinesRef.current.filter(Boolean) as HTMLDivElement[];
+    const petals = petalsRef.current.filter(Boolean) as SVGSVGElement[];
     const text = organicTextRef.current;
 
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({
         onComplete: () => {
-          // Scroll to top before navigating
           window.scrollTo(0, 0);
           document.documentElement.scrollTop = 0;
           document.body.scrollTop = 0;
@@ -140,33 +160,51 @@ export const PageTransitionProvider: React.FC<{ children: React.ReactNode }> = (
 
       tl.set(overlay, { display: 'flex', opacity: 1 });
 
-      // Vines grow from edges
-      vines.forEach((vine, i) => {
-        const isLeft = i < VINE_COUNT / 2;
-        const startX = isLeft ? '-100%' : '100%';
-        
-        tl.fromTo(vine,
-          { scaleX: 0, transformOrigin: isLeft ? 'left center' : 'right center' },
+      // Petals swirl in from outside the screen
+      petals.forEach((petal, i) => {
+        const angle = (i / petals.length) * Math.PI * 2;
+        const startDistance = 800 + Math.random() * 400;
+        const startX = Math.cos(angle) * startDistance;
+        const startY = Math.sin(angle) * startDistance;
+        const rotation = Math.random() * 720 - 360;
+        const duration = 0.8 + Math.random() * 0.4;
+        const delay = Math.random() * 0.3;
+
+        tl.fromTo(petal,
           { 
-            scaleX: 1, 
-            duration: 0.6 + Math.random() * 0.3, 
+            x: startX, 
+            y: startY, 
+            rotation: rotation,
+            scale: 0.5 + Math.random() * 0.5,
+            opacity: 0,
+          },
+          { 
+            x: (Math.random() - 0.5) * 100,
+            y: (Math.random() - 0.5) * 100,
+            rotation: rotation + (Math.random() - 0.5) * 180,
+            scale: 1 + Math.random() * 0.5,
+            opacity: 1,
+            duration: duration,
             ease: 'power2.out',
           },
-          i * 0.04
+          delay
         );
       });
 
-      // Center bloom
-      tl.to(overlay, {
-        background: 'radial-gradient(circle at center, #1A2F1A 0%, #1A2F1A 100%)',
-        duration: 0.3,
-      }, 0.3);
+      // After petals gather, they continue floating gently
+      tl.to(petals, {
+        y: '+=20',
+        rotation: '+=30',
+        duration: 0.5,
+        ease: 'sine.inOut',
+        stagger: 0.02,
+      }, 0.6);
 
-      // Text blooms in
+      // Text fades in
       if (text) {
         tl.fromTo(text,
-          { opacity: 0, scale: 0.5, filter: 'blur(10px)' },
-          { opacity: 1, scale: 1, filter: 'blur(0px)', duration: 0.5, ease: 'power2.out' },
+          { opacity: 0, scale: 0.8, y: 20 },
+          { opacity: 1, scale: 1, y: 0, duration: 0.5, ease: 'power2.out' },
           0.4
         );
       }
@@ -179,7 +217,7 @@ export const PageTransitionProvider: React.FC<{ children: React.ReactNode }> = (
     if (!organicOverlayRef.current) return;
 
     const overlay = organicOverlayRef.current;
-    const vines = vinesRef.current.filter(Boolean) as HTMLDivElement[];
+    const petals = petalsRef.current.filter(Boolean) as SVGSVGElement[];
     const text = organicTextRef.current;
 
     const ctx = gsap.context(() => {
@@ -188,33 +226,38 @@ export const PageTransitionProvider: React.FC<{ children: React.ReactNode }> = (
           setIsTransitioning(false);
           setTargetPath(null);
           gsap.set(overlay, { display: 'none' });
+          // Reset petals for next transition
+          petals.forEach(petal => {
+            gsap.set(petal, { x: 0, y: 0, rotation: 0, scale: 1, opacity: 0 });
+          });
         },
       });
 
-      // Text fades
+      // Text fades out
       if (text) {
-        tl.to(text, { opacity: 0, scale: 1.1, duration: 0.3 }, 0);
+        tl.to(text, { opacity: 0, scale: 1.1, y: -20, duration: 0.3 }, 0);
       }
 
-      // Vines retreat with a wave
-      vines.forEach((vine, i) => {
-        const isLeft = i < VINE_COUNT / 2;
-        tl.to(vine, {
-          scaleX: 0,
-          transformOrigin: isLeft ? 'left center' : 'right center',
-          duration: 0.5,
+      // Petals scatter outward like wind blowing them away
+      petals.forEach((petal, i) => {
+        const angle = (i / petals.length) * Math.PI * 2 + Math.random() * 0.5;
+        const distance = 600 + Math.random() * 400;
+        const endX = Math.cos(angle) * distance;
+        const endY = Math.sin(angle) * distance - 200; // Drift upward
+        
+        tl.to(petal, {
+          x: endX,
+          y: endY,
+          rotation: '+=360',
+          scale: 0.3,
+          opacity: 0,
+          duration: 0.6 + Math.random() * 0.3,
           ease: 'power2.in',
-        }, 0.1 + (VINE_COUNT - i) * 0.02);
+        }, 0.1 + i * 0.01);
       });
 
-      // Circular reveal wipe
-      tl.to(overlay, {
-        clipPath: 'circle(0% at 50% 50%)',
-        duration: 0.6,
-        ease: 'power3.in',
-      }, 0.2);
-
-      tl.to(overlay, { opacity: 0, duration: 0.1 });
+      // Fade overlay
+      tl.to(overlay, { opacity: 0, duration: 0.3 }, 0.5);
     });
 
     return () => ctx.revert();
@@ -248,28 +291,6 @@ export const PageTransitionProvider: React.FC<{ children: React.ReactNode }> = (
 
     return () => clearInterval(interval);
   }, [isTransitioning, targetPath, transitionType]);
-
-  // Generate vine positions
-  const getVineStyle = (index: number): React.CSSProperties => {
-    const isLeft = index < VINE_COUNT / 2;
-    const localIndex = isLeft ? index : index - VINE_COUNT / 2;
-    const yPercent = (localIndex / (VINE_COUNT / 2)) * 100;
-    
-    return {
-      position: 'absolute',
-      left: isLeft ? 0 : 'auto',
-      right: isLeft ? 'auto' : 0,
-      top: `${yPercent}%`,
-      width: '60%',
-      height: `${100 / (VINE_COUNT / 2) + 2}%`,
-      backgroundColor: '#1A2F1A',
-      clipPath: isLeft 
-        ? 'polygon(0 0, 100% 20%, 95% 50%, 100% 80%, 0 100%)'
-        : 'polygon(100% 0, 0 20%, 5% 50%, 0 80%, 100% 100%)',
-      transformOrigin: isLeft ? 'left center' : 'right center',
-      transform: 'scaleX(0)',
-    };
-  };
 
   return (
     <TransitionContext.Provider value={{ navigateWithTransition, isTransitioning }}>
@@ -318,23 +339,43 @@ export const PageTransitionProvider: React.FC<{ children: React.ReactNode }> = (
         />
       </div>
 
-      {/* ORGANIC Transition Overlay (PANGAIA) */}
+      {/* ORGANIC Petal Storm Overlay (PANGAIA) */}
       <div
         ref={organicOverlayRef}
         className="fixed inset-0 z-[9999] pointer-events-none hidden items-center justify-center overflow-hidden"
         style={{ 
-          background: 'linear-gradient(135deg, #1A2F1A 0%, #2A4F2A 50%, #1A2F1A 100%)',
-          clipPath: 'circle(150% at 50% 50%)',
+          background: 'linear-gradient(135deg, #1A2F1A 0%, #2A4A2A 50%, #1A2F1A 100%)',
         }}
       >
-        {/* Growing vines */}
-        {Array.from({ length: VINE_COUNT }).map((_, i) => (
-          <div
-            key={i}
-            ref={(el) => (vinesRef.current[i] = el)}
-            style={getVineStyle(i)}
-          />
-        ))}
+        {/* Floating petals */}
+        {Array.from({ length: PETAL_COUNT }).map((_, i) => {
+          const shapeIndex = i % petalShapes.length;
+          const colorIndex = i % petalColors.length;
+          const size = 20 + Math.random() * 30;
+          
+          return (
+            <svg
+              key={i}
+              ref={(el) => (petalsRef.current[i] = el)}
+              className="absolute"
+              style={{
+                left: '50%',
+                top: '50%',
+                width: size,
+                height: size * 1.5,
+                opacity: 0,
+                filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.2))',
+              }}
+              viewBox="0 0 20 30"
+            >
+              <path
+                d={petalShapes[shapeIndex]}
+                fill={petalColors[colorIndex]}
+                opacity={0.85}
+              />
+            </svg>
+          );
+        })}
 
         {/* Center text */}
         <div
@@ -342,36 +383,18 @@ export const PageTransitionProvider: React.FC<{ children: React.ReactNode }> = (
           className="relative z-10 text-4xl md:text-6xl font-light tracking-[0.3em] opacity-0"
           style={{ 
             fontFamily: "'Georgia', serif",
-            color: '#8B9A7A',
-            textShadow: '0 0 30px rgba(139, 154, 122, 0.5)',
+            color: '#F5F0E8',
+            textShadow: '0 2px 20px rgba(139, 154, 122, 0.5)',
           }}
         >
-          {targetPath === '/pangaia' ? 'PANGAIA' : targetPath === '/' ? 'HOME' : ''}
+          {targetPath === '/pangaia' ? 'SYMBIOSIS' : targetPath === '/' ? 'HOME' : ''}
         </div>
 
-        {/* Floating particles */}
-        <div className="absolute inset-0 pointer-events-none">
-          {Array.from({ length: 20 }).map((_, i) => (
-            <div
-              key={i}
-              className="absolute w-2 h-2 rounded-full"
-              style={{
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-                backgroundColor: '#8B9A7A',
-                opacity: 0.3,
-                animation: `float ${2 + Math.random() * 2}s ease-in-out infinite`,
-                animationDelay: `${Math.random() * 2}s`,
-              }}
-            />
-          ))}
-        </div>
-
-        {/* Grain texture */}
+        {/* Soft gradient overlay */}
         <div 
-          className="absolute inset-0 opacity-5 pointer-events-none"
+          className="absolute inset-0 pointer-events-none"
           style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
+            background: 'radial-gradient(circle at 50% 50%, transparent 0%, rgba(26, 47, 26, 0.3) 100%)',
           }}
         />
       </div>
