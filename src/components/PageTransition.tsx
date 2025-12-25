@@ -43,6 +43,7 @@ const petalColors = [
 
 export const PageTransitionProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [phase, setPhase] = useState<'idle' | 'exiting' | 'entering'>('idle');
   const [targetPath, setTargetPath] = useState<string | null>(null);
   const [transitionType, setTransitionType] = useState<'glitch' | 'organic'>('glitch');
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -56,16 +57,17 @@ export const PageTransitionProvider: React.FC<{ children: React.ReactNode }> = (
 
   const navigateWithTransition = useCallback((to: string) => {
     if (isTransitioning || to === location.pathname) return;
-    
+
     const type = to === '/pangaia' || location.pathname === '/pangaia' ? 'organic' : 'glitch';
     setTransitionType(type);
-    setIsTransitioning(true);
     setTargetPath(to);
+    setIsTransitioning(true);
+    setPhase('exiting');
   }, [isTransitioning, location.pathname]);
 
   // GLITCH TRANSITION (for Nothing)
   useEffect(() => {
-    if (!isTransitioning || !targetPath || transitionType !== 'glitch' || !overlayRef.current) return;
+    if (phase !== 'exiting' || !isTransitioning || !targetPath || transitionType !== 'glitch' || !overlayRef.current) return;
 
     const overlay = overlayRef.current;
     const slices = slicesRef.current.filter(Boolean) as HTMLDivElement[];
@@ -74,12 +76,15 @@ export const PageTransitionProvider: React.FC<{ children: React.ReactNode }> = (
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({
         onComplete: () => {
+          setPhase('entering');
+
           window.scrollTo(0, 0);
           document.documentElement.scrollTop = 0;
           document.body.scrollTop = 0;
-          
+
           navigate(targetPath);
-          setTimeout(() => runGlitchEntry(), 100);
+          // Run entry after route swap; keeping this minimal prevents re-triggering on re-render.
+          setTimeout(() => runGlitchEntry(), 50);
         },
       });
 
@@ -105,7 +110,7 @@ export const PageTransitionProvider: React.FC<{ children: React.ReactNode }> = (
     });
 
     return () => ctx.revert();
-  }, [isTransitioning, targetPath, transitionType, navigate]);
+  }, [phase, isTransitioning, targetPath, transitionType, navigate]);
 
   const runGlitchEntry = useCallback(() => {
     if (!overlayRef.current) return;
@@ -117,6 +122,7 @@ export const PageTransitionProvider: React.FC<{ children: React.ReactNode }> = (
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({
         onComplete: () => {
+          setPhase('idle');
           setIsTransitioning(false);
           setTargetPath(null);
           gsap.set(overlay, { display: 'none' });
@@ -140,7 +146,7 @@ export const PageTransitionProvider: React.FC<{ children: React.ReactNode }> = (
 
   // ORGANIC PETAL STORM TRANSITION (for PANGAIA)
   useEffect(() => {
-    if (!isTransitioning || !targetPath || transitionType !== 'organic' || !organicOverlayRef.current) return;
+    if (phase !== 'exiting' || !isTransitioning || !targetPath || transitionType !== 'organic' || !organicOverlayRef.current) return;
 
     const overlay = organicOverlayRef.current;
     const petals = petalsRef.current.filter(Boolean) as SVGSVGElement[];
@@ -149,12 +155,14 @@ export const PageTransitionProvider: React.FC<{ children: React.ReactNode }> = (
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({
         onComplete: () => {
+          setPhase('entering');
+
           window.scrollTo(0, 0);
           document.documentElement.scrollTop = 0;
           document.body.scrollTop = 0;
-          
+
           navigate(targetPath);
-          setTimeout(() => runOrganicEntry(), 100);
+          setTimeout(() => runOrganicEntry(), 50);
         },
       });
 
@@ -211,7 +219,7 @@ export const PageTransitionProvider: React.FC<{ children: React.ReactNode }> = (
     });
 
     return () => ctx.revert();
-  }, [isTransitioning, targetPath, transitionType, navigate]);
+  }, [phase, isTransitioning, targetPath, transitionType, navigate]);
 
   const runOrganicEntry = useCallback(() => {
     if (!organicOverlayRef.current) return;
@@ -223,11 +231,12 @@ export const PageTransitionProvider: React.FC<{ children: React.ReactNode }> = (
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({
         onComplete: () => {
+          setPhase('idle');
           setIsTransitioning(false);
           setTargetPath(null);
           gsap.set(overlay, { display: 'none' });
           // Reset petals for next transition
-          petals.forEach(petal => {
+          petals.forEach((petal) => {
             gsap.set(petal, { x: 0, y: 0, rotation: 0, scale: 1, opacity: 0 });
           });
         },
