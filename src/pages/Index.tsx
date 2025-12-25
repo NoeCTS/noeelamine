@@ -5,7 +5,7 @@ import Lenis from 'lenis';
 
 import GrainOverlay from '@/components/GrainOverlay';
 import CustomCursor from '@/components/CustomCursor';
-import Orb from '@/components/Orb';
+import OrbJourney, { OrbJourneyRef } from '@/components/OrbJourney';
 import HeroSection from '@/components/HeroSection';
 import PositioningSection from '@/components/PositioningSection';
 import ProjectsSection from '@/components/ProjectsSection';
@@ -19,7 +19,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 const Index = () => {
   const cursorRef = useRef<HTMLDivElement>(null);
-  const mainOrbRef = useRef<HTMLDivElement>(null);
+  const orbJourneyRef = useRef<OrbJourneyRef>(null);
   const heroRef = useRef<HTMLElement>(null);
   const heroNameRef = useRef<HTMLHeadingElement>(null);
   const scrollIndicatorRef = useRef<HTMLDivElement>(null);
@@ -36,10 +36,7 @@ const Index = () => {
     window.scrollTo(0, 0);
     
     // Reset orb state on mount
-    if (mainOrbRef.current) {
-      mainOrbRef.current.style.opacity = '0';
-      mainOrbRef.current.classList.remove('breathing');
-    }
+    orbJourneyRef.current?.reset();
 
     // Initialize Lenis smooth scroll (faster)
     const lenis = new Lenis({
@@ -104,20 +101,14 @@ const Index = () => {
         splitChars(secondPart);
     }
 
-    // Load Animation Sequence
-    const loadTL = gsap.timeline({ delay: 0.2 });
+    // Load Animation Sequence (hero text only - orb handled by OrbJourney)
+    const loadTL = gsap.timeline({ delay: 0.5 });
 
     loadTL
-      .to(mainOrbRef.current, { opacity: 0.9, duration: 2, ease: 'power2.out', overwrite: 'auto' })
-      .to('.hero-char', { opacity: 1, y: 0, stagger: 0.05, duration: 0.8, ease: 'power2.out' }, '-=1.5')
-      .to(scrollIndicatorRef.current, { opacity: 0.5, duration: 1 }, '-=0.5');
+      .to('.hero-char', { opacity: 1, y: 0, stagger: 0.05, duration: 0.8, ease: 'power2.out' }, '+=1.2')
+      .to(scrollIndicatorRef.current, { opacity: 0.5, duration: 1 }, '-=0.3');
 
-    // Add breathing class after load
-    const breathingTimeoutId = window.setTimeout(() => {
-      mainOrbRef.current?.classList.add('breathing');
-    }, 2000);
-
-    // Hero Scroll Out - fade out both text and orb
+    // Hero Scroll Out - fade out text
     gsap.to('.hero-name', {
       y: -100,
       opacity: 0,
@@ -126,40 +117,6 @@ const Index = () => {
         start: 'top top',
         end: 'bottom center',
         scrub: 1.5,
-      },
-    });
-
-    // Fade out orb as hero scrolls away (before positioning section)
-    ScrollTrigger.create({
-      trigger: '#hero',
-      start: 'center top',
-      end: 'bottom top',
-      scrub: 0.5,
-      fastScrollEnd: true,
-      onUpdate: (self) => {
-        if (!mainOrbRef.current) return;
-
-        // If the user scrolls quickly during the intro tween, ensure scroll-driven state wins.
-        gsap.killTweensOf(mainOrbRef.current);
-        mainOrbRef.current.classList.remove('breathing');
-
-        const progress = Math.min(1, Math.max(0, self.progress));
-        mainOrbRef.current.style.opacity = String(0.9 - progress * 0.9);
-        mainOrbRef.current.style.transform = `translate(-50%, -50%) scale(${1 - progress * 0.2})`;
-      },
-      onLeave: () => {
-        if (!mainOrbRef.current) return;
-        gsap.killTweensOf(mainOrbRef.current);
-        mainOrbRef.current.classList.remove('breathing');
-        mainOrbRef.current.style.opacity = '0';
-        mainOrbRef.current.style.transform = 'translate(-50%, -50%) scale(0.8)';
-      },
-      onEnterBack: () => {
-        if (!mainOrbRef.current) return;
-        gsap.killTweensOf(mainOrbRef.current);
-        mainOrbRef.current.style.opacity = '0.9';
-        mainOrbRef.current.style.transform = 'translate(-50%, -50%) scale(1)';
-        mainOrbRef.current.classList.add('breathing');
       },
     });
 
@@ -229,7 +186,6 @@ const Index = () => {
     });
 
     return () => {
-      window.clearTimeout(breathingTimeoutId);
       window.removeEventListener('mousemove', handleMouseMove);
       ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
       lenis.destroy();
@@ -242,8 +198,8 @@ const Index = () => {
       <GrainOverlay />
       <CustomCursor cursorRef={cursorRef} />
 
-      {/* Orb */}
-      <Orb ref={mainOrbRef} />
+      {/* Orb Journey - handles all orb states */}
+      <OrbJourney ref={orbJourneyRef} />
 
       {/* Scroll Wrapper */}
       <div id="smooth-wrapper">
