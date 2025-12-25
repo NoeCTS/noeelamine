@@ -10,6 +10,7 @@ import HeroSection from '@/components/HeroSection';
 import PositioningSection from '@/components/PositioningSection';
 import ProjectsSection from '@/components/ProjectsSection';
 import ExperienceSection from '@/components/ExperienceSection';
+import EducationSection from '@/components/EducationSection';
 import PhilosophySection from '@/components/PhilosophySection';
 import ContactSection from '@/components/ContactSection';
 
@@ -24,6 +25,7 @@ const Index = () => {
   const positioningRef = useRef<HTMLElement>(null);
   const projectsRef = useRef<HTMLElement>(null);
   const experienceRef = useRef<HTMLElement>(null);
+  const educationRef = useRef<HTMLElement>(null);
   const philosophyRef = useRef<HTMLElement>(null);
   const contactRef = useRef<HTMLElement>(null);
 
@@ -224,6 +226,7 @@ const Index = () => {
           <PositioningSection ref={positioningRef} />
           <ProjectsSection ref={projectsRef} />
           <ExperienceSection ref={experienceRef} />
+          <EducationSection ref={educationRef} />
           <PhilosophySection ref={philosophyRef} />
           <ContactSection ref={contactRef} />
         </div>

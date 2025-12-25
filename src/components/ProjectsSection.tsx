@@ -3,27 +3,48 @@ import { forwardRef } from 'react';
 interface Project {
   id: string;
   name: string;
+  role: string;
   description: string;
+  highlights: string[];
   letter: string;
+  image?: string;
 }
 
 const projects: Project[] = [
   {
     id: 'project-aube',
     name: 'AUBE',
-    description: 'Cultural intelligence for global marketing teams.',
+    role: 'Founder',
+    description: 'AI-powered cultural intelligence platform that screens marketing campaigns for cultural appropriation, tokenism, and sensitivity issues across 68+ global markets.',
+    highlights: [
+      'Zero external funding — built with AI tools',
+      'Designed AI analysis pipeline from scratch',
+      'Developed B2B pricing & NGO partnerships',
+    ],
     letter: 'A',
   },
   {
     id: 'project-betteride',
     name: 'BETTERIDE',
-    description: "Guerrilla marketing for Berlin's streets.",
+    role: 'Strategy & Marketing Freelancer',
+    description: 'Owned full marketing function for Berlin-based cycling startup — from strategy to execution.',
+    highlights: [
+      '"Broken Bike Museum" guerrilla campaign',
+      'Analysed cycling traffic patterns for targeting',
+      'Designed insight-driven creative for Berlin culture',
+    ],
     letter: 'B',
   },
   {
     id: 'project-claude',
-    name: 'CLAUDE CLUB',
-    description: 'Led AI ethics for 1,000+ members.',
+    name: 'CLAUDE BUILDER CLUB',
+    role: 'AI Ethics & Impact Co-Lead',
+    description: "Grew Imperial's largest student organisation and the biggest Claude society worldwide to 1,000+ members.",
+    highlights: [
+      'Organised 100-person AI safety hackathon',
+      'Focus on nuclear emergency detection',
+      'Led ethics discussions and flagship events',
+    ],
     letter: 'C',
   },
 ];
@@ -49,17 +70,36 @@ const ProjectsSection = forwardRef<HTMLElement>((_, ref) => {
                 className="project-card group relative"
               >
                 <div className="mb-8">
-                  <h3 className="text-headline font-semibold tracking-tighter mb-2">
+                  <span className="text-sm font-medium tracking-wide text-accent uppercase mb-2 block">
+                    {project.role}
+                  </span>
+                  <h3 className="text-headline font-semibold tracking-tighter mb-3">
                     {project.name}
                   </h3>
-                  <p className="text-body text-secondary max-w-md">
+                  <p className="text-body text-secondary max-w-lg mb-6">
                     {project.description}
                   </p>
+                  <ul className="space-y-2">
+                    {project.highlights.map((highlight, i) => (
+                      <li key={i} className="text-sm text-tertiary flex items-start gap-2">
+                        <span className="text-accent mt-1">→</span>
+                        {highlight}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-                <div className="relative aspect-[16/9] bg-elevated rounded-2xl overflow-hidden border border-foreground/5">
-                  <div className="absolute inset-0 flex items-center justify-center text-foreground/10 text-9xl font-bold select-none">
-                    {project.letter}
-                  </div>
+                <div className="relative aspect-[16/9] bg-elevated rounded-2xl overflow-hidden border border-foreground/5 group-hover:border-accent/20 transition-colors">
+                  {project.image ? (
+                    <img 
+                      src={project.image} 
+                      alt={project.name}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="absolute inset-0 flex items-center justify-center text-foreground/10 text-9xl font-bold select-none">
+                      {project.letter}
+                    </div>
+                  )}
                   <div className="absolute inset-0 bg-gradient-to-t from-background/50 to-transparent" />
                 </div>
               </div>
