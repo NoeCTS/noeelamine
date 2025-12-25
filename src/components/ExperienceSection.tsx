@@ -34,11 +34,11 @@ const experiences: Experience[] = [
     year: '2024',
     title: 'Publicis One Touch',
     role: 'Student Employee',
-    description: "Created agency's first AI-generated storyboard and developed AI evaluation frameworks.",
+    description: "Worked on strategy and developed AI evaluation frameworks.",
     location: 'Hamburg, Germany',
   },
   {
-    year: '2021',
+    year: '2021-2024',
     title: 'The Journey Begins',
     description: 'German 1st Bundesliga Rugby, U16 National Team, and ESCP Business School across 3 cities.',
     location: 'London — Paris — Berlin',
