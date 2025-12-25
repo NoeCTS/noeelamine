@@ -491,6 +491,56 @@ const ConceptCampaignsSection = forwardRef<HTMLElement>((_, ref) => {
                 </svg>
               </div>
             </button>
+
+            {/* BERLIN CTA */}
+            <button
+              onClick={() => navigateWithTransition('/berlin')}
+              className="group block w-full text-left"
+            >
+              <div
+                className="relative border border-secondary/30 hover:border-neon-red/60 transition-colors duration-500 px-8 py-12 md:px-16 md:py-16 overflow-hidden"
+                style={{ 
+                  willChange: 'transform, opacity',
+                  background: 'linear-gradient(135deg, rgba(20, 20, 25, 0.9), rgba(30, 15, 20, 0.8))'
+                }}
+              >
+                {/* Bass pulse overlay */}
+                <div
+                  className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  style={{
+                    background: 'radial-gradient(circle at 50% 50%, rgba(255, 0, 64, 0.1), transparent 70%)',
+                    animation: 'bassPulse 1s ease-in-out infinite',
+                  }}
+                />
+
+                {/* Scanline overlay */}
+                <div
+                  className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  style={{
+                    background:
+                      'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.02) 2px, rgba(255,255,255,0.02) 4px)',
+                  }}
+                />
+
+                {/* Main text */}
+                <div className="relative flex items-center justify-center h-[2em] md:h-[2.5em]">
+                  <h2 className="text-xl md:text-2xl lg:text-3xl font-medium tracking-[0.3em] uppercase text-secondary group-hover:text-neon-red transition-colors duration-500">
+                    BERLIN
+                  </h2>
+                </div>
+
+                {/* Subtitle */}
+                <p className="text-center text-secondary/50 font-mono text-xs tracking-wider mt-2 group-hover:text-foreground/60 transition-colors duration-500">
+                  A NIGHT OUT
+                </p>
+
+                {/* Corner accents */}
+                <div className="absolute top-0 left-0 w-4 h-4 border-l border-t border-secondary/40 group-hover:border-neon-red/60 transition-colors duration-500" />
+                <div className="absolute top-0 right-0 w-4 h-4 border-r border-t border-secondary/40 group-hover:border-neon-red/60 transition-colors duration-500" />
+                <div className="absolute bottom-0 left-0 w-4 h-4 border-l border-b border-secondary/40 group-hover:border-neon-red/60 transition-colors duration-500" />
+                <div className="absolute bottom-0 right-0 w-4 h-4 border-r border-b border-secondary/40 group-hover:border-neon-red/60 transition-colors duration-500" />
+              </div>
+            </button>
           </div>
         </div>
       </div>
@@ -499,6 +549,10 @@ const ConceptCampaignsSection = forwardRef<HTMLElement>((_, ref) => {
         @keyframes scanlines {
           0% { transform: translateY(0); }
           100% { transform: translateY(100%); }
+        }
+        @keyframes bassPulse {
+          0%, 100% { opacity: 0.3; transform: scale(1); }
+          50% { opacity: 0.6; transform: scale(1.02); }
         }
       `}</style>
     </section>
