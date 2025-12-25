@@ -41,9 +41,9 @@ const Index = () => {
       mainOrbRef.current.classList.remove('breathing');
     }
 
-    // Initialize Lenis smooth scroll
+    // Initialize Lenis smooth scroll (faster)
     const lenis = new Lenis({
-      duration: 1.5,
+      duration: 0.8,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
     });
 
