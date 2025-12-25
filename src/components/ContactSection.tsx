@@ -21,10 +21,10 @@ const ContactSection = forwardRef<HTMLElement>((_, ref) => {
           Let's talk.
         </h2>
         <a 
-          href="mailto:ne25@imperial.ac.uk" 
+          href="mailto:noe.elmne@gmail.com" 
           className="animated-link text-title text-secondary hover:text-foreground transition-colors block mb-12 contact-reveal translate-y-12 opacity-0"
         >
-          ne25@imperial.ac.uk
+          noe.elmne@gmail.com
         </a>
         
         <div className="flex gap-12 justify-center text-sm font-medium tracking-wide text-tertiary uppercase contact-reveal translate-y-12 opacity-0">
