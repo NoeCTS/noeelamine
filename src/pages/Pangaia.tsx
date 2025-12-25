@@ -21,10 +21,7 @@ const Pangaia = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const heroRef = useRef<HTMLElement>(null);
   const problemRef = useRef<HTMLElement>(null);
-  const solutionRef = useRef<HTMLElement>(null);
-  const phasesRef = useRef<HTMLElement>(null);
   const galleryRef = useRef<HTMLElement>(null);
-  const frameworkRef = useRef<HTMLElement>(null);
   const resultsRef = useRef<HTMLElement>(null);
 
   // Particle state for animations
@@ -74,7 +71,7 @@ const Pangaia = () => {
           stagger: 0.1,
         }, '-=0.3');
 
-      // Video section - simple fade in
+      // Gallery section - fade in
       gsap.from('.gallery-image', {
         opacity: 0,
         y: 30,
@@ -84,52 +81,6 @@ const Pangaia = () => {
           start: 'top 80%',
         },
       });
-
-      // Solution Section - T-shirt reveal
-      const solutionTL = gsap.timeline({
-        scrollTrigger: {
-          trigger: solutionRef.current,
-          start: 'top center',
-          end: 'bottom center',
-          scrub: 1.5,
-        },
-      });
-
-      solutionTL
-        .from('.tshirt-outline', { strokeDashoffset: 1000, duration: 1 })
-        .from('.tshirt-fill-1', { clipPath: 'inset(100% 0 0 0)', duration: 0.5 })
-        .from('.tshirt-fill-2', { clipPath: 'inset(100% 0 0 0)', duration: 0.5 })
-        .from('.tshirt-fill-3', { clipPath: 'inset(100% 0 0 0)', duration: 0.5 })
-        .from('.comparison-cards', { y: 100, opacity: 0, stagger: 0.2, duration: 0.5 });
-
-      // Campaign Phases - Horizontal scroll
-      gsap.to('.phases-track', {
-        x: () => -(document.querySelector('.phases-track')?.scrollWidth || 0) + window.innerWidth,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: phasesRef.current,
-          start: 'top top',
-          end: () => `+=${document.querySelector('.phases-track')?.scrollWidth || 3000}`,
-          scrub: 1,
-          pin: true,
-        },
-      });
-
-
-      // Framework - Circular diagram
-      const frameworkTL = gsap.timeline({
-        scrollTrigger: {
-          trigger: frameworkRef.current,
-          start: 'top center',
-          end: 'center center',
-          scrub: 1,
-        },
-      });
-
-      frameworkTL
-        .from('.framework-center', { scale: 0, duration: 0.5 })
-        .from('.framework-line', { strokeDashoffset: 200, stagger: 0.1, duration: 0.3 })
-        .from('.framework-node', { scale: 0, opacity: 0, stagger: 0.1, duration: 0.3 });
 
       // Results - Stats animation
       gsap.from('.result-stat', {
@@ -304,328 +255,78 @@ const Pangaia = () => {
         </div>
       </section>
 
-      {/* Section 3: The Solution - The Becoming Tee */}
-      <section ref={solutionRef} className="min-h-[150vh] py-32 px-6 md:px-12 lg:px-24" style={{ backgroundColor: '#1A2F1A' }}>
-        <div className="max-w-6xl mx-auto">
-          <p className="text-xs tracking-[0.5em] uppercase mb-8" style={{ color: '#8B9A7A' }}>
-            The Solution
-          </p>
-          <h2 className="text-3xl md:text-5xl font-light leading-relaxed mb-16">
-            The Becoming Tee
-          </h2>
-
-          {/* T-shirt visualization */}
-          <div className="relative flex flex-col lg:flex-row items-center gap-16">
-            {/* T-shirt SVG */}
-            <div className="flex-1 flex justify-center">
-              <svg viewBox="0 0 300 350" className="w-full max-w-md">
-                {/* T-shirt outline */}
-                <path
-                  className="tshirt-outline"
-                  d="M50 80 L100 50 L150 70 L200 50 L250 80 L220 120 L200 110 L200 300 L100 300 L100 110 L80 120 Z"
-                  fill="none"
-                  stroke="#8B9A7A"
-                  strokeWidth="2"
-                  strokeDasharray="1000"
-                  strokeDashoffset="0"
-                />
-                {/* Fill layers */}
-                <path
-                  className="tshirt-fill-1"
-                  d="M100 300 L100 220 L200 220 L200 300 Z"
-                  fill="#8B9A7A"
-                  opacity="0.8"
-                />
-                <path
-                  className="tshirt-fill-2"
-                  d="M100 220 L100 150 L200 150 L200 220 Z"
-                  fill="#F4C430"
-                  opacity="0.6"
-                />
-                <path
-                  className="tshirt-fill-3"
-                  d="M50 80 L100 50 L150 70 L200 50 L250 80 L220 120 L200 110 L200 150 L100 150 L100 110 L80 120 Z"
-                  fill="#F5F0E8"
-                  opacity="0.4"
-                />
-              </svg>
-            </div>
-
-            {/* Material breakdown */}
-            <div className="flex-1 space-y-6">
-              <div className="flex items-center gap-4">
-                <div className="w-4 h-4 rounded-full" style={{ backgroundColor: '#8B9A7A' }} />
-                <span>50% regenerative cotton</span>
-              </div>
-              <div className="flex items-center gap-4">
-                <div className="w-4 h-4 rounded-full" style={{ backgroundColor: '#F4C430' }} />
-                <span>30% recycled cotton</span>
-              </div>
-              <div className="flex items-center gap-4">
-                <div className="w-4 h-4 rounded-full" style={{ backgroundColor: '#F5F0E8' }} />
-                <span>20% Lyocell</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Comparison cards */}
-          <div className="grid md:grid-cols-2 gap-8 mt-24 max-w-3xl mx-auto">
-            <div className="comparison-cards p-8 rounded-xl border" style={{ borderColor: '#5C4033', backgroundColor: 'rgba(92, 64, 51, 0.1)' }}>
-              <p className="text-xs tracking-[0.3em] uppercase mb-4" style={{ color: '#8B9A7A' }}>Standard Tee</p>
-              <p className="text-4xl font-light mb-2">£45</p>
-              <p className="text-sm" style={{ color: '#8B9A7A' }}>2yr life</p>
-              <p className="text-lg mt-4" style={{ color: '#E84B3C' }}>£22.50/year</p>
-            </div>
-            <div
-              className="comparison-cards p-8 rounded-xl border-2 relative overflow-hidden"
-              style={{ borderColor: '#8B9A7A', backgroundColor: 'rgba(139, 154, 122, 0.1)' }}
-            >
-              <div
-                className="absolute inset-0 opacity-20"
-                style={{
-                  background: 'radial-gradient(circle at center, #8B9A7A 0%, transparent 70%)',
-                  animation: 'pulse 2s ease-in-out infinite',
-                }}
-              />
-              <p className="text-xs tracking-[0.3em] uppercase mb-4 relative z-10" style={{ color: '#8B9A7A' }}>Becoming Tee</p>
-              <p className="text-4xl font-light mb-2 relative z-10">£65</p>
-              <p className="text-sm relative z-10" style={{ color: '#8B9A7A' }}>6yr life</p>
-              <p className="text-lg mt-4 relative z-10" style={{ color: '#8B9A7A' }}>£10.83/year</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Section 4: Campaign Phases - Horizontal Scroll */}
-      <section ref={phasesRef} className="min-h-screen relative overflow-hidden" style={{ backgroundColor: '#0a0a0a' }}>
-        <div className="phases-track flex h-screen">
-          {/* Phase 1 */}
-          <div className="phase-card flex-shrink-0 w-[80vw] md:w-[60vw] h-full flex items-center justify-center p-12">
-            <div className="max-w-xl">
-              <p className="text-xs tracking-[0.3em] uppercase mb-4" style={{ color: '#E84B3C' }}>Phase 1</p>
-              <h3 className="text-3xl md:text-4xl font-light mb-6">The Honest Reckoning</h3>
-              <blockquote className="text-xl italic mb-8" style={{ color: '#8B9A7A' }}>
-                "We're sorry. But 'better' is no longer good enough."
-              </blockquote>
-              <div className="flex gap-8">
-                <div>
-                  <p className="text-3xl font-light" style={{ color: '#F4C430' }}>20M+</p>
-                  <p className="text-sm" style={{ color: '#8B9A7A' }}>impressions</p>
-                </div>
-                <div>
-                  <p className="text-3xl font-light" style={{ color: '#F4C430' }}>50+</p>
-                  <p className="text-sm" style={{ color: '#8B9A7A' }}>press articles</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Phase 2 */}
-          <div className="phase-card flex-shrink-0 w-[80vw] md:w-[60vw] h-full flex items-center justify-center p-12">
-            <div className="max-w-xl">
-              <p className="text-xs tracking-[0.3em] uppercase mb-4" style={{ color: '#6495ED' }}>Phase 2</p>
-              <h3 className="text-3xl md:text-4xl font-light mb-6">Waste vs. Wonder</h3>
-              <p className="text-lg mb-8" style={{ color: '#8B9A7A' }}>
-                Shoreditch installation: A split-screen reality of fashion's future.
-              </p>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="p-6 rounded-lg" style={{ backgroundColor: 'rgba(92, 64, 51, 0.3)' }}>
-                  <p className="text-sm">Waste Mountain</p>
-                </div>
-                <div className="p-6 rounded-lg" style={{ backgroundColor: 'rgba(139, 154, 122, 0.3)' }}>
-                  <p className="text-sm">Regenerative Field</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Phase 3 */}
-          <div className="phase-card flex-shrink-0 w-[80vw] md:w-[60vw] h-full flex items-center justify-center p-12">
-            <div className="max-w-xl">
-              <p className="text-xs tracking-[0.3em] uppercase mb-4" style={{ color: '#F4C430' }}>Phase 3</p>
-              <h3 className="text-3xl md:text-4xl font-light mb-6">The Circular Makers</h3>
-              <p className="text-lg mb-8" style={{ color: '#8B9A7A' }}>
-                3-minute hero film documenting the journey from soil to style and back.
-              </p>
-              <div className="aspect-video rounded-xl flex items-center justify-center" style={{ backgroundColor: 'rgba(139, 154, 122, 0.2)' }}>
-                <div className="w-16 h-16 rounded-full border-2 flex items-center justify-center" style={{ borderColor: '#8B9A7A' }}>
-                  <div className="w-0 h-0 border-t-8 border-b-8 border-l-12 border-transparent ml-1" style={{ borderLeftColor: '#8B9A7A' }} />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Phase 4 */}
-          <div className="phase-card flex-shrink-0 w-[80vw] md:w-[60vw] h-full flex items-center justify-center p-12">
-            <div className="max-w-xl">
-              <p className="text-xs tracking-[0.3em] uppercase mb-4" style={{ color: '#8B9A7A' }}>Phase 4</p>
-              <h3 className="text-3xl md:text-4xl font-light mb-6">Seed Tag Experience</h3>
-              <p className="text-lg mb-8" style={{ color: '#8B9A7A' }}>
-                Every garment comes with a plantable tag. 8 weeks → wildflowers bloom.
-              </p>
-              {/* Seed tag animation placeholder */}
-              <div className="flex items-end gap-2 h-24">
-                <div className="w-2 h-4 rounded-t" style={{ backgroundColor: '#8B9A7A' }} />
-                <div className="w-2 h-8 rounded-t" style={{ backgroundColor: '#8B9A7A' }} />
-                <div className="w-2 h-12 rounded-t" style={{ backgroundColor: '#8B9A7A' }} />
-                <div className="w-2 h-16 rounded-t" style={{ backgroundColor: '#8B9A7A' }} />
-                <div className="w-4 h-20 flex flex-col items-center">
-                  <div className="w-4 h-4 rounded-full" style={{ backgroundColor: '#E84B3C' }} />
-                  <div className="w-1 h-16" style={{ backgroundColor: '#8B9A7A' }} />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Phase 5 */}
-          <div className="phase-card flex-shrink-0 w-[80vw] md:w-[60vw] h-full flex items-center justify-center p-12">
-            <div className="max-w-xl">
-              <p className="text-xs tracking-[0.3em] uppercase mb-4" style={{ color: '#F5F0E8' }}>Phase 5</p>
-              <h3 className="text-3xl md:text-4xl font-light mb-6">PANGAIA Archive</h3>
-              <p className="text-lg mb-8" style={{ color: '#8B9A7A' }}>
-                Resale platform with graded garments. Customer LTV 2x.
-              </p>
-              <div className="flex gap-4">
-                {['A', 'B', 'C'].map((grade, i) => (
-                  <div
-                    key={grade}
-                    className="w-16 h-20 rounded-lg flex items-center justify-center text-2xl font-light"
-                    style={{
-                      backgroundColor: `rgba(139, 154, 122, ${0.8 - i * 0.2})`,
-                      color: '#1A2F1A',
-                    }}
-                  >
-                    {grade}
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Section 5: Visual Gallery */}
+      {/* Section 3: Visual Gallery */}
       <section ref={galleryRef} className="min-h-screen py-32 px-6 md:px-12 lg:px-24" style={{ backgroundColor: '#1A2F1A' }}>
         <div className="max-w-6xl mx-auto">
           <p className="text-xs tracking-[0.5em] uppercase mb-16 text-center" style={{ color: '#8B9A7A' }}>
             Campaign Imagery
           </p>
 
-          {/* Masonry gallery grid */}
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-            {[
-              { span: 'col-span-2 md:col-span-1', aspect: 'aspect-[4/5]', label: 'Wildflower Field', image: wildflowerWomanImg },
-              { span: 'col-span-1', aspect: 'aspect-square', label: 'PANGAIA Campaign', image: manFieldImg },
-              { span: 'col-span-1', aspect: 'aspect-[3/4]', label: 'Two Models', image: twoModelsImg },
-              { span: 'col-span-2', aspect: 'aspect-video', label: 'London Bus Stop OOH', image: busStopImg },
-              { span: 'col-span-1', aspect: 'aspect-[9/16]', label: 'Sustainable Dye', image: dyeScienceImg },
-              { span: 'col-span-1', aspect: 'aspect-[9/16]', label: 'The Footprint', image: footprintImg },
-              { span: 'col-span-2', aspect: 'aspect-video', label: 'Packaging', image: boxImg },
-              { span: 'col-span-1 md:col-span-3', aspect: 'aspect-[4/3]', label: 'Campaign Ad', image: adImg },
-            ].map((item, i) => (
-              <div
-                key={i}
-                className={`gallery-image ${item.span} ${item.aspect} rounded-2xl overflow-hidden relative group cursor-pointer`}
-                style={{ backgroundColor: 'rgba(139, 154, 122, 0.2)' }}
-              >
-                <img
-                  src={item.image}
-                  alt={item.label}
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
-                  <p className="text-sm font-medium">{item.label}</p>
-                </div>
-              </div>
-            ))}
+          {/* Gallery grid - optimized for full visibility */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="gallery-image rounded-2xl overflow-hidden relative group cursor-pointer">
+              <img
+                src={wildflowerWomanImg}
+                alt="Wildflower Woman"
+                className="w-full h-auto object-contain transition-transform duration-700 group-hover:scale-105"
+              />
+            </div>
+            <div className="gallery-image rounded-2xl overflow-hidden relative group cursor-pointer">
+              <img
+                src={manFieldImg}
+                alt="Man in Field"
+                className="w-full h-auto object-contain transition-transform duration-700 group-hover:scale-105"
+              />
+            </div>
+            <div className="gallery-image rounded-2xl overflow-hidden relative group cursor-pointer">
+              <img
+                src={twoModelsImg}
+                alt="Two Models"
+                className="w-full h-auto object-contain transition-transform duration-700 group-hover:scale-105"
+              />
+            </div>
+            <div className="gallery-image rounded-2xl overflow-hidden relative group cursor-pointer md:col-span-2 lg:col-span-2">
+              <img
+                src={busStopImg}
+                alt="London Bus Stop OOH"
+                className="w-full h-auto object-contain transition-transform duration-700 group-hover:scale-105"
+              />
+            </div>
+            <div className="gallery-image rounded-2xl overflow-hidden relative group cursor-pointer">
+              <img
+                src={dyeScienceImg}
+                alt="Sustainable Dye"
+                className="w-full h-auto object-contain transition-transform duration-700 group-hover:scale-105"
+              />
+            </div>
+            <div className="gallery-image rounded-2xl overflow-hidden relative group cursor-pointer">
+              <img
+                src={footprintImg}
+                alt="The Footprint"
+                className="w-full h-auto object-contain transition-transform duration-700 group-hover:scale-105"
+              />
+            </div>
+            <div className="gallery-image rounded-2xl overflow-hidden relative group cursor-pointer">
+              <img
+                src={boxImg}
+                alt="Packaging"
+                className="w-full h-auto object-contain transition-transform duration-700 group-hover:scale-105"
+              />
+            </div>
+            <div className="gallery-image rounded-2xl overflow-hidden relative group cursor-pointer md:col-span-2 lg:col-span-1">
+              <img
+                src={adImg}
+                alt="Campaign Ad"
+                className="w-full h-auto object-contain transition-transform duration-700 group-hover:scale-105"
+              />
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Section 6: Academic Framework */}
-      <section ref={frameworkRef} className="min-h-screen py-32 px-6 md:px-12 lg:px-24" style={{ backgroundColor: '#0a0a0a' }}>
-        <div className="max-w-4xl mx-auto">
-          <p className="text-xs tracking-[0.5em] uppercase mb-16 text-center" style={{ color: '#8B9A7A' }}>
-            Strategic Framework
-          </p>
-
-          {/* Circular diagram */}
-          <div className="relative aspect-square max-w-lg mx-auto">
-            <svg viewBox="0 0 400 400" className="w-full h-full">
-              {/* Center */}
-              <circle className="framework-center" cx="200" cy="200" r="50" fill="#8B9A7A" opacity="0.3" />
-              <text x="200" y="195" textAnchor="middle" fill="#F5F0E8" fontSize="12" fontWeight="500">
-                CIRCULAR
-              </text>
-              <text x="200" y="210" textAnchor="middle" fill="#F5F0E8" fontSize="12" fontWeight="500">
-                STRATEGY
-              </text>
-
-              {/* Connecting lines */}
-              {[0, 90, 180, 270].map((angle, i) => {
-                const x2 = 200 + 120 * Math.cos((angle * Math.PI) / 180);
-                const y2 = 200 + 120 * Math.sin((angle * Math.PI) / 180);
-                return (
-                  <line
-                    key={i}
-                    className="framework-line"
-                    x1="200"
-                    y1="200"
-                    x2={x2}
-                    y2={y2}
-                    stroke="#8B9A7A"
-                    strokeWidth="1"
-                    strokeDasharray="200"
-                    strokeDashoffset="0"
-                  />
-                );
-              })}
-
-              {/* Nodes */}
-              {[
-                { angle: 0, label: 'Blue Ocean', sub: 'Eliminate obsolescence' },
-                { angle: 90, label: 'R-Ladder', sub: 'Refuse → Recover' },
-                { angle: 180, label: 'Behavioral', sub: 'Incentives + Nudges' },
-                { angle: 270, label: 'Life Cycle', sub: 'Regenerative impact' },
-              ].map((node, i) => {
-                const x = 200 + 140 * Math.cos((node.angle * Math.PI) / 180);
-                const y = 200 + 140 * Math.sin((node.angle * Math.PI) / 180);
-                return (
-                  <g key={i} className="framework-node" transform={`translate(${x}, ${y})`}>
-                    <circle r="35" fill="#1A2F1A" stroke="#8B9A7A" strokeWidth="1" />
-                    <text y="-5" textAnchor="middle" fill="#F5F0E8" fontSize="10" fontWeight="500">
-                      {node.label}
-                    </text>
-                    <text y="10" textAnchor="middle" fill="#8B9A7A" fontSize="8">
-                      {node.sub}
-                    </text>
-                  </g>
-                );
-              })}
-            </svg>
-          </div>
-        </div>
-      </section>
-
-      {/* Section 7: Results & Close */}
+      {/* Section 4: Results & Close */}
       <section ref={resultsRef} className="min-h-screen py-32 px-6 md:px-12 lg:px-24" style={{ backgroundColor: '#F5F0E8' }}>
         <div className="max-w-4xl mx-auto text-center">
-          {/* Stats */}
-          <div className="grid md:grid-cols-3 gap-12 mb-24">
-            <div className="result-stat">
-              <p className="text-5xl md:text-6xl font-light mb-2" style={{ color: '#1A2F1A' }}>£65</p>
-              <p className="text-sm tracking-[0.2em] uppercase" style={{ color: '#5C4033' }}>Becoming Tee</p>
-            </div>
-            <div className="result-stat">
-              <p className="text-5xl md:text-6xl font-light mb-2" style={{ color: '#1A2F1A' }}>6yr</p>
-              <p className="text-sm tracking-[0.2em] uppercase" style={{ color: '#5C4033' }}>Lifespan</p>
-            </div>
-            <div className="result-stat">
-              <p className="text-5xl md:text-6xl font-light mb-2" style={{ color: '#1A2F1A' }}>2x</p>
-              <p className="text-sm tracking-[0.2em] uppercase" style={{ color: '#5C4033' }}>Customer LTV</p>
-            </div>
-          </div>
-
           {/* Final quote */}
           <div className="final-quote mb-24">
             <p className="final-quote-line text-2xl md:text-3xl font-light leading-relaxed mb-4" style={{ color: '#1A2F1A' }}>
@@ -645,12 +346,15 @@ const Pangaia = () => {
           </h2>
 
           {/* CTA */}
-          <button
-            className="px-8 py-4 rounded-full text-sm tracking-[0.2em] uppercase transition-all duration-300 hover:scale-105"
+          <a
+            href="https://youtu.be/WOnd04WRT-U"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block px-8 py-4 rounded-full text-sm tracking-[0.2em] uppercase transition-all duration-300 hover:scale-105"
             style={{ backgroundColor: '#1A2F1A', color: '#F5F0E8' }}
           >
-            View Full Strategy Deck
-          </button>
+            Watch Campaign Strategy Video
+          </a>
         </div>
       </section>
 
