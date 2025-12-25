@@ -18,8 +18,8 @@ const campaigns: Campaign[] = [
   {
     id: 'pangaia',
     name: 'PANGAIA',
-    description: 'Sustainable fashion concept campaign — coming soon.',
-    hasDetailPage: false,
+    description: 'Circular fashion revolution — The Symbiosis campaign reimagines sustainability through regenerative design.',
+    hasDetailPage: true,
   },
 ];
 
