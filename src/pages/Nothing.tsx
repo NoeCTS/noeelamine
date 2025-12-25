@@ -2,7 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import nothingAd1 from '@/assets/nothing-ad-1.jpg';
 import nothingAd2 from '@/assets/nothing-ad-2.jpg';
-
+import nothingBillboard1 from '@/assets/nothing-billboard-1.png';
+import nothingBillboard2 from '@/assets/nothing-billboard-2.png';
 
 const Nothing = () => {
   const [loaded, setLoaded] = useState(false);
@@ -101,7 +102,7 @@ const Nothing = () => {
       </section>
 
       {/* Campaign Images */}
-      <section className="py-16 px-6 md:px-12 lg:px-24 bg-black">
+      <section className="py-16 px-6 md:px-12 lg:px-24 bg-black relative z-20">
         <div className="max-w-6xl mx-auto space-y-24">
           {/* First image */}
           <div 
@@ -135,6 +136,37 @@ const Nothing = () => {
             <p className="text-sm text-neutral-500 max-w-md mt-6">
               Find clarity in chaos. When everyone looks down, you look forward.
             </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Billboard Mockups */}
+      <section className="py-16 px-6 md:px-12 lg:px-24 bg-black relative z-20">
+        <div className="max-w-6xl mx-auto">
+          <p className="text-xs tracking-[0.5em] uppercase text-neutral-600 mb-12 text-center">Outdoor Activation</p>
+          <div className="space-y-16">
+            <div 
+              id="billboard1" 
+              data-animate
+              className={`transition-all duration-1000 ${isVisible('billboard1') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-16'}`}
+            >
+              <img 
+                src={nothingBillboard1} 
+                alt="Nothing Campaign Billboard Mockup - Underground" 
+                className="w-full h-auto rounded-lg"
+              />
+            </div>
+            <div 
+              id="billboard2" 
+              data-animate
+              className={`transition-all duration-1000 ${isVisible('billboard2') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-16'}`}
+            >
+              <img 
+                src={nothingBillboard2} 
+                alt="Nothing Campaign Billboard Mockup - Crowd" 
+                className="w-full h-auto rounded-lg"
+              />
+            </div>
           </div>
         </div>
       </section>
