@@ -12,6 +12,7 @@ import ProjectsSection from '@/components/ProjectsSection';
 import ConceptCampaignsSection from '@/components/ConceptCampaignsSection';
 import ExperienceSection from '@/components/ExperienceSection';
 import EducationSection from '@/components/EducationSection';
+import NothingCTASection from '@/components/NothingCTASection';
 import PhilosophySection from '@/components/PhilosophySection';
 import ContactSection from '@/components/ContactSection';
 
@@ -247,6 +248,7 @@ const Index = () => {
           <ConceptCampaignsSection ref={conceptCampaignsRef} />
           <ExperienceSection ref={experienceRef} />
           <EducationSection ref={educationRef} />
+          <NothingCTASection />
           <PhilosophySection ref={philosophyRef} />
           <ContactSection ref={contactRef} />
         </div>

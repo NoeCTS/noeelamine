@@ -13,9 +13,6 @@ const HeroSection = forwardRef<HTMLElement, HeroSectionProps>(({ nameRef, scroll
       className="relative h-screen w-full flex flex-col items-center justify-center overflow-hidden"
     >
       <div className="z-20 text-center relative mix-blend-difference">
-        <p className="text-sm md:text-base font-medium tracking-wide text-secondary mb-4 opacity-70">
-          do you work at nothing?
-        </p>
         <h1 
           ref={nameRef}
           className="hero-name font-sans text-hero font-semibold tracking-tighter leading-[0.9] text-foreground"
