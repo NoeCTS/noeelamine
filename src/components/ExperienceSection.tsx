@@ -3,6 +3,7 @@ import { forwardRef } from 'react';
 interface Experience {
   year: string;
   title: string;
+  role?: string;
   description: string;
   location: string;
 }
@@ -11,25 +12,35 @@ const experiences: Experience[] = [
   {
     year: '2025',
     title: 'Aube',
-    description: 'Founded a cultural intelligence platform.',
-    location: 'London',
+    role: 'Founder',
+    description: 'Built an AI-powered cultural intelligence platform screening campaigns across 68+ markets.',
+    location: 'London, UK',
+  },
+  {
+    year: '2025',
+    title: 'Betteride',
+    role: 'Strategy & Marketing Freelancer',
+    description: 'Owned full marketing function from strategy to execution for Berlin cycling startup.',
+    location: 'Berlin, Germany',
   },
   {
     year: '2025',
     title: 'Claude Builder Club',
-    description: 'AI Ethics Lead for 1,000+ member community.',
-    location: 'Imperial College',
+    role: 'AI Ethics & Impact Co-Lead',
+    description: "Built Imperial's largest student org and biggest Claude society worldwide (1,000+ members).",
+    location: 'Imperial College London',
   },
   {
     year: '2024',
     title: 'Publicis One Touch',
-    description: 'Introduced AI workflows to a 140-person agency.',
-    location: 'Hamburg',
+    role: 'Student Employee',
+    description: "Created agency's first AI-generated storyboard and developed AI evaluation frameworks.",
+    location: 'Hamburg, Germany',
   },
   {
     year: '2021',
     title: 'The Journey Begins',
-    description: 'Professional Rugby & Business School.',
+    description: 'German 1st Bundesliga Rugby, U16 National Team, and ESCP Business School across 3 cities.',
     location: 'London — Paris — Berlin',
   },
 ];
@@ -48,7 +59,10 @@ const ExperienceSection = forwardRef<HTMLElement>((_, ref) => {
                 {exp.year}
               </span>
               <div className="timeline-content">
-                <h3 className="text-title font-semibold mb-2">{exp.title}</h3>
+                <h3 className="text-title font-semibold mb-1">{exp.title}</h3>
+                {exp.role && (
+                  <p className="text-sm text-accent mb-2">{exp.role}</p>
+                )}
                 <p className="text-body text-secondary">{exp.description}</p>
                 <p className="text-sm text-tertiary mt-2">{exp.location}</p>
               </div>

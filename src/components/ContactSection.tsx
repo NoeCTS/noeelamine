@@ -15,9 +15,9 @@ const ContactSection = forwardRef<HTMLElement>((_, ref) => {
         </a>
         
         <div className="flex gap-12 justify-center text-sm font-medium tracking-wide text-tertiary uppercase contact-reveal translate-y-12 opacity-0">
-          <a href="#" className="animated-link hover:text-foreground transition-colors">LinkedIn</a>
-          <a href="#" className="animated-link hover:text-foreground transition-colors">GitHub</a>
-          <a href="#" className="animated-link hover:text-foreground transition-colors">Read.cv</a>
+          <a href="https://linkedin.com/in/noeelamine" target="_blank" rel="noopener noreferrer" className="animated-link hover:text-foreground transition-colors">LinkedIn</a>
+          <a href="https://aube-ai.com" target="_blank" rel="noopener noreferrer" className="animated-link hover:text-foreground transition-colors">Aube</a>
+          <a href="https://betteride.eu" target="_blank" rel="noopener noreferrer" className="animated-link hover:text-foreground transition-colors">Betteride</a>
         </div>
       </div>
       
