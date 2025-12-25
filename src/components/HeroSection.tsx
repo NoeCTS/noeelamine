@@ -17,7 +17,7 @@ const HeroSection = forwardRef<HTMLElement, HeroSectionProps>(({ nameRef, scroll
           ref={nameRef}
           className="hero-name font-sans text-hero font-semibold tracking-tighter leading-[0.9] text-foreground"
         >
-          NOE ELAMINE
+          NOE<br className="md:hidden" /> ELAMINE
         </h1>
       </div>
       
