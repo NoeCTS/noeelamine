@@ -104,12 +104,12 @@ const Index = () => {
     const loadTL = gsap.timeline({ delay: 0.2 });
 
     loadTL
-      .to(mainOrbRef.current, { opacity: 0.9, duration: 2, ease: 'power2.out' })
+      .to(mainOrbRef.current, { opacity: 0.9, duration: 2, ease: 'power2.out', overwrite: 'auto' })
       .to('.hero-char', { opacity: 1, y: 0, stagger: 0.05, duration: 0.8, ease: 'power2.out' }, '-=1.5')
       .to(scrollIndicatorRef.current, { opacity: 0.5, duration: 1 }, '-=0.5');
 
     // Add breathing class after load
-    setTimeout(() => {
+    const breathingTimeoutId = window.setTimeout(() => {
       mainOrbRef.current?.classList.add('breathing');
     }, 2000);
 
@@ -131,26 +131,31 @@ const Index = () => {
       start: 'center top',
       end: 'bottom top',
       scrub: 0.5,
+      fastScrollEnd: true,
       onUpdate: (self) => {
-        if (mainOrbRef.current) {
-          mainOrbRef.current.classList.remove('breathing');
-          const progress = self.progress;
-          mainOrbRef.current.style.opacity = String(0.9 - (progress * 0.9));
-          mainOrbRef.current.style.transform = `translate(-50%, -50%) scale(${1 - (progress * 0.2)})`;
-        }
+        if (!mainOrbRef.current) return;
+
+        // If the user scrolls quickly during the intro tween, ensure scroll-driven state wins.
+        gsap.killTweensOf(mainOrbRef.current);
+        mainOrbRef.current.classList.remove('breathing');
+
+        const progress = Math.min(1, Math.max(0, self.progress));
+        mainOrbRef.current.style.opacity = String(0.9 - progress * 0.9);
+        mainOrbRef.current.style.transform = `translate(-50%, -50%) scale(${1 - progress * 0.2})`;
       },
       onLeave: () => {
-        if (mainOrbRef.current) {
-          mainOrbRef.current.style.opacity = '0';
-          mainOrbRef.current.style.transform = 'translate(-50%, -50%) scale(0.8)';
-        }
+        if (!mainOrbRef.current) return;
+        gsap.killTweensOf(mainOrbRef.current);
+        mainOrbRef.current.classList.remove('breathing');
+        mainOrbRef.current.style.opacity = '0';
+        mainOrbRef.current.style.transform = 'translate(-50%, -50%) scale(0.8)';
       },
       onEnterBack: () => {
-        if (mainOrbRef.current) {
-          mainOrbRef.current.style.opacity = '0.9';
-          mainOrbRef.current.style.transform = 'translate(-50%, -50%) scale(1)';
-          mainOrbRef.current.classList.add('breathing');
-        }
+        if (!mainOrbRef.current) return;
+        gsap.killTweensOf(mainOrbRef.current);
+        mainOrbRef.current.style.opacity = '0.9';
+        mainOrbRef.current.style.transform = 'translate(-50%, -50%) scale(1)';
+        mainOrbRef.current.classList.add('breathing');
       },
     });
 
@@ -220,6 +225,7 @@ const Index = () => {
     });
 
     return () => {
+      window.clearTimeout(breathingTimeoutId);
       window.removeEventListener('mousemove', handleMouseMove);
       ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
       lenis.destroy();
