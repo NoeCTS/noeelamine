@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, Suspense, lazy } from 'react';
 import { Link } from 'react-router-dom';
 import nothingAd1 from '@/assets/nothing-ad-1.jpg';
 import nothingAd2 from '@/assets/nothing-ad-2.jpg';
-import nothingHeroVideo from '@/assets/nothing-hero-video.mp4';
+
+const HeadphoneViewer = lazy(() => import('@/components/HeadphoneViewer'));
 
 const Nothing = () => {
   const [loaded, setLoaded] = useState(false);
@@ -50,42 +51,38 @@ const Nothing = () => {
         </div>
       </header>
 
-      {/* Hero with Video */}
-      <section className="h-screen relative overflow-hidden">
-        <video 
-          autoPlay 
-          muted 
-          loop 
-          playsInline
-          className="absolute inset-0 w-full h-full object-cover"
-        >
-          <source src={nothingHeroVideo} type="video/mp4" />
-        </video>
-        <div className="absolute inset-0 bg-gradient-to-b from-[#f5f5f5]/30 via-transparent to-[#f5f5f5]" />
-        
-        {/* Product card overlay */}
-        <div className={`absolute bottom-8 left-1/2 -translate-x-1/2 w-[90%] max-w-md bg-white rounded-2xl p-6 shadow-xl transition-all duration-1000 delay-500 ${loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
-          <h1 className="text-2xl mb-4" style={{ fontFamily: "'Courier New', monospace", textDecoration: 'line-through', textDecorationThickness: '2px' }}>
+      {/* Hero with 3D Headphone */}
+      <section className="min-h-screen relative overflow-hidden flex flex-col items-center justify-center pt-24">
+        <div className={`text-center mb-4 transition-all duration-1000 delay-300 ${loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
+          <p className="text-xs tracking-[0.5em] uppercase text-neutral-400 mb-4">Concept Campaign</p>
+          <h1 className="text-4xl md:text-6xl font-light tracking-tight" style={{ textDecoration: 'line-through', textDecorationThickness: '2px' }}>
             headphone(1)
           </h1>
-          <div className="space-y-2 text-xs tracking-wide text-neutral-600 mb-6">
-            <div className="flex items-center gap-3">
-              <span>🔋</span>
-              <span>UP TO 80 HOURS OF PLAYBACK</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <span>🔊</span>
-              <span>SOUND BY KEF</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <span>🎧</span>
-              <span>REAL-TIME ADAPTIVE ANC</span>
-            </div>
-          </div>
-          <p className="text-center text-xs text-neutral-400 tracking-widest uppercase">
-            Concept Campaign by Noe Elamine
-          </p>
         </div>
+        
+        {/* 3D Viewer */}
+        <div className={`w-full transition-all duration-1000 delay-500 ${loaded ? 'opacity-100' : 'opacity-0'}`}>
+          <Suspense fallback={
+            <div className="h-[60vh] flex items-center justify-center">
+              <div className="w-8 h-8 border-2 border-neutral-300 border-t-neutral-900 rounded-full animate-spin" />
+            </div>
+          }>
+            <HeadphoneViewer />
+          </Suspense>
+        </div>
+
+        {/* Product specs */}
+        <div className={`flex flex-wrap justify-center gap-8 text-xs tracking-wide text-neutral-500 transition-all duration-1000 delay-700 ${loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+          <span>80H PLAYBACK</span>
+          <span>•</span>
+          <span>SOUND BY KEF</span>
+          <span>•</span>
+          <span>ADAPTIVE ANC</span>
+        </div>
+
+        <p className={`text-center text-xs text-neutral-400 tracking-widest uppercase mt-8 transition-all duration-1000 delay-900 ${loaded ? 'opacity-100' : 'opacity-0'}`}>
+          Drag to rotate
+        </p>
       </section>
 
       {/* Campaign Brief */}
