@@ -1,4 +1,5 @@
 import { forwardRef } from 'react';
+import aubeDashboard from '@/assets/aube-dashboard.png';
 
 interface Project {
   id: string;
@@ -22,6 +23,7 @@ const projects: Project[] = [
       'Developed B2B pricing & NGO partnerships',
     ],
     letter: 'A',
+    image: aubeDashboard,
   },
   {
     id: 'project-betteride',
