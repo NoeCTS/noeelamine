@@ -8,6 +8,7 @@ import { PageTransitionProvider } from "./components/PageTransition";
 import Index from "./pages/Index";
 import Nothing from "./pages/Nothing";
 import Pangaia from "./pages/Pangaia";
+import Berlin from "./pages/Berlin";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -24,6 +25,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/nothing" element={<Nothing />} />
             <Route path="/pangaia" element={<Pangaia />} />
+            <Route path="/berlin" element={<Berlin />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

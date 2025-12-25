@@ -45,13 +45,16 @@ export const PageTransitionProvider: React.FC<{ children: React.ReactNode }> = (
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [phase, setPhase] = useState<'idle' | 'exiting' | 'entering'>('idle');
   const [targetPath, setTargetPath] = useState<string | null>(null);
-  const [transitionType, setTransitionType] = useState<'glitch' | 'organic'>('glitch');
+  const [transitionType, setTransitionType] = useState<'glitch' | 'organic' | 'techno'>('glitch');
   const overlayRef = useRef<HTMLDivElement>(null);
   const slicesRef = useRef<(HTMLDivElement | null)[]>([]);
   const textRef = useRef<HTMLDivElement>(null);
   const organicOverlayRef = useRef<HTMLDivElement>(null);
   const petalsRef = useRef<(SVGSVGElement | null)[]>([]);
   const organicTextRef = useRef<HTMLDivElement>(null);
+  const technoOverlayRef = useRef<HTMLDivElement>(null);
+  const technoTextRef = useRef<HTMLDivElement>(null);
+  const technoBarsRef = useRef<(HTMLDivElement | null)[]>([]);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -62,7 +65,14 @@ export const PageTransitionProvider: React.FC<{ children: React.ReactNode }> = (
     document.body.style.overflow = 'hidden';
     document.documentElement.style.overflow = 'hidden';
 
-    const type = to === '/pangaia' || location.pathname === '/pangaia' ? 'organic' : 'glitch';
+    // Determine transition type based on route
+    let type: 'glitch' | 'organic' | 'techno' = 'glitch';
+    if (to === '/pangaia' || location.pathname === '/pangaia') {
+      type = 'organic';
+    } else if (to === '/berlin' || location.pathname === '/berlin') {
+      type = 'techno';
+    }
+    
     setTransitionType(type);
     setTargetPath(to);
     setIsTransitioning(true);
@@ -282,12 +292,121 @@ export const PageTransitionProvider: React.FC<{ children: React.ReactNode }> = (
     return () => ctx.revert();
   }, []);
 
-  // Scramble text effect for glitch
+  // TECHNO TRANSITION (for Berlin)
   useEffect(() => {
-    if (!isTransitioning || !textRef.current || transitionType !== 'glitch') return;
+    if (phase !== 'exiting' || !isTransitioning || !targetPath || transitionType !== 'techno' || !technoOverlayRef.current) return;
 
-    const element = textRef.current;
+    const overlay = technoOverlayRef.current;
+    const bars = technoBarsRef.current.filter(Boolean) as HTMLDivElement[];
+    const text = technoTextRef.current;
+
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({
+        onComplete: () => {
+          setPhase('entering');
+          window.scrollTo(0, 0);
+          document.documentElement.scrollTop = 0;
+          document.body.scrollTop = 0;
+          navigate(targetPath);
+          setTimeout(() => runTechnoEntry(), 50);
+        },
+      });
+
+      tl.set(overlay, { display: 'flex', opacity: 1 });
+
+      // Horizontal bars slice in from alternating sides
+      bars.forEach((bar, i) => {
+        const direction = i % 2 === 0 ? -1 : 1;
+        tl.fromTo(bar,
+          { x: `${direction * 100}%`, scaleY: 0.5 },
+          { x: '0%', scaleY: 1, duration: 0.3, ease: 'power4.out' },
+          i * 0.04
+        );
+      });
+
+      // Bass pulse flash
+      tl.to(overlay, { 
+        backgroundColor: 'rgba(255, 0, 64, 0.15)', 
+        duration: 0.1 
+      }, 0.3);
+      tl.to(overlay, { 
+        backgroundColor: 'rgba(10, 10, 10, 1)', 
+        duration: 0.1 
+      }, 0.4);
+
+      // Text appears
+      if (text) {
+        tl.fromTo(text,
+          { opacity: 0, scale: 0.8, letterSpacing: '0.5em' },
+          { opacity: 1, scale: 1, letterSpacing: '0.3em', duration: 0.4, ease: 'power2.out' },
+          0.35
+        );
+      }
+    });
+
+    return () => ctx.revert();
+  }, [phase, isTransitioning, targetPath, transitionType, navigate]);
+
+  const runTechnoEntry = useCallback(() => {
+    if (!technoOverlayRef.current) return;
+
+    const overlay = technoOverlayRef.current;
+    const bars = technoBarsRef.current.filter(Boolean) as HTMLDivElement[];
+    const text = technoTextRef.current;
+
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({
+        onComplete: () => {
+          setPhase('idle');
+          setIsTransitioning(false);
+          setTargetPath(null);
+          gsap.set(overlay, { display: 'none' });
+          document.body.style.overflow = '';
+          document.documentElement.style.overflow = '';
+        },
+      });
+
+      // Text fades out
+      if (text) {
+        tl.to(text, { opacity: 0, scale: 1.1, duration: 0.2 }, 0);
+      }
+
+      // Bass pulse
+      tl.to(overlay, { 
+        backgroundColor: 'rgba(0, 240, 255, 0.1)', 
+        duration: 0.05 
+      }, 0.1);
+      tl.to(overlay, { 
+        backgroundColor: 'rgba(10, 10, 10, 1)', 
+        duration: 0.05 
+      }, 0.15);
+
+      // Bars slide out
+      bars.forEach((bar, i) => {
+        const direction = i % 2 === 0 ? 1 : -1;
+        tl.to(bar, { 
+          x: `${direction * 100}%`, 
+          scaleY: 0.3,
+          duration: 0.3, 
+          ease: 'power4.in' 
+        }, 0.15 + i * 0.02);
+      });
+
+      tl.to(overlay, { opacity: 0, duration: 0.2 }, 0.4);
+    });
+
+    return () => ctx.revert();
+  }, []);
+
+  // Scramble text effect for glitch and techno
+  useEffect(() => {
+    if (!isTransitioning || transitionType === 'organic') return;
+    
+    const element = transitionType === 'glitch' ? textRef.current : technoTextRef.current;
+    if (!element) return;
+
     const targetText = targetPath === '/nothing' ? 'NOTHING' : 
+                       targetPath === '/berlin' ? 'BERLIN' :
                        targetPath === '/' ? 'HOME' : 'LOADING';
     
     let iteration = 0;
@@ -414,6 +533,61 @@ export const PageTransitionProvider: React.FC<{ children: React.ReactNode }> = (
           className="absolute inset-0 pointer-events-none"
           style={{
             background: 'radial-gradient(circle at 50% 50%, transparent 0%, rgba(26, 47, 26, 0.3) 100%)',
+          }}
+        />
+      </div>
+
+      {/* TECHNO Transition Overlay (Berlin) */}
+      <div
+        ref={technoOverlayRef}
+        className="fixed inset-0 z-[9999] pointer-events-none hidden items-center justify-center overflow-hidden"
+        style={{ backgroundColor: '#0a0a0a' }}
+      >
+        {/* Horizontal bars */}
+        {Array.from({ length: 12 }).map((_, i) => (
+          <div
+            key={i}
+            ref={(el) => (technoBarsRef.current[i] = el)}
+            className="absolute left-0 right-0"
+            style={{
+              top: `${(i / 12) * 100}%`,
+              height: `${100 / 12}%`,
+              backgroundColor: i % 2 === 0 ? '#0a0a0a' : '#111111',
+              willChange: 'transform',
+            }}
+          >
+            {/* Subtle red accent line */}
+            <div 
+              className="absolute bottom-0 left-0 right-0 h-px"
+              style={{ backgroundColor: 'rgba(255, 0, 64, 0.3)' }}
+            />
+          </div>
+        ))}
+
+        {/* Center text */}
+        <div
+          ref={technoTextRef}
+          className="relative z-10 text-4xl md:text-7xl font-bold tracking-[0.3em] opacity-0"
+          style={{ 
+            fontFamily: "'Bebas Neue', sans-serif",
+            color: '#f5f5f5',
+            textShadow: '0 0 40px rgba(255, 0, 64, 0.5), 0 0 80px rgba(0, 240, 255, 0.3)',
+          }}
+        />
+
+        {/* Scanlines */}
+        <div 
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 0, 0, 0.1) 2px, rgba(0, 0, 0, 0.1) 4px)',
+          }}
+        />
+
+        {/* Red glow */}
+        <div 
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background: 'radial-gradient(circle at 50% 50%, rgba(255, 0, 64, 0.1) 0%, transparent 70%)',
           }}
         />
       </div>
