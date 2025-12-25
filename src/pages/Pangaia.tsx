@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { usePageTransition } from '@/components/PageTransition';
 
 // Import assets
 import heroVideo from '@/assets/pangaia-hero-video.mp4';
@@ -24,6 +24,7 @@ const Pangaia = () => {
   const problemRef = useRef<HTMLElement>(null);
   const galleryRef = useRef<HTMLElement>(null);
   const resultsRef = useRef<HTMLElement>(null);
+  const { navigateWithTransition } = usePageTransition();
 
   // Particle state for animations
   const [particles, setParticles] = useState<Array<{ id: number; x: number; y: number; delay: number }>>([]);
@@ -138,13 +139,13 @@ const Pangaia = () => {
           </span>
           <span className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: '#8B9A7A' }} />
         </div>
-        <Link
-          to="/"
+        <button
+          onClick={() => navigateWithTransition('/')}
           className="text-xs tracking-[0.2em] uppercase transition-colors"
           style={{ color: '#8B9A7A' }}
         >
           ← Back to portfolio
-        </Link>
+        </button>
       </header>
 
       {/* Section 1: Hero - Symbiosis */}
@@ -390,9 +391,13 @@ const Pangaia = () => {
           <p className="text-xs text-center" style={{ color: '#5C4033' }}>
             This is a speculative campaign created for portfolio purposes. Not affiliated with PANGAIA.
           </p>
-          <Link to="/" className="text-xs tracking-[0.2em] uppercase transition-colors" style={{ color: '#5C4033' }}>
+          <button 
+            onClick={() => navigateWithTransition('/')} 
+            className="text-xs tracking-[0.2em] uppercase transition-colors" 
+            style={{ color: '#5C4033' }}
+          >
             Back to portfolio
-          </Link>
+          </button>
         </div>
       </footer>
 

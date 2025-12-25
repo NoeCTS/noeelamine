@@ -13,6 +13,7 @@ import ConceptCampaignsSection from '@/components/ConceptCampaignsSection';
 import ExperienceSection from '@/components/ExperienceSection';
 import EducationSection from '@/components/EducationSection';
 import NothingCTASection from '@/components/NothingCTASection';
+import PangaiaCTASection from '@/components/PangaiaCTASection';
 import PhilosophySection from '@/components/PhilosophySection';
 import ContactSection from '@/components/ContactSection';
 
@@ -251,6 +252,7 @@ const Index = () => {
           />
           <PositioningSection ref={positioningRef} />
           <NothingCTASection />
+          <PangaiaCTASection />
           <ProjectsSection ref={projectsRef} />
           <ConceptCampaignsSection ref={conceptCampaignsRef} />
           <ExperienceSection ref={experienceRef} />
