@@ -76,10 +76,10 @@ const Index = () => {
 
     window.addEventListener('mousemove', handleMouseMove);
 
-    // Cursor hover effect using event delegation (works with dynamically rendered elements)
+    // Cursor hover effect using event delegation (only for links, not project cards)
     const handleMouseOver = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      if (target.closest('a, .project-card')) {
+      if (target.closest('a')) {
         cursorRef.current?.classList.add('hovering');
       }
     };
@@ -87,8 +87,7 @@ const Index = () => {
     const handleMouseOut = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
       const relatedTarget = e.relatedTarget as HTMLElement | null;
-      // Only remove hovering if we're not moving to another hoverable element
-      if (target.closest('a, .project-card') && !relatedTarget?.closest('a, .project-card')) {
+      if (target.closest('a') && !relatedTarget?.closest('a')) {
         cursorRef.current?.classList.remove('hovering');
       }
     };
