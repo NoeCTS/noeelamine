@@ -3,8 +3,8 @@ import gsap from 'gsap';
 import { usePageTransition } from './PageTransition';
 
 const GLITCH_CHARS = '█▓▒░╔╗╚╝┃━┏┓┗┛▀▄▌▐■□▪▫';
-const NOTHING_TEXT = 'DO YOU WORK AT NOTHING?';
-const PANGAIA_TEXT = 'BECOME NATURE';
+const NOTHING_TEXT = 'NOTHING';
+const PANGAIA_TEXT = 'PANGAIA';
 const SLICE_COUNT = 6;
 const PETAL_COUNT = 24;
 
