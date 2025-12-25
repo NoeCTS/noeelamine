@@ -2,9 +2,10 @@ import { useEffect, useRef, useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { ArrowLeft, Play, Instagram, Mail, Video } from 'lucide-react';
+import { ArrowLeft, Play, Pause, Instagram, Mail, Video } from 'lucide-react';
 import BerlinScene, { BerlinSceneHandle } from '@/components/BerlinScene';
 import { usePageTransition } from '@/components/PageTransition';
+import berlinVideo from '@/assets/berlin-night-video.mp4';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -14,8 +15,10 @@ const Berlin = () => {
   const heroTextRef = useRef<HTMLHeadingElement>(null);
   const horizontalTextRef = useRef<HTMLDivElement>(null);
   const videoSectionRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const detailsRef = useRef<HTMLDivElement>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
   const { navigateWithTransition } = usePageTransition();
 
   // Calculate BPM for CSS animations
@@ -208,34 +211,61 @@ const Berlin = () => {
           style={{ perspective: '1000px' }}
         >
           <div className="video-container relative w-full max-w-5xl mx-auto px-8">
-            {/* Video placeholder with pulsing border */}
+            {/* Video with pulsing border */}
             <div className="video-pulse-border video-scanlines relative aspect-video bg-berlin-deep rounded-sm overflow-hidden">
-              {/* Noise pattern inside placeholder */}
-              <div 
-                className="absolute inset-0 opacity-20"
-                style={{
-                  backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
+              {/* Actual video */}
+              <video
+                ref={videoRef}
+                src={berlinVideo}
+                className="absolute inset-0 w-full h-full object-cover"
+                loop
+                muted
+                playsInline
+                onClick={() => {
+                  if (videoRef.current) {
+                    if (isPlaying) {
+                      videoRef.current.pause();
+                    } else {
+                      videoRef.current.play();
+                    }
+                    setIsPlaying(!isPlaying);
+                  }
                 }}
               />
               
               {/* Gradient overlay */}
-              <div className="absolute inset-0 bg-gradient-to-br from-neon-red/5 via-transparent to-neon-blue/5" />
+              <div className="absolute inset-0 bg-gradient-to-br from-neon-red/5 via-transparent to-neon-blue/5 pointer-events-none" />
               
-              {/* Play button */}
-              <div className="absolute inset-0 flex flex-col items-center justify-center gap-6">
-                <button className="group relative w-24 h-24 rounded-full border-2 border-foreground/30 flex items-center justify-center hover:border-neon-red hover:bg-neon-red/10 transition-all duration-300">
-                  <Play className="w-10 h-10 text-foreground/60 group-hover:text-neon-red transition-colors ml-1" />
+              {/* Play/Pause button */}
+              <div className={`absolute inset-0 flex flex-col items-center justify-center gap-6 transition-opacity duration-300 ${isPlaying ? 'opacity-0 hover:opacity-100' : 'opacity-100'}`}>
+                <button 
+                  onClick={() => {
+                    if (videoRef.current) {
+                      if (isPlaying) {
+                        videoRef.current.pause();
+                      } else {
+                        videoRef.current.play();
+                      }
+                      setIsPlaying(!isPlaying);
+                    }
+                  }}
+                  className="group relative w-24 h-24 rounded-full border-2 border-foreground/30 flex items-center justify-center hover:border-neon-red hover:bg-neon-red/10 transition-all duration-300 bg-background/20 backdrop-blur-sm"
+                >
+                  {isPlaying ? (
+                    <Pause className="w-10 h-10 text-foreground/60 group-hover:text-neon-red transition-colors" />
+                  ) : (
+                    <Play className="w-10 h-10 text-foreground/60 group-hover:text-neon-red transition-colors ml-1" />
+                  )}
                   <div className="absolute inset-0 rounded-full border border-foreground/10 scale-150 opacity-0 group-hover:scale-100 group-hover:opacity-100 transition-all duration-500" />
                 </button>
-                <span className="text-foreground/40 font-mono text-xs tracking-[0.3em]">VIDEO COMING SOON</span>
               </div>
               
               {/* Waveform visualization */}
-              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 waveform">
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 waveform pointer-events-none">
                 {waveformBars.map((bar, i) => (
                   <div
                     key={i}
-                    className={`waveform-bar ${scrollProgress > 0.45 ? 'animate' : ''}`}
+                    className={`waveform-bar ${isPlaying || scrollProgress > 0.45 ? 'animate' : ''}`}
                     style={{ 
                       height: `${bar.height}%`,
                       animationDelay: `${bar.delay}s`,
