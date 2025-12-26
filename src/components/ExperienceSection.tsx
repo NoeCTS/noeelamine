@@ -39,7 +39,7 @@ const experiences: Experience[] = [
   },
   {
     year: '2021-2024',
-    title: 'The Journey Begins',
+    title: 'Before All This',
     description: 'German 1st Bundesliga Rugby, U16 National Team, and ESCP Business School across 3 cities.',
     location: 'London — Paris — Berlin',
   },
