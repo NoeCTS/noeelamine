@@ -29,12 +29,13 @@ const Aube = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
 
-    // Lenis smooth scroll
+    // Lenis smooth scroll - extra smooth for editorial feel
     const lenis = new Lenis({
-      duration: 1.2,
+      duration: 1.8,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       orientation: 'vertical',
       smoothWheel: true,
+      lerp: 0.08,
     });
 
     lenis.on('scroll', ScrollTrigger.update);
@@ -78,122 +79,130 @@ const Aube = () => {
       .fromTo('.aube-hero-tagline', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out' }, '-=0.4')
       .fromTo('.aube-scroll-indicator', { opacity: 0 }, { opacity: 1, duration: 0.5 }, '-=0.2');
 
-    // Problem section - Heinz ad reveal
+    // Problem section - Heinz ad reveal with smoother scrub
     const problemTl = gsap.timeline({
       scrollTrigger: {
         trigger: problemRef.current,
         start: 'top top',
-        end: '+=200%',
-        scrub: 1,
+        end: '+=250%',
+        scrub: 1.5,
         pin: true,
         anticipatePin: 1,
       }
     });
 
     problemTl
-      .fromTo('.heinz-question', { opacity: 1 }, { opacity: 0, duration: 0.3 })
-      .fromTo('.heinz-reveal-1', { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.3 })
-      .to('.heinz-reveal-1', { opacity: 0, duration: 0.2 }, '+=0.5')
-      .fromTo('.heinz-annotations', { opacity: 0, scale: 0.95 }, { opacity: 1, scale: 1, duration: 0.5 })
-      .fromTo('.heinz-annotation-box', { opacity: 0, scale: 0 }, { opacity: 1, scale: 1, duration: 0.3, stagger: 0.15 }, '-=0.2')
-      .fromTo('.heinz-reveal-2', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.3 }, '+=0.3')
-      .fromTo('.heinz-reveal-3', { opacity: 0 }, { opacity: 1, duration: 0.4 }, '+=0.5');
+      .fromTo('.heinz-question', { opacity: 1 }, { opacity: 0, duration: 0.4, ease: 'power2.inOut' })
+      .fromTo('.heinz-reveal-1', { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.5, ease: 'power3.out' })
+      .to('.heinz-reveal-1', { opacity: 0, duration: 0.3, ease: 'power2.inOut' }, '+=0.6')
+      .fromTo('.heinz-annotations', { opacity: 0, scale: 0.97 }, { opacity: 1, scale: 1, duration: 0.6, ease: 'power2.out' })
+      .fromTo('.heinz-annotation-box', { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: 0.4, stagger: 0.2, ease: 'back.out(1.7)' }, '-=0.3')
+      .fromTo('.heinz-reveal-2', { opacity: 0, y: 25 }, { opacity: 1, y: 0, duration: 0.5, ease: 'power3.out' }, '+=0.4')
+      .fromTo('.heinz-reveal-3', { opacity: 0, y: 15 }, { opacity: 1, y: 0, duration: 0.5, ease: 'power3.out' }, '+=0.5');
 
-    // Origin section - staggered text reveals
+    // Origin section - staggered text reveals with smoother transitions
     gsap.utils.toArray('.origin-text').forEach((el: any, i: number) => {
       gsap.fromTo(el, 
-        { opacity: 0, y: 40 }, 
+        { opacity: 0, y: 50, filter: 'blur(4px)' }, 
         { 
           opacity: 1, 
           y: 0, 
-          duration: 0.8, 
+          filter: 'blur(0px)',
+          duration: 1.2, 
           ease: 'power3.out',
           scrollTrigger: {
             trigger: el,
-            start: 'top 80%',
-            toggleActions: 'play none none reverse',
+            start: 'top 85%',
+            end: 'top 40%',
+            scrub: 0.8,
           }
         }
       );
     });
 
-    // Solution section - flow diagram
+    // Solution section - flow diagram with fluid animations
     const solutionTl = gsap.timeline({
       scrollTrigger: {
         trigger: solutionRef.current,
-        start: 'top 60%',
-        toggleActions: 'play none none reverse',
+        start: 'top 70%',
+        end: 'center 40%',
+        scrub: 1,
       }
     });
 
     solutionTl
-      .fromTo('.solution-title', { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.6 })
-      .fromTo('.flow-step', { opacity: 0, x: -30 }, { opacity: 1, x: 0, duration: 0.4, stagger: 0.15 }, '-=0.3')
-      .fromTo('.flow-connector', { scaleX: 0 }, { scaleX: 1, duration: 0.3, stagger: 0.1 }, '-=0.8')
-      .fromTo('.dimension-card', { opacity: 0, y: 40, scale: 0.95 }, { opacity: 1, y: 0, scale: 1, duration: 0.5, stagger: 0.1 }, '-=0.3')
-      .fromTo('.solution-comparison', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.5 }, '-=0.2');
+      .fromTo('.solution-title', { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' })
+      .fromTo('.flow-step', { opacity: 0, y: 30, scale: 0.9 }, { opacity: 1, y: 0, scale: 1, duration: 0.6, stagger: 0.2, ease: 'power3.out' }, '-=0.4')
+      .fromTo('.flow-connector', { scaleX: 0, opacity: 0 }, { scaleX: 1, opacity: 1, duration: 0.5, stagger: 0.15, ease: 'power2.inOut' }, '-=1')
+      .fromTo('.dimension-card', { opacity: 0, y: 50, scale: 0.92 }, { opacity: 1, y: 0, scale: 1, duration: 0.7, stagger: 0.12, ease: 'power3.out' }, '-=0.5')
+      .fromTo('.solution-comparison', { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out' }, '-=0.3');
 
-    // Vibe code section
+    // Vibe code section with smooth scrub
     gsap.utils.toArray('.vibe-text').forEach((el: any) => {
       gsap.fromTo(el,
-        { opacity: 0, y: 30 },
+        { opacity: 0, y: 40, filter: 'blur(3px)' },
         {
           opacity: 1,
           y: 0,
-          duration: 0.7,
+          filter: 'blur(0px)',
+          duration: 1,
+          ease: 'power3.out',
           scrollTrigger: {
             trigger: el,
-            start: 'top 85%',
-            toggleActions: 'play none none reverse',
+            start: 'top 88%',
+            end: 'top 50%',
+            scrub: 0.6,
           }
         }
       );
     });
 
-    // Showcase section
+    // Showcase section with fluid scroll-linked animation
     gsap.fromTo('.showcase-mockup',
-      { opacity: 0, y: 60, scale: 0.95 },
+      { opacity: 0, y: 80, scale: 0.92, rotateX: 5 },
       {
         opacity: 1,
         y: 0,
         scale: 1,
-        duration: 1,
+        rotateX: 0,
         ease: 'power3.out',
         scrollTrigger: {
           trigger: showcaseRef.current,
-          start: 'top 70%',
-          toggleActions: 'play none none reverse',
+          start: 'top 80%',
+          end: 'top 30%',
+          scrub: 1.2,
         }
       }
     );
 
-    // NGO section
-    gsap.fromTo('.ngo-card',
-      { opacity: 0, y: 40 },
-      {
-        opacity: 1,
-        y: 0,
-        duration: 0.6,
-        stagger: 0.15,
-        scrollTrigger: {
-          trigger: ngoRef.current,
-          start: 'top 70%',
-          toggleActions: 'play none none reverse',
-        }
+    // NGO section with staggered scrub
+    const ngoTl = gsap.timeline({
+      scrollTrigger: {
+        trigger: ngoRef.current,
+        start: 'top 75%',
+        end: 'center 50%',
+        scrub: 0.8,
       }
+    });
+    
+    ngoTl.fromTo('.ngo-card',
+      { opacity: 0, y: 50, scale: 0.95 },
+      { opacity: 1, y: 0, scale: 1, stagger: 0.15, ease: 'power3.out' }
     );
 
-    // Closing section
+    // Closing section with smooth reveal
     gsap.fromTo('.closing-text',
-      { opacity: 0, y: 40 },
+      { opacity: 0, y: 50, filter: 'blur(4px)' },
       {
         opacity: 1,
         y: 0,
-        duration: 0.8,
+        filter: 'blur(0px)',
+        ease: 'power3.out',
         scrollTrigger: {
           trigger: closingRef.current,
-          start: 'top 70%',
-          toggleActions: 'play none none reverse',
+          start: 'top 80%',
+          end: 'top 40%',
+          scrub: 0.8,
         }
       }
     );
@@ -435,7 +444,7 @@ const Aube = () => {
           
           <div className="text-center mt-10">
             <a 
-              href="https://aube.cx" 
+              href="https://aube-ai.com" 
               target="_blank" 
               rel="noopener noreferrer"
               className="inline-flex items-center gap-3 px-8 py-4 bg-amber-500 hover:bg-amber-400 text-black font-semibold rounded-full transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-amber-500/30"
@@ -470,7 +479,7 @@ const Aube = () => {
           </div>
 
           <a 
-            href="mailto:founding@aube.cx" 
+            href="mailto:founding@aube-ai.com" 
             className="inline-flex items-center gap-2 px-6 py-3 border border-amber-500 text-amber-500 rounded-full hover:bg-amber-500 hover:text-black transition-all duration-300"
           >
             Apply for Founding Partner Access <ArrowDown className="w-4 h-4 rotate-[-90deg]" />
@@ -488,7 +497,7 @@ const Aube = () => {
 
           <div className="closing-text flex flex-col sm:flex-row items-center justify-center gap-6">
             <a 
-              href="https://aube.cx" 
+              href="https://aube-ai.com" 
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-3 px-8 py-4 bg-amber-500 hover:bg-amber-400 text-black font-semibold rounded-full transition-all duration-300 hover:scale-105"
