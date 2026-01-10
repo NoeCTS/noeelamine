@@ -71,6 +71,8 @@ export const PageTransitionProvider: React.FC<{ children: React.ReactNode }> = (
       type = 'organic';
     } else if (to === '/berlin' || location.pathname === '/berlin') {
       type = 'techno';
+    } else if (to === '/aube' || location.pathname === '/aube') {
+      type = 'glitch'; // Aube uses glitch with amber styling handled by route detection
     }
     
     setTransitionType(type);
@@ -407,6 +409,7 @@ export const PageTransitionProvider: React.FC<{ children: React.ReactNode }> = (
 
     const targetText = targetPath === '/nothing' ? 'NOTHING' : 
                        targetPath === '/berlin' ? 'BERLIN' :
+                       targetPath === '/aube' ? 'AUBE' :
                        targetPath === '/' ? 'HOME' : 'LOADING';
     
     let iteration = 0;
