@@ -516,6 +516,80 @@
   transition: width 0.15s, height 0.15s, background 0.15s, border-color 0.15s, box-shadow 0.15s;
 }
 
+/* ================================ */
+/* AUBE PROJECT STYLES              */
+/* ================================ */
+
+/* Aube card with subtle glow */
+.aube-card {
+  background: linear-gradient(135deg, rgba(23, 23, 23, 0.9) 0%, rgba(26, 26, 26, 0.8) 100%);
+  border: 1px solid rgba(245, 158, 11, 0.1);
+  backdrop-filter: blur(10px);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.aube-card:hover {
+  border-color: rgba(245, 158, 11, 0.3);
+  box-shadow: 0 0 40px rgba(245, 158, 11, 0.1), 0 20px 40px -20px rgba(0, 0, 0, 0.5);
+  transform: translateY(-4px);
+}
+
+/* Aube pull quote with amber accent */
+.aube-pull-quote {
+  border-left: 3px solid hsl(var(--accent));
+  padding-left: 1.5rem;
+  margin-left: 0;
+}
+
+/* Aube amber glow effect */
+.aube-glow {
+  box-shadow: 0 0 60px rgba(245, 158, 11, 0.2), 0 0 120px rgba(245, 158, 11, 0.1);
+}
+
+/* Aube button hover glow */
+.aube-btn-glow:hover {
+  box-shadow: 0 0 30px rgba(245, 158, 11, 0.4), 0 10px 30px -10px rgba(245, 158, 11, 0.3);
+}
+
+/* Aube annotation box pulse */
+.aube-annotation-pulse {
+  animation: aube-pulse 2s ease-in-out infinite;
+}
+
+@keyframes aube-pulse {
+  0%, 100% { 
+    box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4);
+  }
+  50% { 
+    box-shadow: 0 0 0 10px rgba(245, 158, 11, 0);
+  }
+}
+
+/* Aube shimmer effect for loading states */
+.aube-shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(245, 158, 11, 0) 0%,
+    rgba(245, 158, 11, 0.1) 50%,
+    rgba(245, 158, 11, 0) 100%
+  );
+  background-size: 200% 100%;
+  animation: aube-shimmer 2s infinite;
+}
+
+@keyframes aube-shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* Aube text gradient */
+.aube-text-gradient {
+  background: linear-gradient(135deg, #f59e0b 0%, #ea580c 50%, #f59e0b 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   .glitch-text::before,
@@ -523,12 +597,18 @@
   .bass-pulse,
   .video-pulse-border,
   .waveform-bar,
-  .strobe {
+  .strobe,
+  .aube-annotation-pulse,
+  .aube-shimmer {
     animation: none !important;
   }
   
   .glitch-text::before,
   .glitch-text::after {
     display: none;
+  }
+  
+  .aube-card:hover {
+    transform: none;
   }
 }
