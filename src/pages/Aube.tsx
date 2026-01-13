@@ -410,18 +410,36 @@ const Aube = () => {
             The hardest part wasn't the code. <span className="text-white/90">It was encoding cultural nuance into logic.</span>
           </p>
 
-          {/* Abstract code visualization */}
-          <div className="vibe-text relative h-32 rounded-xl overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-r from-amber-500/10 via-orange-500/5 to-amber-500/10 blur-2xl" />
-            <div className="absolute inset-0 flex items-center justify-center opacity-30">
-              <pre className="text-xs text-amber-500/60 font-mono blur-[2px]">
-{`analyze_cultural_context(
-  markets: ["US", "UK", "DE", ...],
-  frameworks: [tokenism, appropriation, ...],
-  confidence_threshold: 0.85
-)`}
-              </pre>
+          {/* Code visualization */}
+          <div className="vibe-text relative rounded-xl overflow-hidden border border-amber-500/20 bg-[#0d0d0d]">
+            <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 via-transparent to-orange-500/5" />
+            {/* Terminal header */}
+            <div className="flex items-center gap-2 px-4 py-3 border-b border-white/10 bg-white/5">
+              <div className="w-3 h-3 rounded-full bg-red-500/80" />
+              <div className="w-3 h-3 rounded-full bg-yellow-500/80" />
+              <div className="w-3 h-3 rounded-full bg-green-500/80" />
+              <span className="ml-3 text-xs text-white/40 font-mono">aube_analysis.py</span>
             </div>
+            {/* Code content */}
+            <div className="p-6 font-mono text-sm leading-relaxed">
+              <div className="text-purple-400">
+                <span className="text-pink-400">def</span> <span className="text-amber-400">analyze_cultural_context</span><span className="text-white/80">(</span><span className="text-orange-300">asset</span><span className="text-white/80">):</span>
+              </div>
+              <div className="pl-6 mt-2">
+                <span className="text-white/60">markets</span> <span className="text-pink-400">=</span> <span className="text-white/80">[</span><span className="text-green-400">"US"</span><span className="text-white/50">,</span> <span className="text-green-400">"UK"</span><span className="text-white/50">,</span> <span className="text-green-400">"DE"</span><span className="text-white/50">,</span> <span className="text-white/40">...</span><span className="text-white/80">]</span>
+              </div>
+              <div className="pl-6 mt-1">
+                <span className="text-white/60">frameworks</span> <span className="text-pink-400">=</span> <span className="text-white/80">[</span><span className="text-cyan-400">tokenism</span><span className="text-white/50">,</span> <span className="text-cyan-400">appropriation</span><span className="text-white/50">,</span> <span className="text-white/40">...</span><span className="text-white/80">]</span>
+              </div>
+              <div className="pl-6 mt-1">
+                <span className="text-white/60">confidence</span> <span className="text-pink-400">=</span> <span className="text-amber-400">0.85</span>
+              </div>
+              <div className="pl-6 mt-3">
+                <span className="text-pink-400">return</span> <span className="text-amber-400">cultural_insights</span><span className="text-white/80">(</span><span className="text-orange-300">asset</span><span className="text-white/50">,</span> <span className="text-white/60">markets</span><span className="text-white/80">)</span>
+              </div>
+            </div>
+            {/* Glow effect */}
+            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-3/4 h-px bg-gradient-to-r from-transparent via-amber-500/50 to-transparent" />
           </div>
         </div>
       </section>
