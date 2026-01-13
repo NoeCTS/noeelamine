@@ -497,7 +497,9 @@ const Aube = () => {
           </div>
 
           <a 
-            href="mailto:founding@aube-ai.com" 
+            href="https://aube-ai.com/ngo-apply" 
+            target="_blank"
+            rel="noopener noreferrer"
             className="inline-flex items-center gap-2 px-6 py-3 border border-amber-500 text-amber-500 rounded-full hover:bg-amber-500 hover:text-black transition-all duration-300"
           >
             Apply for Founding Partner Access <ArrowDown className="w-4 h-4 rotate-[-90deg]" />
