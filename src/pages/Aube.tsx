@@ -257,21 +257,21 @@ const Aube = () => {
       </section>
 
       {/* Problem Section - Heinz Ad Reveal */}
-      <section ref={problemRef} className="min-h-screen flex items-center justify-center relative px-6">
-        <div className="max-w-5xl w-full">
+      <section ref={problemRef} className="h-screen flex items-center justify-center relative px-6 overflow-hidden">
+        <div className="max-w-4xl w-full flex flex-col items-center justify-center">
           {/* Question overlay */}
-          <div className="heinz-question absolute inset-0 flex items-center justify-center z-20">
+          <div className="heinz-question absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
             <p className="text-2xl md:text-4xl font-light text-center px-8">
               Do you see anything wrong with this ad?
             </p>
           </div>
 
-          {/* The Heinz ad image */}
-          <div className="relative">
+          {/* The Heinz ad image - centered container */}
+          <div className="relative w-full max-w-3xl mx-auto">
             <img 
               src={heinzAdImage} 
               alt="Heinz advertisement" 
-              className="w-full rounded-lg shadow-2xl"
+              className="w-full h-auto max-h-[60vh] object-contain rounded-lg shadow-2xl mx-auto"
             />
             
             {/* Annotations overlay */}
@@ -286,15 +286,15 @@ const Aube = () => {
             </div>
           </div>
 
-          {/* Reveal text 1 */}
-          <div className="heinz-reveal-1 absolute bottom-32 left-0 right-0 text-center px-8 opacity-0">
+          {/* Reveal text 1 - positioned below image */}
+          <div className="heinz-reveal-1 w-full text-center mt-8 opacity-0">
             <p className="text-lg md:text-xl text-white/70 max-w-2xl mx-auto">
               Most people don't. Neither did Heinz's agency. Neither did their market research.
             </p>
           </div>
 
           {/* Reveal text 2 */}
-          <div className="heinz-reveal-2 mt-12 text-center opacity-0">
+          <div className="heinz-reveal-2 w-full mt-8 text-center opacity-0">
             <p className="text-lg text-white/80 max-w-3xl mx-auto leading-relaxed">
               <span className="text-amber-500 font-medium">Black bride. White groom. His parents present. Her family?</span> Absent.
               <br /><br />
@@ -303,7 +303,7 @@ const Aube = () => {
           </div>
 
           {/* Reveal text 3 - Other examples */}
-          <div className="heinz-reveal-3 mt-8 text-center opacity-0">
+          <div className="heinz-reveal-3 w-full mt-6 text-center opacity-0">
             <p className="text-base text-white/50 max-w-2xl mx-auto">
               This happens constantly. <span className="text-white/70">Pepsi and Kendall Jenner.</span> <span className="text-white/70">Dolce & Gabbana in China.</span> <span className="text-white/70">H&M's "coolest monkey" hoodie.</span>
               <br /><br />
