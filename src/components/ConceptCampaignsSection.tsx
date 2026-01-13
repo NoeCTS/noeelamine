@@ -542,74 +542,6 @@ const ConceptCampaignsSection = forwardRef<HTMLElement>((_, ref) => {
               </div>
             </button>
 
-            {/* AUBE CTA */}
-            <button
-              onClick={() => navigateWithTransition('/aube')}
-              className="group block w-full text-left"
-            >
-              <div
-                className="relative border border-amber-500/20 hover:border-amber-500/60 transition-all duration-500 px-8 py-12 md:px-16 md:py-16 overflow-hidden"
-                style={{ 
-                  willChange: 'transform, opacity, box-shadow',
-                  background: 'linear-gradient(135deg, rgba(20, 15, 10, 0.9), rgba(30, 20, 10, 0.8))'
-                }}
-              >
-                {/* Amber glow pulse overlay */}
-                <div
-                  className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                  style={{
-                    background: 'radial-gradient(circle at 50% 50%, rgba(245, 158, 11, 0.15), transparent 70%)',
-                    animation: 'amberPulse 2s ease-in-out infinite',
-                  }}
-                />
-
-                {/* Subtle shimmer overlay */}
-                <div
-                  className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                  style={{
-                    background: 'linear-gradient(90deg, transparent 0%, rgba(245, 158, 11, 0.05) 50%, transparent 100%)',
-                    backgroundSize: '200% 100%',
-                    animation: 'aubeShimmer 3s infinite',
-                  }}
-                />
-
-                {/* Main text */}
-                <div className="relative flex items-center justify-center h-[2em] md:h-[2.5em]">
-                  <h2 
-                    className="text-xl md:text-2xl lg:text-3xl font-bold tracking-[0.3em] uppercase transition-all duration-500"
-                    style={{
-                      background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.6) 0%, rgba(234, 88, 12, 0.6) 50%, rgba(245, 158, 11, 0.6) 100%)',
-                      WebkitBackgroundClip: 'text',
-                      WebkitTextFillColor: 'transparent',
-                      backgroundClip: 'text',
-                    }}
-                  >
-                    <span className="group-hover:drop-shadow-[0_0_20px_rgba(245,158,11,0.5)] transition-all duration-500">
-                      AUBE
-                    </span>
-                  </h2>
-                </div>
-
-                {/* Subtitle */}
-                <p className="text-center text-amber-500/50 font-light text-xs tracking-wider mt-2 group-hover:text-amber-400/80 transition-colors duration-500">
-                  CULTURAL INTELLIGENCE
-                </p>
-
-                {/* Corner accents - amber themed */}
-                <div className="absolute top-0 left-0 w-4 h-4 border-l border-t border-amber-500/30 group-hover:border-amber-500/70 transition-colors duration-500" />
-                <div className="absolute top-0 right-0 w-4 h-4 border-r border-t border-amber-500/30 group-hover:border-amber-500/70 transition-colors duration-500" />
-                <div className="absolute bottom-0 left-0 w-4 h-4 border-l border-b border-amber-500/30 group-hover:border-amber-500/70 transition-colors duration-500" />
-                <div className="absolute bottom-0 right-0 w-4 h-4 border-r border-b border-amber-500/30 group-hover:border-amber-500/70 transition-colors duration-500" />
-
-                {/* Hover glow effect */}
-                <div 
-                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-                  style={{
-                    boxShadow: 'inset 0 0 60px rgba(245, 158, 11, 0.1)',
-                  }}
-                />
-              </div>
-            </button>
           </div>
         </div>
       </div>
@@ -622,14 +554,6 @@ const ConceptCampaignsSection = forwardRef<HTMLElement>((_, ref) => {
         @keyframes bassPulse {
           0%, 100% { opacity: 0.3; transform: scale(1); }
           50% { opacity: 0.6; transform: scale(1.02); }
-        }
-        @keyframes amberPulse {
-          0%, 100% { opacity: 0.4; transform: scale(1); }
-          50% { opacity: 0.8; transform: scale(1.01); }
-        }
-        @keyframes aubeShimmer {
-          0% { background-position: -200% 0; }
-          100% { background-position: 200% 0; }
         }
       `}</style>
     </section>

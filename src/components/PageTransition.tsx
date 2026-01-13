@@ -5,6 +5,7 @@ import gsap from 'gsap';
 const SLICE_COUNT = 8;
 const GLITCH_CHARS = '█▓▒░╔╗╚╝┃━▀▄■□';
 const PETAL_COUNT = 60;
+const SUNRISE_RAY_COUNT = 12;
 
 interface TransitionContextType {
   navigateWithTransition: (to: string) => void;
@@ -45,7 +46,7 @@ export const PageTransitionProvider: React.FC<{ children: React.ReactNode }> = (
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [phase, setPhase] = useState<'idle' | 'exiting' | 'entering'>('idle');
   const [targetPath, setTargetPath] = useState<string | null>(null);
-  const [transitionType, setTransitionType] = useState<'glitch' | 'organic' | 'techno'>('glitch');
+  const [transitionType, setTransitionType] = useState<'glitch' | 'organic' | 'techno' | 'sunrise'>('glitch');
   const overlayRef = useRef<HTMLDivElement>(null);
   const slicesRef = useRef<(HTMLDivElement | null)[]>([]);
   const textRef = useRef<HTMLDivElement>(null);
@@ -55,6 +56,9 @@ export const PageTransitionProvider: React.FC<{ children: React.ReactNode }> = (
   const technoOverlayRef = useRef<HTMLDivElement>(null);
   const technoTextRef = useRef<HTMLDivElement>(null);
   const technoBarsRef = useRef<(HTMLDivElement | null)[]>([]);
+  const sunriseOverlayRef = useRef<HTMLDivElement>(null);
+  const sunriseTextRef = useRef<HTMLDivElement>(null);
+  const sunriseRaysRef = useRef<(HTMLDivElement | null)[]>([]);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -66,13 +70,13 @@ export const PageTransitionProvider: React.FC<{ children: React.ReactNode }> = (
     document.documentElement.style.overflow = 'hidden';
 
     // Determine transition type based on route
-    let type: 'glitch' | 'organic' | 'techno' = 'glitch';
+    let type: 'glitch' | 'organic' | 'techno' | 'sunrise' = 'glitch';
     if (to === '/pangaia' || location.pathname === '/pangaia') {
       type = 'organic';
     } else if (to === '/berlin' || location.pathname === '/berlin') {
       type = 'techno';
     } else if (to === '/aube' || location.pathname === '/aube') {
-      type = 'glitch'; // Aube uses glitch with amber styling handled by route detection
+      type = 'sunrise';
     }
     
     setTransitionType(type);
@@ -400,9 +404,104 @@ export const PageTransitionProvider: React.FC<{ children: React.ReactNode }> = (
     return () => ctx.revert();
   }, []);
 
+  // SUNRISE TRANSITION (for Aube)
+  useEffect(() => {
+    if (phase !== 'exiting' || !isTransitioning || !targetPath || transitionType !== 'sunrise' || !sunriseOverlayRef.current) return;
+
+    const overlay = sunriseOverlayRef.current;
+    const rays = sunriseRaysRef.current.filter(Boolean) as HTMLDivElement[];
+    const text = sunriseTextRef.current;
+
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({
+        onComplete: () => {
+          setPhase('entering');
+          window.scrollTo(0, 0);
+          document.documentElement.scrollTop = 0;
+          document.body.scrollTop = 0;
+          navigate(targetPath);
+          setTimeout(() => runSunriseEntry(), 50);
+        },
+      });
+
+      tl.set(overlay, { display: 'flex', opacity: 1 });
+
+      // Rays expand from bottom center
+      rays.forEach((ray, i) => {
+        const delay = i * 0.04;
+        tl.fromTo(ray,
+          { scaleY: 0, opacity: 0 },
+          { scaleY: 1, opacity: 0.6 + Math.random() * 0.4, duration: 0.5, ease: 'power2.out' },
+          delay
+        );
+      });
+
+      // Warm pulse
+      tl.to(overlay, { 
+        backgroundColor: 'rgba(245, 158, 11, 0.15)', 
+        duration: 0.2 
+      }, 0.3);
+      tl.to(overlay, { 
+        backgroundColor: 'rgba(15, 10, 5, 1)', 
+        duration: 0.3 
+      }, 0.5);
+
+      // Text rises like the sun
+      if (text) {
+        tl.fromTo(text,
+          { opacity: 0, y: 40, scale: 0.9 },
+          { opacity: 1, y: 0, scale: 1, duration: 0.6, ease: 'power2.out' },
+          0.4
+        );
+      }
+    });
+
+    return () => ctx.revert();
+  }, [phase, isTransitioning, targetPath, transitionType, navigate]);
+
+  const runSunriseEntry = useCallback(() => {
+    if (!sunriseOverlayRef.current) return;
+
+    const overlay = sunriseOverlayRef.current;
+    const rays = sunriseRaysRef.current.filter(Boolean) as HTMLDivElement[];
+    const text = sunriseTextRef.current;
+
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({
+        onComplete: () => {
+          setPhase('idle');
+          setIsTransitioning(false);
+          setTargetPath(null);
+          gsap.set(overlay, { display: 'none' });
+          document.body.style.overflow = '';
+          document.documentElement.style.overflow = '';
+        },
+      });
+
+      // Text fades up and out
+      if (text) {
+        tl.to(text, { opacity: 0, y: -30, scale: 1.1, duration: 0.3 }, 0);
+      }
+
+      // Rays expand and fade
+      rays.forEach((ray, i) => {
+        tl.to(ray, {
+          scaleY: 1.5,
+          opacity: 0,
+          duration: 0.4,
+          ease: 'power2.in',
+        }, 0.1 + i * 0.02);
+      });
+
+      tl.to(overlay, { opacity: 0, duration: 0.3 }, 0.3);
+    });
+
+    return () => ctx.revert();
+  }, []);
+
   // Scramble text effect for glitch and techno
   useEffect(() => {
-    if (!isTransitioning || transitionType === 'organic') return;
+    if (!isTransitioning || transitionType === 'organic' || transitionType === 'sunrise') return;
     
     const element = transitionType === 'glitch' ? textRef.current : technoTextRef.current;
     if (!element) return;
@@ -591,6 +690,79 @@ export const PageTransitionProvider: React.FC<{ children: React.ReactNode }> = (
           className="absolute inset-0 pointer-events-none"
           style={{
             background: 'radial-gradient(circle at 50% 50%, rgba(255, 0, 64, 0.1) 0%, transparent 70%)',
+          }}
+        />
+      </div>
+
+      {/* SUNRISE Transition Overlay (Aube) */}
+      <div
+        ref={sunriseOverlayRef}
+        className="fixed inset-0 z-[9999] pointer-events-none hidden items-center justify-center overflow-hidden"
+        style={{ backgroundColor: 'rgba(15, 10, 5, 1)' }}
+      >
+        {/* Gradient base - warm amber to dark */}
+        <div 
+          className="absolute inset-0"
+          style={{
+            background: 'radial-gradient(ellipse 120% 60% at 50% 100%, rgba(245, 158, 11, 0.3) 0%, rgba(234, 88, 12, 0.15) 30%, transparent 70%)',
+          }}
+        />
+
+        {/* Sun rays emanating from bottom */}
+        {Array.from({ length: SUNRISE_RAY_COUNT }).map((_, i) => {
+          const angle = (i / SUNRISE_RAY_COUNT) * 180 - 90; // -90 to 90 degrees
+          const width = 2 + Math.random() * 3;
+          return (
+            <div
+              key={i}
+              ref={(el) => (sunriseRaysRef.current[i] = el)}
+              className="absolute"
+              style={{
+                bottom: 0,
+                left: '50%',
+                width: `${width}px`,
+                height: '120%',
+                background: `linear-gradient(to top, rgba(245, 158, 11, 0.6) 0%, rgba(234, 88, 12, 0.3) 40%, transparent 100%)`,
+                transformOrigin: 'bottom center',
+                transform: `translateX(-50%) rotate(${angle}deg)`,
+                opacity: 0,
+                willChange: 'transform, opacity',
+              }}
+            />
+          );
+        })}
+
+        {/* Warm glow orb at bottom */}
+        <div 
+          className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-64 h-64 rounded-full"
+          style={{
+            background: 'radial-gradient(circle, rgba(245, 158, 11, 0.8) 0%, rgba(234, 88, 12, 0.4) 40%, transparent 70%)',
+            filter: 'blur(40px)',
+          }}
+        />
+
+        {/* Center text */}
+        <div
+          ref={sunriseTextRef}
+          className="relative z-10 text-4xl md:text-6xl font-bold tracking-[0.3em] opacity-0"
+          style={{ 
+            background: 'linear-gradient(135deg, #f59e0b 0%, #ea580c 50%, #f59e0b 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text',
+            textShadow: '0 0 60px rgba(245, 158, 11, 0.5)',
+            filter: 'drop-shadow(0 0 30px rgba(245, 158, 11, 0.4))',
+          }}
+        >
+          {targetPath === '/aube' ? 'AUBE' : targetPath === '/' ? 'HOME' : ''}
+        </div>
+
+        {/* Particle dust */}
+        <div 
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            backgroundImage: `radial-gradient(circle at random, rgba(245, 158, 11, 0.3) 1px, transparent 1px)`,
+            backgroundSize: '50px 50px',
           }}
         />
       </div>
