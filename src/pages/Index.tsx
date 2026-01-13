@@ -8,6 +8,7 @@ import CustomCursor from '@/components/CustomCursor';
 import Orb from '@/components/Orb';
 import HeroSection from '@/components/HeroSection';
 import PositioningSection from '@/components/PositioningSection';
+import RealWorkSection from '@/components/RealWorkSection';
 import ProjectsSection from '@/components/ProjectsSection';
 import ConceptCampaignsSection from '@/components/ConceptCampaignsSection';
 import ExperienceSection from '@/components/ExperienceSection';
@@ -25,6 +26,7 @@ const Index = () => {
   const scrollIndicatorRef = useRef<HTMLDivElement>(null);
   const positioningRef = useRef<HTMLElement>(null);
   const projectsRef = useRef<HTMLElement>(null);
+  const realWorkRef = useRef<HTMLElement>(null);
   const conceptCampaignsRef = useRef<HTMLElement>(null);
   const experienceRef = useRef<HTMLElement>(null);
   const educationRef = useRef<HTMLElement>(null);
@@ -263,6 +265,7 @@ const Index = () => {
             scrollIndicatorRef={scrollIndicatorRef}
           />
           <PositioningSection ref={positioningRef} />
+          <RealWorkSection ref={realWorkRef} />
           <ConceptCampaignsSection ref={conceptCampaignsRef} />
           <ProjectsSection ref={projectsRef} />
           <ExperienceSection ref={experienceRef} />
