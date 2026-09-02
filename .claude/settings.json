@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//tmp/**)",
+      "Read(//private/tmp/**)",
+      "Bash(python3 docs/build.py)",
+      "Bash(open docs/preview.local.html)",
+      "Bash(awk '{print $5,$9}')",
+      "Bash(sips -Z 900 /tmp/moodboard/13_dsc02174.jpeg --out /tmp/ghost.jpg -s format jpeg -s formatOptions 55)",
+      "Bash(awk '{print $5}')",
+      "Bash(python3 -)"
+    ]
+  }
+}

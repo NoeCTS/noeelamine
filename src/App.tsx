@@ -10,6 +10,7 @@ import Nothing from "./pages/Nothing";
 import Pangaia from "./pages/Pangaia";
 import Berlin from "./pages/Berlin";
 import Aube from "./pages/Aube";
+import Betteride from "./pages/Betteride";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,6 +29,7 @@ const App = () => (
             <Route path="/pangaia" element={<Pangaia />} />
             <Route path="/berlin" element={<Berlin />} />
             <Route path="/aube" element={<Aube />} />
+            <Route path="/betteride" element={<Betteride />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

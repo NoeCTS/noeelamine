@@ -20,7 +20,7 @@ const experiences: Experience[] = [
     year: '2025',
     title: 'Betteride',
     role: 'Strategy & Marketing Freelancer',
-    description: 'Owned full marketing function from strategy to execution for Berlin cycling startup.',
+    description: 'Designed and executed a zero-budget GTM strategy for a two-sided Berlin cycling marketplace.',
     location: 'Berlin, Germany',
   },
   {

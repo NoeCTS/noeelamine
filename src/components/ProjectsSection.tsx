@@ -1,4 +1,5 @@
 import { forwardRef } from 'react';
+import { usePageTransition } from './PageTransition';
 import aubeDashboard from '@/assets/aube-dashboard.png';
 import betterideFlyer1 from '@/assets/betteride-flyer-1.jpg';
 import betterideFlyer2 from '@/assets/betteride-flyer-2.jpg';
@@ -11,6 +12,11 @@ interface Project {
   role: string;
   description: string;
   highlights: string[];
+  challenge?: string;
+  approach?: string;
+  outcome?: string;
+  ctaPath?: string;
+  ctaLabel?: string;
   letter: string;
   image?: string;
   images?: string[];
@@ -27,6 +33,11 @@ const projects: Project[] = [
       'Designed AI analysis pipeline from scratch',
       'Developed B2B pricing & NGO partnerships',
     ],
+    challenge: 'Brands miss cultural risk before launch.',
+    approach: 'Built a screening workflow blending AI analysis with applied strategy.',
+    outcome: 'Shipped platform MVP and early partnerships across impact-focused teams.',
+    ctaPath: '/aube',
+    ctaLabel: 'Open case study',
     letter: 'A',
     image: aubeDashboard,
   },
@@ -34,12 +45,17 @@ const projects: Project[] = [
     id: 'project-betteride',
     name: 'BETTERIDE',
     role: 'Strategy & Marketing Freelancer',
-    description: 'Owned full marketing function for Berlin-based cycling startup — from strategy to execution.',
+    description: 'Built and executed a zero-budget GTM for a Berlin bike-repair marketplace facing a two-sided cold start.',
     highlights: [
-      '"Broken Bike Museum" guerrilla campaign',
-      'Analysed cycling traffic patterns for targeting',
-      'Designed insight-driven creative for Berlin culture',
+      'Designed 5-tactic guerrilla activation system for Charlottenburg',
+      'Created trust-first B2B model for skeptical local repair shops',
+      'Executed full launch solo, from market analysis to field deployment',
     ],
+    challenge: 'Acquire cyclists and repair shops at the same time with almost no budget.',
+    approach: 'Concentrated geography, physical activation, and risk-free B2B onboarding.',
+    outcome: 'Created local visibility density and a credible path for partner conversion.',
+    ctaPath: '/betteride',
+    ctaLabel: 'Read full GTM case',
     letter: 'B',
     images: [betterideFlyer1, betterideFlyer2, betterideFlyer3],
   },
@@ -53,12 +69,17 @@ const projects: Project[] = [
       'Curated speaker series with leading AI ethics academics (TUM Institute for Ethics in AI)',
       "Translated Anthropic's safety research into practical frameworks for student builders",
     ],
+    challenge: 'Scale a meaningful AI community without diluting quality.',
+    approach: 'Programmed high-signal events and practical ethics frameworks.',
+    outcome: 'Grew to 1,000+ members with flagship partnerships and recurring events.',
     letter: 'C',
     image: claudeClub,
   },
 ];
 
 const ProjectsSection = forwardRef<HTMLElement>((_, ref) => {
+  const { navigateWithTransition } = usePageTransition();
+
   return (
     <section ref={ref} id="projects" className="relative py-section w-full">
       <div className="container mx-auto px-6 max-w-[1400px]">
@@ -96,6 +117,30 @@ const ProjectsSection = forwardRef<HTMLElement>((_, ref) => {
                       </li>
                     ))}
                   </ul>
+                  {project.challenge && project.approach && project.outcome && (
+                    <div className="mt-6 grid md:grid-cols-3 gap-3">
+                      <div className="border border-foreground/10 p-3">
+                        <p className="text-[10px] uppercase tracking-[0.16em] text-secondary mb-1">Challenge</p>
+                        <p className="text-xs text-tertiary leading-relaxed">{project.challenge}</p>
+                      </div>
+                      <div className="border border-foreground/10 p-3">
+                        <p className="text-[10px] uppercase tracking-[0.16em] text-secondary mb-1">Approach</p>
+                        <p className="text-xs text-tertiary leading-relaxed">{project.approach}</p>
+                      </div>
+                      <div className="border border-foreground/10 p-3">
+                        <p className="text-[10px] uppercase tracking-[0.16em] text-secondary mb-1">Outcome</p>
+                        <p className="text-xs text-tertiary leading-relaxed">{project.outcome}</p>
+                      </div>
+                    </div>
+                  )}
+                  {project.ctaPath && project.ctaLabel && (
+                    <button
+                      onClick={() => navigateWithTransition(project.ctaPath)}
+                      className="mt-5 text-xs uppercase tracking-[0.18em] border border-accent/40 text-accent px-4 py-2 hover:bg-accent hover:text-background transition-all"
+                    >
+                      {project.ctaLabel}
+                    </button>
+                  )}
                 </div>
                 
                 {/* Multiple images grid */}

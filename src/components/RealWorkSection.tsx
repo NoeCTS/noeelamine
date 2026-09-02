@@ -100,6 +100,44 @@ const RealWorkSection = forwardRef<HTMLElement>((_, ref) => {
                 />
               </div>
             </button>
+
+            {/* Betteride CTA */}
+            <button
+              onClick={() => navigateWithTransition('/betteride')}
+              className="group block w-full text-left"
+            >
+              <div
+                className="relative border border-emerald-400/20 hover:border-emerald-300/60 transition-all duration-500 px-8 py-12 md:px-16 md:py-16 overflow-hidden"
+                style={{
+                  willChange: 'transform, opacity, box-shadow',
+                  background: 'linear-gradient(140deg, rgba(5, 18, 14, 0.92), rgba(8, 22, 18, 0.84))',
+                }}
+              >
+                <div
+                  className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700"
+                  style={{
+                    background: 'radial-gradient(ellipse 70% 45% at 50% 100%, rgba(16, 185, 129, 0.2), rgba(34, 211, 238, 0.12) 45%, transparent 70%)',
+                  }}
+                />
+
+                <div className="relative flex flex-col items-center justify-center">
+                  <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-[0.18em] uppercase text-emerald-200 group-hover:text-emerald-100 transition-colors duration-500">
+                    BETTERIDE
+                  </h2>
+                  <p className="text-emerald-200/60 font-light text-xs md:text-sm tracking-[0.28em] mt-4 group-hover:text-emerald-100/90 transition-colors duration-500">
+                    ZERO-BUDGET GTM ACTIVATION
+                  </p>
+                  <p className="text-secondary/70 text-sm mt-6 max-w-2xl text-center group-hover:text-secondary/95 transition-colors duration-500">
+                    A full case study on how I launched a two-sided Berlin marketplace with guerrilla B2C activations and trust-first B2B partner strategy.
+                  </p>
+                </div>
+
+                <div className="absolute top-0 left-0 w-6 h-6 border-l-2 border-t-2 border-emerald-400/30 group-hover:border-emerald-300/80 transition-all duration-500" />
+                <div className="absolute top-0 right-0 w-6 h-6 border-r-2 border-t-2 border-emerald-400/30 group-hover:border-emerald-300/80 transition-all duration-500" />
+                <div className="absolute bottom-0 left-0 w-6 h-6 border-l-2 border-b-2 border-emerald-400/30 group-hover:border-emerald-300/80 transition-all duration-500" />
+                <div className="absolute bottom-0 right-0 w-6 h-6 border-r-2 border-b-2 border-emerald-400/30 group-hover:border-emerald-300/80 transition-all duration-500" />
+              </div>
+            </button>
           </div>
         </div>
       </div>

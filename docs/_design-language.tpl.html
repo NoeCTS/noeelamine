@@ -1,0 +1,1457 @@
+<title>Noe Elamine · Design Language, Rev 03</title>
+<style>
+  @font-face{font-family:"Silvestre";src:url(data:font/ttf;base64,__F_SILVESTRE__) format("truetype");font-display:block}
+  @font-face{font-family:"Range Sans";src:url(data:font/woff2;base64,__F_RANGE__) format("woff2");font-weight:100 900;font-display:block}
+  @font-face{font-family:"Archivo";src:url(data:font/woff2;base64,__F_ARCHIVO__) format("woff2");font-weight:400 500;font-display:block}
+  @font-face{font-family:"Departure Mono";src:url(data:font/woff2;base64,__F_DEPARTURE__) format("woff2");font-display:block}
+  @font-face{font-family:"Ndot55";src:url(data:font/otf;base64,__F_NDOT__) format("opentype");font-display:block}
+  @font-face{font-family:"Abacaxi";src:url(data:font/woff2;base64,__F_ABACAXI__) format("woff2");font-weight:100 800;font-display:block}
+  @font-face{font-family:"Google Sans";src:url(data:font/woff2;base64,__F_GSANS__) format("woff2");font-weight:400;font-display:block}
+  @font-face{font-family:"Google Sans";src:url(data:font/woff2;base64,__F_GSANSM__) format("woff2");font-weight:500;font-display:block}
+
+  /* One committed world: crushed black, white, grey, and Klein blue as a field.
+     Every colour is painted explicitly so the page holds on any host ground. */
+  :root{
+    --void:#08080A;
+    --void-2:#101013;
+    --ink:#F2F0EC;
+    --grey:#8A8A92;
+    --grey-dim:#3B3B42;
+    /* Klein pulled toward green. The hue is a variable so it can be dialled live. */
+    --kh:228;
+    --klein:hsl(var(--kh) 100% 30%);
+    --klein-lift:hsl(var(--kh) 82% 56%);
+
+    --display:"Silvestre","Archivo",sans-serif;
+    --body:"Range Sans","Archivo",system-ui,sans-serif;
+    --data:"Departure Mono",ui-monospace,monospace;
+    --dot:"Ndot55","Departure Mono",monospace;
+    --sheet:min(1180px,100% - 2.5rem);
+    --noise:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.92' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23g)'/%3E%3C/svg%3E");
+    --screen:radial-gradient(circle at center,#FFFFFF 0 .6px,transparent .8px);
+  }
+
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--void);color:var(--ink);font-family:var(--body);font-weight:400;
+    font-size:16px;line-height:1.62;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+
+  /* ---------- texture: real film grain, luminance noise, not a dot screen ---------- */
+  /* Real grain: per pixel monochromatic noise generated on a canvas, the same operation as
+     Add Noise, not an feTurbulence cloud. The tile is swapped several times a second so it
+     scintillates rather than sitting still. */
+  .grain{position:fixed;inset:-120px;pointer-events:none;z-index:100;opacity:.36;mix-blend-mode:overlay;
+    background-repeat:repeat;background-size:180px 180px;
+    animation:grainshift .7s steps(1) infinite}
+  @keyframes grainshift{
+    0%{transform:translate(0,0)}      12.5%{transform:translate(-14px,7px)}
+    25%{transform:translate(9px,-12px)} 37.5%{transform:translate(-7px,-9px)}
+    50%{transform:translate(12px,6px)}  62.5%{transform:translate(-11px,11px)}
+    75%{transform:translate(6px,-6px)}  87.5%{transform:translate(-9px,-14px)}
+  }
+  /* the dot screen: the halftone from the Betteride prints, laid over the black */
+  .dots{position:fixed;inset:0;pointer-events:none;z-index:99;opacity:.07;
+    background-image:var(--screen);background-size:4px 4px}
+
+  /* the ghost field: a photograph reduced to characters, sitting behind everything.
+     Not a dot grid. It is an actual image, only barely present. */
+  .ghost{position:fixed;inset:0;pointer-events:none;z-index:0;opacity:0;color:var(--ink);
+    font-family:var(--data);font-size:9px;line-height:1;white-space:pre;overflow:hidden;
+    display:flex;align-items:center;justify-content:center}
+
+  /* the tree, drawn as a dot matrix: the Nothing dot grid, except the dots make a picture */
+  .treedots{position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.38}
+
+  .wrap{width:var(--sheet);margin-inline:auto;padding-block:clamp(2rem,5vw,3.5rem) 6rem;position:relative;z-index:1}
+
+  /* Ndot is a house face now, not just numerals: it sets every label. Departure stays
+     underneath it for the ASCII engines, where a strict monospace advance is required. */
+  .mono{font-family:var(--dot);font-size:13px;letter-spacing:.04em;text-transform:uppercase;color:var(--grey)}
+  .mono-sm{font-family:var(--data);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--grey)}
+  .num{font-family:var(--dot);font-variant-numeric:tabular-nums}
+
+  /* ---------- masthead ---------- */
+  .masthead{display:grid;grid-template-columns:1fr auto;gap:1.2rem 2rem;align-items:start;margin-top:clamp(3rem,8vw,6rem)}
+  .masthead h1{font-family:var(--display);font-size:clamp(2.6rem,10vw,6.4rem);line-height:.86;
+    margin:0;text-transform:uppercase;font-weight:400;letter-spacing:.01em}
+  .mh-meta{display:flex;flex-direction:column;gap:.35rem;text-align:right}
+  .lede{max-width:56ch;margin:2.4rem 0 0;font-size:clamp(1.05rem,1.6vw,1.28rem);line-height:1.5;font-weight:400;
+    color:var(--ink);text-wrap:pretty}
+  .lede em{font-style:normal;color:var(--grey)}
+
+  /* ---------- plates: no rules, no badges. Hierarchy is scale and space. ---------- */
+  .plate{margin-top:clamp(4.5rem,11vw,8.5rem);display:flex;flex-direction:column;gap:1.5rem}
+  .plate-head{display:flex;align-items:baseline;gap:1rem;flex-wrap:wrap}
+  .plate-no{font-family:var(--dot);font-size:clamp(1.1rem,2.6vw,1.6rem);color:var(--grey);line-height:1;flex:none}
+  .plate-head h2{font-family:var(--display);text-transform:uppercase;font-weight:400;
+    font-size:clamp(1.5rem,4vw,2.5rem);margin:0;line-height:1}
+  .plate-head .note{margin-left:auto}
+  .plate p{margin:0;max-width:62ch;color:var(--grey);text-wrap:pretty}
+  .plate p+p{margin-top:.9rem}
+  .plate strong{color:var(--ink);font-weight:600}
+  .cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.6rem;align-items:start}
+
+  /* ---------- the opening: ASCII resolving into the photograph ---------- */
+  .opener{position:relative;height:100vh;min-height:520px;display:flex;align-items:center;justify-content:center;
+    overflow:hidden;background:var(--void);
+    width:100vw;margin-inline:calc(50% - 50vw)}
+  /* the frame is 3:2, the same ratio as the negative, so nothing is cropped */
+  .opener-inner{position:relative;aspect-ratio:3/2;height:min(86vh,calc(96vw/1.5));max-width:96vw}
+  .opener pre{position:absolute;inset:0;margin:0;font-family:var(--data);white-space:pre;color:var(--ink);
+    display:flex;align-items:center;justify-content:center;line-height:1.15;font-size:var(--osz,8px);
+    overflow:hidden}
+  .ghost{line-height:1}
+  .opener img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0}
+  .opener-label{position:absolute;left:1rem;bottom:1rem;display:flex;gap:1.4rem;z-index:3}
+  .opener-hint{position:absolute;left:50%;bottom:2.2rem;transform:translateX(-50%);z-index:3}
+
+  /* ---------- Klein fields ---------- */
+  /* A flat blue block is a swatch, not a surface. The field gets the same grain and
+     screen as the black, mixed hard enough to actually read on a saturated colour. */
+  .klein-field{background:var(--klein);color:#FFFFFF;padding:clamp(1.6rem,4vw,2.6rem);
+    position:relative;isolation:isolate;overflow:hidden}
+  .klein-field>*{position:relative;z-index:2}
+  .klein-field::before{content:"";position:absolute;inset:-140px;z-index:0;pointer-events:none;
+    background-image:var(--noise);background-size:180px 180px;mix-blend-mode:soft-light;opacity:.9;
+    animation:grainshift .7s steps(1) infinite}
+  .klein-field::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+    background-image:var(--screen);background-size:4px 4px;opacity:.22;mix-blend-mode:overlay}
+  .klein-field h3{font-family:var(--display);text-transform:uppercase;font-weight:400;margin:0 0 .6rem;
+    font-size:clamp(1.3rem,3vw,2rem);line-height:1;color:#FFFFFF}
+  .klein-field p{color:rgba(255,255,255,.82);max-width:52ch}
+  .klein-field .mono{color:rgba(255,255,255,.62)}
+
+  .swatches{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:.5rem}
+  .sw{aspect-ratio:4/3;padding:.85rem;display:flex;flex-direction:column;justify-content:flex-end;gap:.1rem}
+  .sw b{font-family:var(--dot);font-size:13px;letter-spacing:.04em;text-transform:uppercase;font-weight:400}
+  .sw span{font-family:var(--dot);font-size:13px;opacity:.72}
+
+  /* ---------- typography ---------- */
+  .wordmark{font-family:var(--wm,var(--display));font-size:clamp(3rem,14vw,9rem);line-height:.86;
+    text-transform:uppercase;margin:0;font-weight:400;word-break:break-word}
+  .roles{display:flex;flex-direction:column;gap:2rem}
+  .role{display:grid;grid-template-columns:130px 1fr;gap:1.2rem;align-items:baseline}
+  .role .r{font-family:var(--dot);font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--grey)}
+  .role .s{display:flex;flex-direction:column;gap:.4rem;min-width:0}
+  .role .spec{font-size:1.9rem;line-height:1.05;color:var(--ink);font-weight:400}
+  .role .why{font-size:14.5px;color:var(--grey);max-width:54ch}
+  .f-silvestre{font-family:"Silvestre";text-transform:uppercase}
+  .f-range{font-family:"Range Sans","Archivo",sans-serif}
+  .f-departure{font-family:"Departure Mono",monospace}
+  .f-ndot{font-family:"Ndot55",monospace}
+  .f-abacaxi{font-family:"Abacaxi","Range Sans",sans-serif}
+
+  /* ---------- buttons ----------
+     Every one of these snaps. No easing anywhere, because physical things do not
+     ease: a stamp lands, a key bottoms out, a punch goes through. Smooth transitions
+     are the single thing that made the earlier set read as machine made. */
+  .btn{position:relative;isolation:isolate;background:transparent;border:none;border-radius:0;
+    padding:.5rem .8rem;cursor:pointer;font-family:var(--dot);font-size:13px;letter-spacing:.04em;
+    text-transform:uppercase;line-height:1;color:var(--grey);transition:none}
+  .btn>span{position:relative;z-index:2;display:inline-block}
+  .btn:focus-visible{outline:2px solid var(--klein-lift);outline-offset:3px}
+  .btn-row{display:flex;flex-wrap:wrap;gap:.55rem}
+
+  /* 1. STAMP: hand set, never quite square, and the ink breaks up on the fill */
+  [data-btn="stamp"] .btn{padding:.52rem .95rem;transform:rotate(-1.4deg);color:var(--grey)}
+  [data-btn="stamp"] .btn::before{content:"";position:absolute;inset:0;z-index:0;
+    border:2px solid var(--grey-dim)}
+  [data-btn="stamp"] .btn:nth-child(even){transform:rotate(1.1deg)}
+  [data-btn="stamp"] .btn:hover{color:var(--ink);transform:rotate(-1.4deg) translate(-1px,-1px)}
+  [data-btn="stamp"] .btn:nth-child(even):hover{transform:rotate(1.1deg) translate(-1px,-1px)}
+  [data-btn="stamp"] .btn:hover::before{border-color:var(--klein-lift)}
+  [data-btn="stamp"] .btn[aria-pressed="true"]{color:#FFFFFF;transform:rotate(.6deg)}
+  [data-btn="stamp"] .btn[aria-pressed="true"]::before{border-color:var(--klein);background:var(--klein)}
+  [data-btn="stamp"] .btn[aria-pressed="true"]::after{content:"";position:absolute;inset:0;z-index:1;
+    background-image:var(--noise);background-size:180px 180px;mix-blend-mode:screen;opacity:.42}
+
+  /* 2. PUNCH: a filing card with the holes down the edge, and a choice punched through */
+  [data-btn="punch"] .btn{padding:.55rem .9rem .55rem 1.5rem;background:var(--void-2);
+    box-shadow:inset 0 0 0 1px var(--grey-dim);color:var(--grey)}
+  [data-btn="punch"] .btn::before{content:"";position:absolute;left:.4rem;top:0;bottom:0;width:7px;z-index:1;
+    background-image:radial-gradient(circle at center,var(--void) 0 3px,transparent 3.3px);
+    background-size:7px 11px;background-repeat:repeat-y}
+  [data-btn="punch"] .btn:hover{color:var(--ink);box-shadow:inset 0 0 0 1px var(--klein-lift)}
+  [data-btn="punch"] .btn[aria-pressed="true"]{background:var(--klein);color:#FFFFFF;box-shadow:inset 0 0 0 1px var(--klein)}
+
+  /* 3. TERMINAL: block inversion and a prompt. Nothing fades, it is simply on or off */
+  [data-btn="terminal"] .btn{padding:.42rem .55rem .42rem 1.2rem;color:var(--grey)}
+  [data-btn="terminal"] .btn::before{content:">";position:absolute;left:.4rem;top:50%;
+    transform:translateY(-50%);color:var(--klein-lift);opacity:0;z-index:2}
+  [data-btn="terminal"] .btn:hover{color:var(--ink)}
+  [data-btn="terminal"] .btn:hover::before{opacity:1}
+  [data-btn="terminal"] .btn[aria-pressed="true"]{background:var(--ink);color:var(--void)}
+  [data-btn="terminal"] .btn[aria-pressed="true"]::before{opacity:1;color:var(--void)}
+
+  /* 4. DYMO: embossed label tape, letters raised out of the plastic */
+  [data-btn="dymo"] .btn{padding:.55rem .95rem;background:#191A1F;color:#CFCCC4;border-radius:3px;
+    letter-spacing:.16em;text-shadow:0 1px 0 rgba(0,0,0,.75);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.14),inset 0 -1px 0 rgba(0,0,0,.6),0 1px 0 rgba(0,0,0,.5)}
+  [data-btn="dymo"] .btn:hover{color:#FFFFFF}
+  [data-btn="dymo"] .btn[aria-pressed="true"]{background:var(--klein);color:#FFFFFF;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.3),inset 0 -1px 0 rgba(0,0,0,.45)}
+
+  /* 5. CUT: a scrap of photocopied paper, taped down and slightly crooked */
+  [data-btn="cut"] .btn{padding:.55rem .95rem;background:#D7D2C4;color:#141210;transform:rotate(-1deg)}
+  [data-btn="cut"] .btn:nth-child(even){transform:rotate(.8deg);background:#CFC9BA}
+  [data-btn="cut"] .btn::before{content:"";position:absolute;top:-7px;left:50%;width:36px;height:13px;z-index:3;
+    transform:translateX(-50%) rotate(-7deg);background:rgba(233,228,215,.26);
+    box-shadow:0 0 0 1px rgba(233,228,215,.14)}
+  [data-btn="cut"] .btn::after{content:"";position:absolute;inset:0;z-index:1;
+    background-image:var(--noise);background-size:180px 180px;mix-blend-mode:multiply;opacity:.5}
+  [data-btn="cut"] .btn:hover{transform:rotate(-1deg) translateY(-2px)}
+  [data-btn="cut"] .btn:nth-child(even):hover{transform:rotate(.8deg) translateY(-2px)}
+  [data-btn="cut"] .btn[aria-pressed="true"]{background:var(--klein);color:#FFFFFF}
+
+  /* 6. CROP: registration marks pulled outward, kept from the previous set */
+  [data-btn="crop"] .btn{padding:.62rem 1rem}
+  [data-btn="crop"] .btn::before{content:"";position:absolute;inset:0;z-index:0;--c:var(--grey-dim);
+    background-image:
+      linear-gradient(var(--c),var(--c)),linear-gradient(var(--c),var(--c)),
+      linear-gradient(var(--c),var(--c)),linear-gradient(var(--c),var(--c)),
+      linear-gradient(var(--c),var(--c)),linear-gradient(var(--c),var(--c)),
+      linear-gradient(var(--c),var(--c)),linear-gradient(var(--c),var(--c));
+    background-size:9px 1px,1px 9px,9px 1px,1px 9px,9px 1px,1px 9px,9px 1px,1px 9px;
+    background-position:0 0,0 0,100% 0,100% 0,0 100%,0 100%,100% 100%,100% 100%;
+    background-repeat:no-repeat}
+  [data-btn="crop"] .btn:hover{color:var(--ink)}
+  [data-btn="crop"] .btn:hover::before{inset:-5px;--c:var(--klein-lift)}
+  [data-btn="crop"] .btn[aria-pressed="true"]{color:#FFFFFF}
+  [data-btn="crop"] .btn[aria-pressed="true"]::before{inset:-5px;--c:var(--klein-lift)}
+  [data-btn="crop"] .btn[aria-pressed="true"]::after{content:"";position:absolute;inset:0;z-index:0;background:var(--klein)}
+
+  /* 7. RESOLVE: the scramble you liked, kept as an option */
+  [data-btn="resolve"] .btn{padding:.52rem .85rem}
+  [data-btn="resolve"] .btn>span{font-variant-ligatures:none}
+  [data-btn="resolve"] .btn::before{content:"";position:absolute;inset:0;z-index:0;background:var(--klein);
+    transform:scaleX(0);transform-origin:left}
+  [data-btn="resolve"] .btn::after{content:"";position:absolute;right:.34rem;top:50%;width:6px;height:1.05em;
+    transform:translateY(-50%);background:var(--klein-lift);opacity:0}
+  [data-btn="resolve"] .btn:hover{color:var(--ink)}
+  [data-btn="resolve"] .btn:hover::after{opacity:1;animation:caret .78s steps(1) infinite}
+  [data-btn="resolve"] .btn[aria-pressed="true"]{color:#FFFFFF}
+  [data-btn="resolve"] .btn[aria-pressed="true"]::before{transform:scaleX(1)}
+  [data-btn="resolve"] .btn[aria-pressed="true"]::after{background:#FFFFFF;opacity:1}
+  @keyframes caret{0%,49%{opacity:1}50%,100%{opacity:0}}
+
+  .btn-demo{display:flex;flex-direction:column;gap:.7rem}
+  .btn-demo .lbl{display:flex;gap:.7rem;align-items:baseline}
+  .btn-demo .lbl b{font-family:var(--dot);font-size:13px;letter-spacing:.04em;text-transform:uppercase;
+    font-weight:400;color:var(--ink)}
+  .btn-demo p{font-size:14px;color:var(--grey);max-width:46ch}
+
+  /* ---------- sliders: a bare track, Klein fill, no boxes ---------- */
+  .ctrl{display:flex;flex-direction:column;gap:.45rem}
+  .ctrl-top{display:flex;justify-content:space-between;align-items:baseline;gap:1rem}
+  .ctrl output{font-family:var(--dot);font-size:15px;line-height:1;color:var(--ink);font-variant-numeric:tabular-nums}
+  .slider{--fill:50%;-webkit-appearance:none;appearance:none;width:100%;height:18px;margin:0;background:transparent;cursor:ew-resize;display:block}
+  .slider::-webkit-slider-runnable-track{height:2px;
+    background:linear-gradient(90deg,var(--klein-lift) 0 var(--fill),var(--grey-dim) var(--fill) 100%)}
+  .slider::-moz-range-track{height:2px;
+    background:linear-gradient(90deg,var(--klein-lift) 0 var(--fill),var(--grey-dim) var(--fill) 100%)}
+  .slider::-webkit-slider-thumb{-webkit-appearance:none;width:3px;height:16px;margin-top:-7px;border-radius:0;border:none;background:var(--ink)}
+  .slider::-moz-range-thumb{width:3px;height:16px;border-radius:0;border:none;background:var(--ink)}
+  .slider:focus-visible{outline:2px solid var(--klein-lift);outline-offset:4px}
+
+  /* ---------- contact sheet: images stay in colour ---------- */
+  .sheetgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1.1rem}
+  .frame{position:relative;display:flex;flex-direction:column;gap:.55rem;cursor:pointer;background:none;border:none;padding:0;text-align:left;font:inherit;color:inherit}
+  .frame-img{position:relative;overflow:hidden;aspect-ratio:4/3;line-height:0;background:var(--void-2)}
+  .frame-img img{width:100%;height:100%;object-fit:cover;display:block;
+    transition:transform .5s cubic-bezier(.2,.8,.25,1),filter .4s ease;filter:saturate(1) contrast(1)}
+  .frame:hover .frame-img img,.frame:focus-visible .frame-img img{transform:scale(1.03);filter:saturate(1.12) contrast(1.05)}
+  /* a Klein plate rises behind the caption instead of a rule */
+  .frame-meta{position:relative;display:flex;justify-content:space-between;gap:.6rem;align-items:baseline;padding:.3rem .4rem}
+  .frame-meta::before{content:"";position:absolute;inset:0;background:var(--klein);z-index:0;
+    transform:scaleY(0);transform-origin:bottom;transition:transform .28s cubic-bezier(.2,.85,.25,1)}
+  .frame:hover .frame-meta::before,.frame:focus-visible .frame-meta::before{transform:scaleY(1)}
+  .frame-meta>*{position:relative;z-index:1;transition:color .2s}
+  .frame-meta .n{font-family:var(--dot);font-size:14px;color:var(--grey)}
+  .frame-meta .t{font-family:var(--data);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--grey);text-align:right;line-height:1.4}
+  .frame:hover .frame-meta .n,.frame:hover .frame-meta .t,
+  .frame:focus-visible .frame-meta .n,.frame:focus-visible .frame-meta .t{color:#FFFFFF}
+  .frame:focus-visible{outline:2px solid var(--klein-lift);outline-offset:6px}
+
+  /* ---------- ascii plate ---------- */
+  .ascii-out{font-family:var(--data);white-space:pre;line-height:1.02;color:var(--ink);background:var(--void-2);
+    padding:14px;overflow-x:auto;font-size:var(--asz,7px);min-height:290px}
+
+  /* ---------- the Chrome zone ----------
+     Modelled on gemini.google/overview/gemini-in-chrome: white ground, centred,
+     Google Sans, a black headline with one word in blue, a blue pill, and a pale
+     blue grey media panel. Deliberately the furthest thing from the archive. */
+  .gzone{background:#FFFFFF;color:#1F1F1F;border-radius:28px;padding:clamp(2rem,5vw,3.4rem) clamp(1.4rem,4vw,2.6rem);
+    font-family:"Google Sans","Range Sans",sans-serif;display:flex;flex-direction:column;
+    align-items:center;text-align:center;gap:1.15rem}
+  .gzone .gnav{display:flex;align-items:center;gap:.5rem;align-self:flex-start;margin-bottom:.4rem}
+  .gzone .gnav b{font-family:"Google Sans",sans-serif;font-weight:500;font-size:1.05rem;color:#1F1F1F}
+  .gspark{width:26px;height:26px;flex:none;display:block}
+  .gzone h3{margin:0;font-weight:500;letter-spacing:-.028em;line-height:1.14;color:#1F1F1F;
+    font-size:clamp(1.75rem,4.4vw,3rem);max-width:16ch}
+  .gzone h3 i{font-style:normal;color:#1B72E8}
+  .gzone .gsub{margin:0;color:#5F6368;font-size:clamp(.95rem,1.5vw,1.05rem);line-height:1.5;max-width:44ch}
+  .gpill{display:inline-flex;align-items:center;gap:.45rem;border:none;border-radius:999px;
+    background:#4285F4;color:#FFFFFF;padding:.72rem 1.5rem;font-family:"Google Sans",sans-serif;
+    font-size:.95rem;font-weight:500;cursor:default}
+  .gpill.ghost{background:#FFFFFF;color:#1F1F1F;border:1px solid #DADCE0}
+  .gzone .grow{display:flex;flex-wrap:wrap;gap:.6rem;justify-content:center}
+  /* the pale media panel the real page uses to hold its product shot */
+  .gpanel{width:100%;background:#EEF1F6;border-radius:24px;padding:clamp(1rem,2.4vw,1.6rem);
+    display:flex;flex-direction:column;gap:.9rem;align-items:center;margin-top:.5rem}
+  .gpanel img{width:100%;height:auto;display:block;border-radius:14px}
+  .gnote{font-family:"Google Sans",sans-serif;font-size:.82rem;color:#80868B;letter-spacing:0;text-transform:none}
+
+  /* ---------- aube ---------- */
+  .aube{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:1.1rem}
+  .aube-panel{background:var(--void-2);padding:1.5rem;display:flex;flex-direction:column;gap:.7rem}
+  .aube-panel h3{margin:0;font-family:"Abacaxi","Range Sans",sans-serif;font-size:1.55rem;font-weight:500;line-height:1.12;color:var(--ink)}
+  .aube-panel p{font-size:14.5px;color:var(--grey)}
+  .metrics{display:flex;gap:1.8rem;flex-wrap:wrap;margin-top:.3rem}
+  .metric b{font-family:var(--dot);font-size:1.9rem;line-height:1;font-weight:400;color:var(--klein-lift);display:block}
+  .metric span{font-family:var(--data);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--grey-dim)}
+
+  /* ---------- structure: a list, not a table ---------- */
+  /* ---------- zone demos ----------
+     Each one is a small page rather than a swatch: a real frame from that project,
+     then a content block set in that zone's own ground, faces and controls. */
+  .zgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:1.6rem}
+  .zcard{display:flex;flex-direction:column;gap:.55rem;min-width:0}
+  .zhead{display:flex;justify-content:space-between;gap:.6rem;align-items:baseline}
+  .zbody{background:var(--zg);color:var(--zt);position:relative;overflow:hidden;
+    display:flex;flex-direction:column;box-shadow:inset 0 0 0 1px rgba(255,255,255,.07)}
+  .zshot{position:relative;aspect-ratio:16/10;overflow:hidden;background:#000;flex:none}
+  .zshot img{width:100%;height:100%;object-fit:cover;display:block}
+  .zshot .zover{position:absolute;inset:0;z-index:3;pointer-events:none}
+  /* every zone enters the way the site does: characters first, then the photograph */
+  .zshot .zascii{position:absolute;inset:0;z-index:2;margin:0;overflow:hidden;pointer-events:none;
+    font-family:var(--data);white-space:pre;line-height:1.06;color:#F2F0EC;background:#08080A;
+    display:flex;align-items:center;justify-content:center;font-size:var(--zsz,7px)}
+  .zshot.is-resolved .zascii{display:none}
+  .zmini{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;aspect-ratio:16/10}
+  .zmini img{width:100%;height:100%;object-fit:cover;display:block}
+  .zcontent{padding:1.15rem;display:flex;flex-direction:column;justify-content:space-between;gap:.9rem;
+    flex:1;position:relative;z-index:2}
+  .zbody .zin{display:flex;flex-direction:column;gap:.5rem}
+  .zbody .zui{display:flex;gap:.4rem;flex-wrap:wrap;align-items:center}
+  .zh{margin:0;font-size:1.3rem;line-height:1.12;font-weight:400;color:inherit}
+  .zp{margin:0;font-size:12.5px;line-height:1.45;opacity:.78;color:inherit}
+  .zchips{display:flex;gap:.25rem}
+  .zchips i{height:5px;flex:1;display:block}
+  .ztag{font-size:10.5px;padding:.32rem .58rem;letter-spacing:.06em;text-transform:uppercase;
+    display:inline-block;line-height:1.1}
+  /* Aube: the scattered risk terms behind the hero, which is the page's signature move */
+  .zaube{position:relative}
+  .zaube .term{position:absolute;font-family:'Range Sans',sans-serif;font-size:8.5px;letter-spacing:.14em;
+    text-transform:uppercase;color:#5E5044;white-space:nowrap;z-index:1}
+  .zaube .zcontent{min-height:264px;justify-content:center;align-items:center;text-align:center;gap:.75rem}
+  .zaube .zin{align-items:center}
+  .aube-eyebrow{font-family:'Range Sans',sans-serif;font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;
+    color:#8A7A6A;display:flex;align-items:center;gap:.4rem}
+  .aube-eyebrow i{width:5px;height:5px;border-radius:50%;background:#E8913A;display:block}
+  .aube-mark{width:15px;height:15px;border-radius:50%;flex:none;
+    background:conic-gradient(from 180deg,#F5B65E,#E8913A 40%,#3A2A1C 75%,#F5B65E)}
+  .aube-pill{font-family:'Range Sans',sans-serif;font-size:11.5px;color:#1A1208;border-radius:999px;
+    padding:.5rem 1.05rem;background:linear-gradient(180deg,#F4AC55 0%,#E4882F 100%);
+    box-shadow:0 0 22px rgba(232,145,58,.32)}
+
+  /* the roll: the archive as something with a length that grows */
+  .roll{display:flex;gap:2px;align-items:flex-end;margin-top:1.1rem;overflow-x:auto;padding-bottom:.5rem}
+  .roll-m{flex:none;display:flex;flex-direction:column;gap:.4rem;min-width:62px}
+  .roll-bar{background:var(--klein);width:100%}
+  .roll-m.dim .roll-bar{background:var(--grey-dim)}
+  .roll-m.new .roll-bar{background:var(--klein-lift)}
+  .roll-m span{font-family:var(--dot);font-size:11px;color:var(--grey);letter-spacing:.03em}
+  .roll-m b{font-family:var(--dot);font-size:13px;color:var(--ink);font-weight:400}
+  .frame-rail{display:grid;grid-template-columns:78px 1fr;gap:1rem;align-items:baseline;padding:.55rem .4rem}
+  .frame-rail .d{font-family:var(--dot);font-size:12px;color:var(--grey)}
+  .frame-rail .t{font-size:14px;color:var(--mark-2, var(--grey))}
+  .frame-rail .t b{color:var(--ink);font-weight:500}
+
+  /* the full photography set */
+  .phgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:.55rem;margin-top:1.2rem}
+  .phgrid figure{margin:0;display:flex;flex-direction:column;gap:.35rem}
+  .phgrid img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block}
+  .phgrid figcaption{font-family:var(--dot);font-size:11px;color:var(--grey);letter-spacing:.04em}
+
+  .inv{display:flex;flex-direction:column;gap:.15rem}
+  .inv-row{display:grid;grid-template-columns:34px 1fr 1.1fr 120px;gap:1.2rem;align-items:baseline;
+    padding:.75rem .5rem;transition:background .18s}
+  .inv-row:hover{background:var(--void-2)}
+  .inv-row .c{font-family:var(--dot);font-size:15px;color:var(--klein-lift);text-align:right}
+  .inv-row .g{color:var(--ink);font-size:15px}
+  .inv-row .f{font-family:var(--data);font-size:11px;color:var(--grey-dim);line-height:1.5}
+  .inv-row .r{font-family:var(--dot);font-size:12px;text-transform:uppercase;color:var(--grey);letter-spacing:.04em}
+  .inv-head{display:grid;grid-template-columns:34px 1fr 1.1fr 120px;gap:1.2rem;padding:0 .5rem .5rem}
+  .inv-head span{font-family:var(--dot);font-size:12px;text-transform:uppercase;color:var(--grey-dim);letter-spacing:.04em}
+  @media (max-width:720px){
+    .inv-row,.inv-head{grid-template-columns:30px 1fr;gap:.5rem}
+    .inv-row .f,.inv-row .r,.inv-head span:nth-child(3),.inv-head span:nth-child(4){display:none}
+  }
+
+  .routes{display:flex;flex-direction:column;gap:.15rem}
+  .route{display:grid;grid-template-columns:150px 1fr auto;gap:1.2rem;align-items:baseline;padding:.7rem .5rem;transition:background .18s}
+  .route:hover{background:var(--void-2)}
+  .route .p{font-family:var(--data);font-size:13px;color:var(--ink)}
+  .route .d{font-size:14.5px;color:var(--grey)}
+  .route .s{font-family:var(--dot);font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--grey);white-space:nowrap}
+
+  ul.spec{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:1.1rem;max-width:62ch}
+  ul.spec li{color:var(--grey);font-size:15px}
+  ul.spec b{display:block;color:var(--ink);font-weight:400;font-family:var(--dot);font-size:13px;
+    letter-spacing:.04em;text-transform:uppercase;margin-bottom:.35rem}
+
+  .qs{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1.6rem}
+  .q b{display:block;color:var(--ink);font-weight:600;margin-bottom:.25rem}
+  .q{font-size:14.5px;color:var(--grey)}
+
+  .colophon{margin-top:6rem;display:flex;flex-wrap:wrap;gap:.7rem 2.5rem;justify-content:space-between}
+
+  @media (prefers-reduced-motion:reduce){
+    *{transition:none!important}
+    .grain{animation:none}
+  }
+</style>
+
+<script>document.documentElement.setAttribute("data-btn","stamp");</script>
+<div class="dots" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+<canvas class="treedots" id="treedots" aria-hidden="true"></canvas>
+<pre class="ghost" id="ghost" aria-hidden="true"></pre>
+
+<div class="wrap">
+
+  <div class="opener" id="opener">
+    <div class="opener-inner">
+      <pre id="openerAscii" aria-hidden="true"></pre>
+      <img id="heroimg" src="data:image/jpeg;base64,__IMG_HERO__" alt="Noe holding a fan of playing cards, lit hard in yellow light">
+      <div class="opener-label">
+        <span class="mono">Frame 001</span>
+        <span class="mono" id="openerStage">characters</span>
+        <span class="num" id="openerPct" style="font-size:13px;color:var(--klein-lift)">000</span>
+      </div>
+    </div>
+    <span class="mono opener-hint" id="openerHint">Keep scrolling</span>
+  </div>
+
+
+  <header class="masthead">
+    <h1>Noe Elamine<br>Design Language</h1>
+    <div class="mh-meta">
+      <span class="mono">Rev 03</span>
+      <span class="mono">2026.09.01</span>
+      <span class="num" style="font-size:15px;color:var(--grey-dim)">03</span>
+    </div>
+  </header>
+
+  <p class="lede">An archive, not a CV. Black ground, Klein blue, and photographs left in their own colour. <em>The texture is film grain, and a dot screen that resolves into your own drawing rather than repeating. This sheet is built in the language it proposes.</em></p>
+
+  <!-- ==================== 01 ==================== -->
+  <section class="plate">
+    <div class="plate-head">
+      <span class="plate-no">01</span>
+      <h2>The opening</h2>
+      <span class="mono note">Scroll to develop</span>
+    </div>
+    <p>You liked the flower opening on Pangaia, so this is the equivalent built from your own material. The site opens on a photograph that does not exist yet: it is a field of characters. As you scroll, the character grid gets finer until the image resolves into itself. <strong>Scrolling is developing.</strong></p>
+    <p>It runs in three stages, because characters are monochrome and dropping straight into a hard yellow photograph was a jolt. Characters, then black and white, then <strong>colour arrives last</strong>. That way colour is the thing the opening earns rather than something it starts with, and it sets up the rule that the interface stays monochrome while the photographs carry the colour.</p>
+    <div class="btn-row">
+      <button class="btn" type="button" data-m="mc" aria-pressed="true"><span>Mono, then colour</span></button>
+      <button class="btn" type="button" data-m="mono"><span>Stay monochrome</span></button>
+      <button class="btn" type="button" data-m="colour"><span>Colour throughout</span></button>
+    </div>
+    <p>Built with GSAP ScrollTrigger, already installed in the project. Scroll slowly into the frame below.</p>
+  </section>
+
+<!-- ==================== 02 ==================== -->
+  <section class="plate">
+    <div class="plate-head">
+      <span class="plate-no">02</span>
+      <h2>Palette</h2>
+      <span class="mono note">Black, white, grey, Klein</span>
+    </div>
+    <p>Klein blue is not used as a small accent. That is what everyone does with it and it wastes the colour. It is used the way Klein used it: as a <strong>field</strong>. Whole blocks of it, with white type on top, against black and grey. Everything else is monochrome, so the blue is the only colour the interface ever produces.</p>
+    <p>You dialled this to the Klein end yourself, so that is where it now sits: true International Klein Blue rather than the greened version. The slider stays, because a case study may want to shift a few degrees, but the house colour is the real thing.</p>
+    <div class="swatches">
+      <div class="sw" style="background:#08080A;color:#F2F0EC;box-shadow:inset 0 0 0 1px #1A1A1F"><b>Void</b><span>08080A</span></div>
+      <div class="sw" style="background:#F2F0EC;color:#08080A"><b>Ink</b><span>F2F0EC</span></div>
+      <div class="sw" style="background:#8A8A92;color:#08080A"><b>Grey</b><span>8A8A92</span></div>
+      <div class="sw" id="swKlein" style="background:var(--klein);color:#FFFFFF"><b>Klein, greened</b><span id="kleinHex">006B9E</span></div>
+    </div>
+    <div class="cols">
+      <div class="ctrl">
+        <div class="ctrl-top"><span class="mono">Blue toward green</span><output id="kho">228</output></div>
+        <input class="slider" type="range" id="kh" min="188" max="242" value="228" aria-label="Blue hue">
+        <p class="mono" style="margin-top:.5rem">228 is true Klein, which is where you put it. Lower goes green, higher goes violet. Everything blue on the page moves with it.</p>
+      </div>
+      <div></div>
+    </div>
+    <div class="klein-field">
+      <h3>This is a field, not an accent</h3>
+      <p>Klein blue at full strength, carrying white type. On the site this is how a case study introduces itself, how a selected frame marks itself, and how the one link that matters announces it is a link. Used at this scale it does not need a border to be noticed.</p>
+      <span class="mono">002FA7 · International Klein Blue</span>
+    </div>
+    <p>The photographs keep their own colour. Your Berlin footage already runs cool teal shadows against warm amber highlights, and the museum frame is a single dense yellow. Draining that to greyscale would throw away the thing that makes the work yours, so the grade stays and the interface stays monochrome around it.</p>
+  </section>
+
+  <!-- ==================== 03 ==================== -->
+  <section class="plate">
+    <div class="plate-head">
+      <span class="plate-no">03</span>
+      <h2>Texture</h2>
+      <span class="mono note">Grain, dots, ghost</span>
+    </div>
+    <p>Four layers, all live on this page right now. First, <strong>film grain</strong>. Generated per pixel on a canvas, monochromatic, the same operation as Add Noise in Photoshop, with the tile regenerated several times a second so it scintillates instead of sitting still. The earlier version used an SVG turbulence filter, which makes soft clouds rather than grain, and you were right that it read wrong.</p>
+    <p>Second, a <strong>dot screen</strong>. You asked for the black to carry little dots the way your Betteride prints do, so there is a fine halftone laid over everything at low strength. It sits under the grain, so the two read as one surface rather than two effects.</p>
+    <p>Third, <strong>the tree</strong>. Your drawing is redrawn into the background out of actual characters, so it reads as real ASCII rather than a dot screen. Denser ink takes a heavier glyph, the same ramp the opening uses. Your Nothing page has a dot grid, and a dot grid is wallpaper: this is a picture that happens to be made of type, which is the whole argument again at another resolution. Dots remain as an option if you want the quieter version.</p>
+    <p>Fourth, the <strong>ghost field</strong>. Your Nothing page uses a dot grid and you wanted to go further than dots, so the background is not a pattern at all: it is one of your own images rendered as characters and held at a few per cent. It reads as texture until you look straight at it and realise it is a picture. <strong>Your ASCII tree is one of the sources</strong>, since you drew it, and it is the most literal version of the whole argument: a picture that is already made of characters.</p>
+    <figure style="margin:0;display:flex;flex-direction:column;gap:.6rem">
+      <img src="data:image/jpeg;base64,__IMG_TREEART__" alt="Noe's artwork: a black and white garden with a tree rendered in ASCII, overlaid with blue blocks and small colour insets" style="width:100%;height:auto;display:block">
+      <figcaption class="mono">Your artwork · the language already exists here</figcaption>
+    </figure>
+    <p>This is the reference the whole sheet is working from, and you made it before any of this started. Black and white photography, a subject redrawn in characters, flat blue blocks, and two small windows of real colour left in. Every rule in Plate 12 is just that picture written down.</p>
+    <div>
+      <p class="mono" style="margin-bottom:.55rem">Ghost source</p>
+      <div class="btn-row">
+        <button class="btn" type="button" data-gs="tree" aria-pressed="true"><span>Your tree artwork</span></button>
+        <button class="btn" type="button" data-gs="funkturm"><span>Funkturm</span></button>
+        <button class="btn" type="button" data-gs="cards"><span>Cards</span></button>
+      </div>
+    </div>
+    <div class="cols">
+      <div class="klein-field">
+        <h3>Why not a dot grid</h3>
+        <p>A dot grid is decoration: it carries no information and any site can have one. A photograph reduced to characters is the same reduction idea as the opening, running quietly in the background. It means the texture belongs to this archive and could not be lifted onto anyone else's.</p>
+      </div>
+      <div>
+        <div class="ctrl">
+          <div class="ctrl-top"><span class="mono">Grain strength</span><output id="go">36</output></div>
+          <input class="slider" type="range" id="gr" min="0" max="70" value="36" aria-label="Grain strength">
+        </div>
+        <div class="ctrl" style="margin-top:1.3rem">
+          <div class="ctrl-top"><span class="mono">Dot screen</span><output id="do">7</output></div>
+          <input class="slider" type="range" id="dt" min="0" max="60" value="7" aria-label="Dot screen strength">
+        </div>
+        <div class="ctrl" style="margin-top:1.3rem">
+          <div class="ctrl-top"><span class="mono">Tree dots</span><output id="tdo">38</output></div>
+          <input class="slider" type="range" id="td" min="0" max="100" value="38" aria-label="Tree dot strength">
+        </div>
+        <div class="ctrl" style="margin-top:1.3rem">
+          <div class="ctrl-top"><span class="mono">Tree cell size</span><output id="tso">13</output></div>
+          <input class="slider" type="range" id="ts" min="6" max="30" value="13" aria-label="Tree cell size">
+        </div>
+        <div style="margin-top:1.3rem">
+          <p class="mono" style="margin-bottom:.55rem">Tree glyphs</p>
+          <div class="btn-row">
+            <button class="btn" type="button" data-tr=" .:-=+ixX*#%@" aria-pressed="true"><span>Mixed</span></button>
+            <button class="btn" type="button" data-tr=" ...xxxXXX###"><span>X only</span></button>
+            <button class="btn" type="button" data-tr=" .,:;oaenxmw#"><span>Letters</span></button>
+            <button class="btn" type="button" data-tr="dots"><span>Dots</span></button>
+          </div>
+        </div>
+        <div class="ctrl" style="margin-top:1.3rem">
+          <div class="ctrl-top"><span class="mono">Ghost characters</span><output id="gho">0</output></div>
+          <input class="slider" type="range" id="gh" min="0" max="340" value="0" aria-label="Ghost field opacity">
+        </div>
+        <p style="margin-top:1.3rem;font-size:14px">All three change the live page. Set them where you want them and read me the numbers, they become tokens.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 04 ==================== -->
+  <section class="plate">
+    <div class="plate-head">
+      <span class="plate-no">04</span>
+      <h2>Typography</h2>
+      <span class="mono note">Four roles</span>
+    </div>
+    <p class="wordmark" id="wm">Noe Elamine</p>
+    <div class="btn-row">
+      <button class="btn" type="button" data-f='"Silvestre",sans-serif' aria-pressed="true"><span>Silvestre</span></button>
+      <button class="btn" type="button" data-f='"Ndot55",monospace'><span>Ndot-55</span></button>
+      <button class="btn" type="button" data-f='"Departure Mono",monospace'><span>Departure</span></button>
+      <button class="btn" type="button" data-f='"Abacaxi",sans-serif'><span>Abacaxi</span></button>
+      <button class="btn" type="button" data-f='"Range Sans",sans-serif'><span>Range Sans</span></button>
+    </div>
+    <div class="roles">
+      <div class="role">
+        <div class="r">Display</div>
+        <div class="s">
+          <div class="spec f-silvestre">Silvestre Bodies</div>
+          <div class="why">Your find, and a strange one: the letters are drawn out of human figures. It has no accented E, which is why the wordmark is set as NOE rather than faking one. It also draws U as V, so names like Aube get their own face instead. Caps, short strings, never a sentence.</div>
+        </div>
+      </div>
+      <div class="role">
+        <div class="r">Body</div>
+        <div class="s">
+          <div class="spec f-range">Range Sans</div>
+          <div class="why">Taken from aube-ai.com, so your product and your archive read as the same person's work. Quiet, warm, holds at 14px.</div>
+        </div>
+      </div>
+      <div class="role">
+        <div class="r">Data</div>
+        <div class="s">
+          <div class="spec f-departure">Departure Mono</div>
+          <div class="why">Captions, metadata, the opening, the ghost field. An open licence pixel mono that stays readable at 9px, which is where the ASCII work actually happens.</div>
+        </div>
+      </div>
+      <div class="role">
+        <div class="r">Labels</div>
+        <div class="s">
+          <div class="spec f-ndot">Ndot-55 · 001 002 003</div>
+          <div class="why">Promoted. It is the second house face alongside Silvestre now, so it sets every label, caption and numeral on the site rather than just digits. Departure Mono stays underneath it for the ASCII work, where a strict monospace advance is what makes the character grid line up.</div>
+        </div>
+      </div>
+      <div class="role">
+        <div class="r">Aube</div>
+        <div class="s">
+          <div class="spec f-abacaxi">Abacaxi</div>
+          <div class="why">Your other Typekit face, used only on the Aube pages so that case study speaks in the product's voice.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 04b ==================== -->
+  <section class="plate">
+    <div class="plate-head">
+      <span class="plate-no">05</span>
+      <h2>Buttons</h2>
+      <span class="mono note">Pick one, it applies everywhere</span>
+    </div>
+    <p>A rectangle with a fill is the default any framework hands you, and you were right to reject it. These seven come from objects rather than from a UI kit. <strong>Clicking one applies it to every button on this page</strong>, including the switcher itself, so you can judge it in use rather than in isolation.</p>
+    <div class="btn-row" style="gap:.55rem">
+      <button class="btn" type="button" data-bs="stamp" aria-pressed="true"><span>Stamp</span></button>
+      <button class="btn" type="button" data-bs="punch"><span>Punch</span></button>
+      <button class="btn" type="button" data-bs="terminal"><span>Terminal</span></button>
+      <button class="btn" type="button" data-bs="dymo"><span>Dymo</span></button>
+      <button class="btn" type="button" data-bs="cut"><span>Cut</span></button>
+      <button class="btn" type="button" data-bs="crop"><span>Crop</span></button>
+      <button class="btn" type="button" data-bs="resolve"><span>Resolve</span></button>
+    </div>
+    <div class="cols" style="margin-top:1rem">
+      <div class="btn-demo">
+        <div class="lbl"><span class="num" style="color:var(--grey-dim)">01</span><b>Stamp</b></div>
+        <p>Hand set and never quite square: each one sits at a slightly different angle, and selecting it lands the ink at a different angle again. The fill carries the same grain as the page, so it breaks up the way a rubber stamp does on rough paper.</p>
+      </div>
+      <div class="btn-demo">
+        <div class="lbl"><span class="num" style="color:var(--grey-dim)">02</span><b>Punch</b></div>
+        <p>A filing card with holes down the edge. The choice is a physical record rather than a highlight, which is what a card index does and what an archive is for.</p>
+      </div>
+      <div class="btn-demo">
+        <div class="lbl"><span class="num" style="color:var(--grey-dim)">03</span><b>Terminal</b></div>
+        <p>Block inversion and a prompt character. Nothing fades because a character cell is either lit or it is not. The most literal reading of the ASCII thesis and the cheapest to build.</p>
+      </div>
+      <div class="btn-demo">
+        <div class="lbl"><span class="num" style="color:var(--grey-dim)">04</span><b>Dymo</b></div>
+        <p>Embossed label tape: letters pressed up out of dark plastic, wide letterspacing, a highlight along the top edge and a shadow along the bottom. The most object-like of the seven.</p>
+      </div>
+      <div class="btn-demo">
+        <div class="lbl"><span class="num" style="color:var(--grey-dim)">05</span><b>Cut</b></div>
+        <p>A scrap of photocopied paper taped down, crooked, with the grain multiplied over it. This is the zine one, and it is the only treatment that brings paper into an otherwise black interface.</p>
+      </div>
+      <div class="btn-demo">
+        <div class="lbl"><span class="num" style="color:var(--grey-dim)">06</span><b>Crop and Resolve</b></div>
+        <p>The two worth keeping from the previous set. Crop is registration marks pulling outward. Resolve is the scramble you liked, still here, though it is the most modern of the seven because it depends on animation to work.</p>
+      </div>
+    </div>
+    <p><strong>The thing that made the old set feel machine made was not the shapes, it was the easing.</strong> Every one of them faded and slid on a cubic bezier, which is the house style of every framework and every generated interface. None of these do. A stamp lands, a key bottoms out, a punch goes through: physical things snap, so every state change here is instant and the only movement is a hard one pixel shift.</p>
+    <p>Set to <strong>Stamp</strong>. It is the least like a web control of the seven, it puts the page's own grain inside the button, and the uneven angles mean no two sit the same way, which is the opposite of a generated grid. <strong>Cut</strong> is the one to try if you want it more zine and less print shop.</p>
+  </section>
+
+  <!-- ==================== 05 ==================== -->
+  <section class="plate">
+    <div class="plate-head">
+      <span class="plate-no">05</span>
+      <h2>The index</h2>
+      <span class="mono note">Colour, held</span>
+    </div>
+    <p>The homepage is a contact sheet, and the frames stay in full colour. A Betteride campaign sits at the same rank as the St. Pauli pitch invasion, because the flatness is the argument. Hovering lifts the frame slightly and drops a Klein plate behind its caption. No outlines, no rules, no dividing lines anywhere.</p>
+    <div class="sheetgrid" id="sheet"></div>
+  </section>
+
+  <!-- ==================== 06 ==================== -->
+  <section class="plate">
+    <div class="plate-head">
+      <span class="plate-no">06</span>
+      <h2>ASCII</h2>
+      <span class="mono note">Live from pixels</span>
+    </div>
+    <p>The same reduction, exposed as a control so you can see the range. This is what drives the opening and the ghost field.</p>
+    <div class="cols">
+      <div>
+        <div class="ascii-out" id="ascii" aria-hidden="true">rendering</div>
+        <p class="mono" style="margin-top:.6rem">Frame 001 to characters · <span class="num" id="asciimeta" style="color:var(--ink);font-size:13px">96</span> cols</p>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:1.4rem">
+        <div class="ctrl">
+          <div class="ctrl-top"><span class="mono">Density</span><output id="aco">96</output></div>
+          <input class="slider" type="range" id="ac" min="40" max="180" value="96" aria-label="ASCII density">
+        </div>
+        <div class="ctrl">
+          <div class="ctrl-top"><span class="mono">Type size</span><output id="aszo">7</output></div>
+          <input class="slider" type="range" id="asz" min="4" max="13" value="7" aria-label="ASCII type size">
+        </div>
+        <div>
+          <p class="mono" style="margin-bottom:.55rem">Character ramp</p>
+          <div class="btn-row">
+            <button class="btn" type="button" data-r=" .:-=+*#%@" aria-pressed="true"><span>Classic</span></button>
+            <button class="btn" type="button" data-r=" ░▒▓█"><span>Blocks</span></button>
+            <button class="btn" type="button" data-r=" ·:∙•●"><span>Dots</span></button>
+            <button class="btn" type="button" data-r=" .,:;!?%$&#@"><span>Toner</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 07 ==================== -->
+  <section class="plate">
+    <div class="plate-head">
+      <span class="plate-no">07</span>
+      <h2 style="font-family:'Google Sans','Range Sans',sans-serif;text-transform:none;letter-spacing:-.02em">Google</h2>
+      <span class="mono note">Its own zone, coming soon</span>
+    </div>
+    <p>This is the part the old site had no answer for. You are an <strong>Associate Product Marketing Manager on the Chrome browser team</strong>, currently working on Gemini in Chrome, and none of that appears anywhere. It should, and it should not be squeezed into the archive's language.</p>
+    <p>So Chrome gets its own zone, the same way Aube and Betteride do, and it is the furthest from the house style on purpose: white ground, everything centred, Google Sans, and a blue pill. Landing on it from a black photocopy archive should feel like stepping into a different building. That contrast is the argument that you can work in more than one register.</p>
+    <div class="cols">
+      <div class="gzone">
+        <div class="gnav">
+          <svg class="gspark" viewBox="0 0 24 24" aria-hidden="true">
+            <defs><linearGradient id="gg" x1="0" y1="1" x2="1" y2="0">
+              <stop offset="0" stop-color="#34A853"/><stop offset=".35" stop-color="#4285F4"/>
+              <stop offset=".72" stop-color="#EA4335"/><stop offset="1" stop-color="#FBBC04"/>
+            </linearGradient></defs>
+            <path fill="url(#gg)" d="M12 0c0 6.63 5.37 12 12 12-6.63 0-12 5.37-12 12 0-6.63-5.37-12-12-12C6.63 12 12 6.63 12 0Z"/>
+          </svg>
+          <b>Gemini</b>
+        </div>
+        <h3>Meet <i>Gemini</i> in Chrome</h3>
+        <p class="gsub">AI assistance, right in your browser. Product marketing for the Chrome browser team.</p>
+        <div class="grow">
+          <span class="gpill">Coming soon</span>
+          <span class="gpill ghost">APMM programme</span>
+        </div>
+        <div class="gpanel">
+          <img src="data:image/jpeg;base64,__IMG_GOOGLE__" alt="Noe at the Google London office, standing beside a Dalek">
+          <span class="gnote">Noe Elamine · Associate Product Marketing Manager, Chrome</span>
+        </div>
+      </div>
+    </div>
+    <p>That is modelled directly on the live Gemini in Chrome page: white ground, everything centred, Google Sans at 500, a black headline with one word in Google blue, a filled pill, and a pale blue grey panel holding the image. Your Dalek photograph sits where their product shot goes. Google Sans is subset from the copy in your downloads, which ships under the open font licence, so it is fine to serve.</p>
+    <div class="klein-field">
+      <h3>Before this goes live</h3>
+      <p>Keep the page to what Google has already announced publicly. Gemini in Chrome is public, so naming it is fine, but anything about unshipped features, timing or metrics needs a manager or comms sign off first. A personal site is external publication.</p>
+      <p style="margin-top:.7rem">The closer this page gets to the real thing, the more it needs your name on it. As built, your role and your photograph are in the panel so it reads as a portfolio entry rather than an official Google page. Worth keeping that way.</p>
+    </div>
+  </section>
+
+  <!-- ==================== 08 ==================== -->
+  <section class="plate">
+    <div class="plate-head">
+      <span class="plate-no">08</span>
+      <h2 style="font-family:'Abacaxi','Range Sans',sans-serif;text-transform:none">Aube</h2>
+      <span class="mono note">Still running</span>
+    </div>
+    <p>Aube is the only entry that is still live, so it is not filed as a past project. It gets the longest entry, set in its own faces, and it is the one frame that links out.</p>
+    <div class="aube">
+      <div class="aube-panel">
+        <span class="mono">What it is</span>
+        <h3>Cultural intelligence, made accessible</h3>
+        <p>An AI platform that analyses campaigns for cultural appropriation, tokenism, stereotypes and visual authenticity across 90+ markets, so a team catches a problem before it ships instead of apologising after.</p>
+        <div class="metrics">
+          <div class="metric"><b>90+</b><span>Markets</span></div>
+          <div class="metric"><b>2025</b><span>Founded</span></div>
+        </div>
+      </div>
+      <div class="aube-panel">
+        <span class="mono">What you did</span>
+        <h3>Product and go to market, both</h3>
+        <p>You designed and built the product architecture, the AI analysis frameworks and the cultural sensitivity databases from scratch, then wrote the go to market yourself: competitive positioning, tiered B2B pricing, and the NGO partnership programme.</p>
+        <p style="color:var(--grey-dim);font-size:13.5px">That combination is the actual story. Most people who can build the thing cannot price it.</p>
+      </div>
+      <div class="klein-field">
+        <h3>Its own zone</h3>
+        <p>The Aube pages are set in Abacaxi and Range Sans, the faces the live product already uses, so following the link is continuous rather than a jump between two design systems.</p>
+        <span class="mono">aube-ai.com · founder · 2025</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 08b ==================== -->
+  <section class="plate">
+    <div class="plate-head">
+      <span class="plate-no">09</span>
+      <h2>The archive</h2>
+      <span class="mono note">All 47 frames, accounted for</span>
+    </div>
+    <p>You were right that the Lisbon set never made it in. Nine frames were chosen for the contact sheet and the other thirty eight were sitting unused, so here is the whole export sorted, with every frame number written down and a route to land on. <strong>Nothing gets dropped when we build.</strong> Counts are frames, not files.</p>
+    <div class="inv-head"><span>No</span><span>Group</span><span>Frames</span><span>Route</span></div>
+    <div class="inv">
+      <div class="inv-row"><span class="c">11</span><span class="g">Lisbon</span><span class="f">16 17 18 19 20 21 22 23 24 25 26</span><span class="r">/photography</span></div>
+      <div class="inv-row"><span class="c">10</span><span class="g">Betteride campaign</span><span class="f">04 05 06 14 32 33 34 35 36 41</span><span class="r">/betteride</span></div>
+      <div class="inv-row"><span class="c">06</span><span class="g">Nothing concept</span><span class="f">02 03 38 39 40 43</span><span class="r">/nothing</span></div>
+      <div class="inv-row"><span class="c">04</span><span class="g">Pangaia concept</span><span class="f">44 45 46 47</span><span class="r">Dropped</span></div>
+      <div class="inv-row"><span class="c">04</span><span class="g">Posters and graphic design</span><span class="f">10 11 12 31</span><span class="r">/archive</span></div>
+      <div class="inv-row"><span class="c">03</span><span class="g">Photography, other</span><span class="f">28 29 30</span><span class="r">/photography</span></div>
+      <div class="inv-row"><span class="c">03</span><span class="g">Portraits and personal</span><span class="f">07 15 27</span><span class="r">/archive</span></div>
+      <div class="inv-row"><span class="c">02</span><span class="g">Berlin</span><span class="f">13 42</span><span class="r">/berlin</span></div>
+      <div class="inv-row"><span class="c">02</span><span class="g">Events, photographed</span><span class="f">08 09</span><span class="r">/archive</span></div>
+      <div class="inv-row"><span class="c">02</span><span class="g">Reference, not your work</span><span class="f">01 Polsia screenshot · 37 generated image</span><span class="r">Exclude</span></div>
+      <div class="inv-row"><span class="c">02</span><span class="g">Added since the export</span><span class="f">Tree artwork · Google, Dalek</span><span class="r">/archive · /google</span></div>
+    </div>
+    <h3 style="font-family:var(--display);text-transform:uppercase;font-weight:400;font-size:1.35rem;margin:2.6rem 0 .2rem">An archive has a length</h3>
+    <p>The thing that separates an archive from a portfolio is that it accretes. As built, this site would be byte identical in six months, which makes it a brochure. Two changes fix that, and neither is expensive.</p>
+    <p><strong>First, every frame carries two dates: when it was made, and when it was added.</strong> The contact sheet then orders by added, newest first, so the index is a record of the archive growing rather than an arbitrary grid. Within a group it falls back to when it was made, which is how a roll of film is ordered anyway.</p>
+    <div class="roll">
+      <div class="roll-m dim"><b>04</b><div class="roll-bar" style="height:26px"></div><span>2025.11</span></div>
+      <div class="roll-m dim"><b>02</b><div class="roll-bar" style="height:14px"></div><span>2025.12</span></div>
+      <div class="roll-m dim"><b>06</b><div class="roll-bar" style="height:38px"></div><span>2026.01</span></div>
+      <div class="roll-m"><b>11</b><div class="roll-bar" style="height:68px"></div><span>2026.02</span></div>
+      <div class="roll-m"><b>10</b><div class="roll-bar" style="height:62px"></div><span>2026.03</span></div>
+      <div class="roll-m dim"><b>03</b><div class="roll-bar" style="height:20px"></div><span>2026.06</span></div>
+      <div class="roll-m new"><b>11</b><div class="roll-bar" style="height:68px"></div><span>2026.09</span></div>
+    </div>
+    <p class="mono" style="margin-top:.6rem">Shape of the archive by month added. The bar at the right is this week, which is the point.</p>
+    <p style="margin-top:1.1rem"><strong>Second, the count is public and the newest frames say so.</strong> The masthead carries a live frame count, and anything added in the last month is marked on the contact sheet. A number that goes up is the cheapest possible proof that someone is still making things.</p>
+    <div style="margin-top:.8rem">
+      <div class="frame-rail"><span class="d">2026.09</span><span class="t"><b>Google, Dalek</b> &nbsp;added this week</span></div>
+      <div class="frame-rail"><span class="d">2026.09</span><span class="t"><b>Tree artwork</b> &nbsp;added this week</span></div>
+      <div class="frame-rail"><span class="d">2026.03</span><span class="t">Betteride, broken bike</span></div>
+      <div class="frame-rail"><span class="d">2026.02</span><span class="t">Unseen Scenes, Berlin</span></div>
+    </div>
+    <div class="cols" style="margin-top:1.6rem">
+      <div class="klein-field">
+        <h3>Wiring it to Are.na</h3>
+        <p>You already keep the channel. A build step reads it with a token, diffs it against a committed manifest, and any new block becomes a new frame with its added date set automatically. Adding to Are.na is then the only thing you ever have to do to update the site.</p>
+        <p>The catch is that Are.na v3 blocks anonymous reads, so it needs a token held as a build secret rather than in the page. That is the whole cost: one environment variable and a script.</p>
+      </div>
+      <div class="klein-field">
+        <h3>Two to look at again</h3>
+        <p>Frame 01 is your screenshot of Polsia and frame 37 is a generated image. Neither is your work, so both stay out of an archive that argues everything in it is yours.</p>
+        <p>Frame 15 is the closest and most personal thing in the export, and it is of someone else. You said publish everything and that is your call, but that one is worth an actual conversation rather than a default.</p>
+      </div>
+      <div>
+        <p>Lisbon is now the largest group in the archive, which changes the shape of the site: it is not a case study, it has no client and no brief, and it is eleven frames of just looking at a city. That is the clearest evidence that this is an archive rather than a portfolio, so it should sit in the contact sheet at full weight rather than being tucked into an appendix.</p>
+        <p style="margin-top:.9rem">Betteride at ten frames has enough material for a real case study rather than the three flyers currently planned, and the Nothing set at six covers the whole campaign.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 09 ==================== -->
+  <section class="plate">
+    <div class="plate-head">
+      <span class="plate-no">10</span>
+      <h2>Structure</h2>
+      <span class="mono note">Routes</span>
+    </div>
+    <div class="routes">
+      <div class="route"><span class="p">/</span><span class="d">Contact sheet, work and photographs in one index</span><span class="s">New</span></div>
+      <div class="route"><span class="p">/google</span><span class="d">Chrome and Gemini in Chrome, coming soon page in its own zone</span><span class="s">New</span></div>
+      <div class="route"><span class="p">/aube</span><span class="d">Aube, cultural intelligence platform</span><span class="s">Rebuild</span></div>
+      <div class="route"><span class="p">/betteride</span><span class="d">Betteride, Berlin launch campaign</span><span class="s">Rebuild</span></div>
+      <div class="route"><span class="p">/nothing</span><span class="d">Nothing, concept campaign</span><span class="s">Rebuild</span></div>
+      <div class="route"><span class="p">/berlin</span><span class="d">Berlin, Unseen Scenes</span><span class="s">Rebuild</span></div>
+      <div class="route"><span class="p">/photography</span><span class="d">Lisbon and the other photographs, fourteen frames</span><span class="s">New</span></div>
+      <div class="route"><span class="p">/archive</span><span class="d">All 47 frames, uncurated</span><span class="s">New</span></div>
+      <div class="route"><span class="p">/index.txt</span><span class="d">Colophon in ASCII, who you are and how to reach you</span><span class="s">New</span></div>
+    </div>
+    <p style="margin-top:1.2rem">Current site preserved on a <span class="mono" style="color:var(--ink);font-size:12px">reference</span> branch. Nothing is deleted until its replacement exists.</p>
+  </section>
+
+  <!-- ==================== 11 ==================== -->
+  <section class="plate">
+    <div class="plate-head">
+      <span class="plate-no">11</span>
+      <h2>The zones</h2>
+      <span class="mono note">Each route, in its own language</span>
+    </div>
+    <p><strong>Every card below resolves from characters as it scrolls into view.</strong> That is the opening applied as a rule rather than as an intro: entering a case study happens the same way entering the site does, so the transition is the grammar of the place instead of a trick you see once. Scroll back up and down to run them again.</p>
+    <p>The rule is that zones are allowed to disagree, so here is what that actually looks like. Each demo uses the real palette and the real faces for that page, pulled out of your existing pages and the live Aube site rather than invented. <strong>The archive holds them, it does not flatten them.</strong></p>
+    <div class="zgrid">
+
+      <div class="zcard">
+        <div class="zhead"><span class="mono">/</span><span class="mono">The archive</span></div>
+        <div class="zbody" style="--zg:#08080A;--zt:#F2F0EC">
+          <div class="zshot"><img src="data:image/jpeg;base64,__Z_ARCHIVE__" alt="Cards self portrait"><pre class="zascii" aria-hidden="true"></pre><pre class="zascii" aria-hidden="true"></pre>
+            <div class="zover" style="background-image:radial-gradient(circle at center,#FFFFFF 0 .6px,transparent .8px);background-size:4px 4px;opacity:.35"></div></div>
+          <div class="zcontent">
+            <div class="zin">
+              <h3 class="zh" style="font-family:'Silvestre',sans-serif;text-transform:uppercase;font-size:1.75rem">Noe Elamine</h3>
+              <p class="zp" style="font-family:'Range Sans',sans-serif">Grain, a Klein field, and photographs left in their own colour. The contact sheet opens in ASCII and resolves.</p>
+            </div>
+            <div class="zui">
+              <span class="ztag" style="font-family:'Ndot55',monospace;background:#002FA7;color:#fff;transform:rotate(-1.4deg)">Stamp</span>
+              <span class="ztag" style="font-family:'Ndot55',monospace;color:#8A8A92;box-shadow:inset 0 0 0 2px #3B3B42;transform:rotate(1deg)">001</span>
+            </div>
+          </div>
+        </div>
+        <div class="zchips"><i style="background:#08080A;box-shadow:inset 0 0 0 1px #26262B"></i><i style="background:#F2F0EC"></i><i style="background:#8A8A92"></i><i style="background:#002FA7"></i></div>
+      </div>
+
+      <div class="zcard">
+        <div class="zhead"><span class="mono">/photography</span><span class="mono">The largest group</span></div>
+        <div class="zbody" style="--zg:#08080A;--zt:#F2F0EC">
+          <div class="zmini">
+            <img src="data:image/jpeg;base64,__PH_16__" alt="Lisbon waterfront">
+            <img src="data:image/jpeg;base64,__PH_20__" alt="Graffitied passage">
+            <img src="data:image/jpeg;base64,__PH_25__" alt="Balcony facade">
+            <img src="data:image/jpeg;base64,__PH_29__" alt="Museum interior">
+            <img src="data:image/jpeg;base64,__PH_28__" alt="Parakeets on a lamppost">
+            <img src="data:image/jpeg;base64,__PH_30__" alt="St Pauli pitch invasion">
+          </div>
+          <div class="zcontent">
+            <div class="zin">
+              <h3 class="zh" style="font-family:'Silvestre',sans-serif;text-transform:uppercase;font-size:1.75rem">Photography</h3>
+              <p class="zp" style="font-family:'Range Sans',sans-serif">Fourteen frames, eleven of them Lisbon. No client, no brief, just looking. The clearest evidence this is an archive.</p>
+            </div>
+            <div class="zui">
+              <span class="ztag" style="font-family:'Ndot55',monospace;background:#002FA7;color:#fff;transform:rotate(-1deg)">Lisbon</span>
+              <span class="ztag" style="font-family:'Ndot55',monospace;color:#8A8A92;box-shadow:inset 0 0 0 2px #3B3B42;transform:rotate(1.2deg)">014</span>
+            </div>
+          </div>
+        </div>
+        <div class="zchips"><i style="background:#08080A;box-shadow:inset 0 0 0 1px #26262B"></i><i style="background:#F2F0EC"></i><i style="background:#8A8A92"></i><i style="background:#002FA7"></i></div>
+      </div>
+
+      <div class="zcard">
+        <div class="zhead"><span class="mono">/google</span><span class="mono">Chrome</span></div>
+        <div class="zbody" style="--zg:#FFFFFF;--zt:#1F1F1F">
+          <div class="zcontent" style="text-align:center;align-items:center;padding-bottom:.6rem">
+            <div class="zin" style="align-items:center">
+              <h3 class="zh" style="font-family:'Google Sans',sans-serif;font-weight:500;letter-spacing:-.028em">Meet <span style="color:#1B72E8">Gemini</span> in Chrome</h3>
+              <p class="zp" style="font-family:'Google Sans',sans-serif;color:#5F6368;opacity:1">AI assistance, right in your browser.</p>
+            </div>
+            <span class="ztag" style="font-family:'Google Sans',sans-serif;background:#4285F4;color:#fff;border-radius:999px;padding:.48rem 1rem;text-transform:none;letter-spacing:0;font-size:12px">Coming soon</span>
+          </div>
+          <div style="padding:0 .9rem .9rem"><div style="background:#EEF1F6;border-radius:18px;padding:.7rem">
+            <img src="data:image/jpeg;base64,__Z_GOOGLE__" alt="Noe at the Google London office" style="width:100%;aspect-ratio:16/10;object-fit:cover;border-radius:10px;display:block">
+          </div></div>
+        </div>
+        <div class="zchips"><i style="background:#FFFFFF"></i><i style="background:#1F1F1F"></i><i style="background:#4285F4"></i><i style="background:#EEF1F6"></i></div>
+      </div>
+
+      <div class="zcard">
+        <div class="zhead"><span class="mono">/aube</span><span class="mono">The product</span></div>
+        <div class="zbody zaube" style="--zg:#110C08;--zt:#F2EDE6">
+          <div style="display:flex;align-items:center;gap:.45rem;padding:.7rem .9rem;position:relative;z-index:3">
+            <span class="aube-mark"></span>
+            <span style="font-family:'Range Sans',sans-serif;font-size:12.5px;color:#F2EDE6">Aube</span>
+            <span style="margin-left:auto;font-family:'Range Sans',sans-serif;font-size:9.5px;
+              background:#E8913A;color:#1A1208;padding:.28rem .55rem;border-radius:5px">Request early access</span>
+          </div>
+          <div class="zcontent">
+            <span class="term" style="left:3%;top:9%">Cultural appropriation</span>
+            <span class="term" style="left:66%;top:7%">Tokenism</span>
+            <span class="term" style="left:72%;top:19%">Stereotyping</span>
+            <span class="term" style="left:2%;top:25%">Colour symbolism</span>
+            <span class="term" style="left:68%;top:80%">Translation error</span>
+            <span class="term" style="left:4%;top:88%">Gesture misread</span>
+            <span class="term" style="left:52%;top:93%">Historical blindspot</span>
+            <div class="zin">
+              <span class="aube-eyebrow"><i></i>Cultural intelligence for global brands</span>
+              <h3 class="zh" style="font-family:'Abacaxi',sans-serif;font-weight:400;letter-spacing:-.01em;font-size:1.45rem">
+                Your campaign launched in <span style="color:#E8913A">Sydney</span></h3>
+              <p class="zp" style="font-family:'Range Sans',sans-serif;color:#9A8B7C;opacity:1;font-size:11.5px">
+                Analysed against five academic frameworks across 70+ markets.</p>
+            </div>
+            <span class="aube-pill">Get your first analysis</span>
+          </div>
+        </div>
+        <div class="zchips"><i style="background:#110C08;box-shadow:inset 0 0 0 1px #2A211A"></i><i style="background:#F2EDE6"></i><i style="background:#E8913A"></i><i style="background:#6B5C4E"></i></div>
+      </div>
+
+      <div class="zcard">
+        <div class="zhead"><span class="mono">/betteride</span><span class="mono">Berlin launch</span></div>
+        <div class="zbody" style="--zg:#0C0902;--zt:#FFC000">
+          <div class="zshot"><img src="data:image/jpeg;base64,__Z_BETTERIDE__" alt="Betteride flyer, lost with a broken bike"><pre class="zascii" aria-hidden="true"></pre></div>
+          <div class="zcontent">
+            <div class="zin">
+              <h3 class="zh" style="font-family:'Range Sans',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:-.02em;line-height:.98">Lost with a<br>broken bike</h3>
+              <p class="zp" style="font-family:'Range Sans',sans-serif;color:#D7BD72;opacity:1">Ten frames. Flyers, banners, the launch.</p>
+            </div>
+            <div class="zui">
+              <span class="ztag" style="font-family:'Range Sans',sans-serif;font-weight:700;background:#6B3FE4;color:#fff">No problem</span>
+              <span class="ztag" style="font-family:'Range Sans',sans-serif;font-weight:700;background:#FFE400;color:#0C0902">Betteride.eu</span>
+            </div>
+          </div>
+        </div>
+        <div class="zchips"><i style="background:#0C0902"></i><i style="background:#FFC000"></i><i style="background:#6B3FE4"></i><i style="background:#FFE400"></i></div>
+      </div>
+
+      <div class="zcard">
+        <div class="zhead"><span class="mono">/nothing</span><span class="mono">Concept campaign</span></div>
+        <div class="zbody" style="--zg:#D8D8D8;--zt:#171717">
+          <div class="zshot"><img src="data:image/jpeg;base64,__Z_NOTHING__" alt="Nothing posters"><pre class="zascii" aria-hidden="true"></pre>
+            <div class="zover" style="background-image:radial-gradient(circle,#888 1.5px,transparent 1.5px);background-size:32px 32px;opacity:.4"></div></div>
+          <div class="zcontent">
+            <div class="zin">
+              <h3 class="zh" style="font-family:'Courier New',monospace;text-transform:uppercase;letter-spacing:.06em">Nothing<span style="color:#D71921">.</span></h3>
+              <p class="zp" style="font-family:'Courier New',monospace;opacity:1;color:#3A3A3A">Light grey, a 32px dot grid, one red dot. Your original, kept.</p>
+            </div>
+            <div class="zui">
+              <span class="ztag" style="font-family:'Courier New',monospace;box-shadow:inset 0 0 0 1px #171717">Ad · tube</span>
+              <span style="width:9px;height:9px;border-radius:50%;background:#D71921;display:inline-block"></span>
+            </div>
+          </div>
+        </div>
+        <div class="zchips"><i style="background:#D8D8D8"></i><i style="background:#171717"></i><i style="background:#888888"></i><i style="background:#D71921"></i></div>
+      </div>
+
+      <div class="zcard">
+        <div class="zhead"><span class="mono">/berlin</span><span class="mono">Unseen Scenes</span></div>
+        <div class="zbody" style="--zg:#0A0A0A;--zt:#E9E4D7">
+          <div class="zshot"><img src="data:image/jpeg;base64,__Z_BERLIN__" alt="Unseen Scenes, Fernsehturm"><pre class="zascii" aria-hidden="true"></pre>
+            <div class="zover" style="background:repeating-linear-gradient(0deg,transparent 0 2px,rgba(0,0,0,.34) 2px 4px)"></div></div>
+          <div class="zcontent">
+            <div class="zin">
+              <h3 class="zh" style="font-family:'Departure Mono',monospace;text-transform:uppercase;text-shadow:-2px 0 #FF0040, 2px 0 #00D5FF">Unseen Scenes</h3>
+              <p class="zp" style="font-family:'Departure Mono',monospace;color:#1B6B65;opacity:1">Teal, scanlines, chromatic split.</p>
+            </div>
+            <div class="zui">
+              <span class="ztag" style="font-family:'Departure Mono',monospace;background:#1B6B65;color:#E9E4D7">Fernsehturm</span>
+              <span class="ztag" style="font-family:'Departure Mono',monospace;color:#FF0040;box-shadow:inset 0 0 0 1px #FF0040">Rec</span>
+            </div>
+          </div>
+        </div>
+        <div class="zchips"><i style="background:#0A0A0A"></i><i style="background:#1B6B65"></i><i style="background:#FF0040"></i><i style="background:#00D5FF"></i></div>
+      </div>
+
+    </div>
+    <p style="margin-top:2rem">Photography is the group you flagged, and it is the one the old site had no room for at all. All fourteen frames from the export, at their own weight rather than as an appendix:</p>
+    <div class="phgrid">
+        <figure><img src="data:image/jpeg;base64,__PH_16__" alt="Ponte 25 de Abril"><figcaption>16 &nbsp;Ponte 25 de Abril</figcaption></figure>
+        <figure><img src="data:image/jpeg;base64,__PH_17__" alt="Cais do Sodré"><figcaption>17 &nbsp;Cais do Sodré</figcaption></figure>
+        <figure><img src="data:image/jpeg;base64,__PH_18__" alt="Tiled facade"><figcaption>18 &nbsp;Tiled facade</figcaption></figure>
+        <figure><img src="data:image/jpeg;base64,__PH_19__" alt="Rua"><figcaption>19 &nbsp;Rua</figcaption></figure>
+        <figure><img src="data:image/jpeg;base64,__PH_20__" alt="Passage"><figcaption>20 &nbsp;Passage</figcaption></figure>
+        <figure><img src="data:image/jpeg;base64,__PH_21__" alt="Apartment block"><figcaption>21 &nbsp;Apartment block</figcaption></figure>
+        <figure><img src="data:image/jpeg;base64,__PH_22__" alt="Glasshouse"><figcaption>22 &nbsp;Glasshouse</figcaption></figure>
+        <figure><img src="data:image/jpeg;base64,__PH_23__" alt="Framed work"><figcaption>23 &nbsp;Framed work</figcaption></figure>
+        <figure><img src="data:image/jpeg;base64,__PH_24__" alt="Interior"><figcaption>24 &nbsp;Interior</figcaption></figure>
+        <figure><img src="data:image/jpeg;base64,__PH_25__" alt="Balcony"><figcaption>25 &nbsp;Balcony</figcaption></figure>
+        <figure><img src="data:image/jpeg;base64,__PH_26__" alt="Facade"><figcaption>26 &nbsp;Facade</figcaption></figure>
+        <figure><img src="data:image/jpeg;base64,__PH_28__" alt="Parakeets"><figcaption>28 &nbsp;Parakeets</figcaption></figure>
+        <figure><img src="data:image/jpeg;base64,__PH_29__" alt="Museum"><figcaption>29 &nbsp;Museum</figcaption></figure>
+        <figure><img src="data:image/jpeg;base64,__PH_30__" alt="St. Pauli"><figcaption>30 &nbsp;St. Pauli</figcaption></figure>
+    </div>
+    <p style="margin-top:1.4rem">Eleven of those are Lisbon, shot in one run, which is why they hold together as a set rather than a scatter of travel pictures. That makes photography the largest single group in the archive, larger than Betteride at ten. <strong>It should get its own route rather than living inside the general archive.</strong></p>
+    <p style="margin-top:1.5rem"><strong>Symbiosis is out.</strong> Pangaia was the one entry that was a student brief for a brand you have no relationship with, and next to Aube, Betteride and Chrome it was the weakest claim on the page. Its four frames stay in the export but the route is gone. Say the word and it comes back in five minutes.</p>
+    <p style="margin-top:.9rem">Two of the remaining zones are stricter than they look. <strong>Nothing keeps your original grey and its 32px dot grid</strong> rather than being redrawn in the archive's language, because that page already works and rebuilding it would only make it more like everything else. <strong>Betteride runs two palettes</strong>: the amber and near black of the site you built, and the violet and acid of the printed flyers. The case study should carry both rather than pick one.</p>
+    <p style="margin-top:.9rem">The Aube card is rebuilt against the live site rather than its stylesheet, and I had it wrong before. <strong>Aube is dark, not light</strong>: warm near black, amber, Abacaxi at a light weight, and that scattered field of failure modes behind the headline. Tokenism, stereotyping, translation error, gesture misread. That drifting field is the page's whole idea, the product's problem space made visible before it says a word, and it is the thing worth carrying into the case study.</p>
+  </section>
+
+  <!-- ==================== 12 ==================== -->
+  <section class="plate">
+    <div class="plate-head">
+      <span class="plate-no">12</span>
+      <h2>Rules</h2>
+      <span class="mono note">What holds it together</span>
+    </div>
+    <ul class="spec">
+      <li><b>No lines</b>Nothing is separated by a rule or a border. Hierarchy comes from scale, space, and Klein blocks. If two things need dividing, they need more space.</li>
+      <li><b>Reduction is the house style</b>Grain, character field, ASCII opening. All three are the same move at different strengths.</li>
+      <li><b>Photographs keep their colour</b>The interface is monochrome so the images do the colouring. The only colour the interface adds is Klein.</li>
+      <li><b>Klein is a field</b>Never a 2px underline or a small icon tint. Blocks, or not at all.</li>
+      <li><b>One motion idea, applied everywhere</b>Things resolve from characters into themselves. The site opens that way and every case study enters that way, so it is a grammar rather than an intro. Nothing else moves: no page transitions, no orbs, no custom cursor.</li>
+      <li><b>Metadata stays visible</b>Frame number, title, type. Never hidden behind a hover.</li>
+      <li><b>Nothing eases</b>State changes are instant. Easing is what makes an interface read as generated, and every physical thing this archive refers to, a stamp, a punch, a key, arrives in one move.</li>
+      <li><b>Controls are objects, not rectangles</b>Buttons are stamps, filing cards, label tape or taped paper. The smallest element on the site is built from the same world as the largest.</li>
+      <li><b>Zones are allowed to disagree</b>The landing page is where this language goes furthest. Project pages keep their own: Chrome is light and rounded, Aube is warm black and amber, Betteride is violet and acid. The archive holds them, it does not flatten them.</li>
+    </ul>
+  </section>
+
+  <!-- ==================== 10 ==================== -->
+  <section class="plate">
+    <div class="plate-head">
+      <span class="plate-no">13</span>
+      <h2>Open decisions</h2>
+      <span class="mono note">Yours</span>
+    </div>
+    <div class="qs">
+      <div class="q"><b>Texture numbers</b>Set grain, dot screen and ghost in Plate 03, plus the blue hue in Plate 02, and read me the four values.</div>
+      <div class="q"><b>Which frame opens the site</b>Cards is the default. The Berlin dusk frame would open colder and slower.</div>
+      <div class="q"><b>Captions for 47 frames</b>Most are still called IMG_0045. Real titles, places and dates are writing only you can do.</div>
+      <div class="q"><b>Google on the page or not</b>An archive does not need an employer. Your call whether it appears.</div>
+      <div class="q"><b>Typekit domain</b>Range Sans and Abacaxi need noeelamine.com added to kit fsq0nta in your Adobe account.</div>
+      <div class="q"><b>Ndot licensing</b>Flagged once already, built in as you asked. Departure Mono is the drop in if you change your mind.</div>
+      <div class="q"><b>Google sign off</b>Who reviews the Chrome page before it goes live, and how much can be said about work that has not shipped.</div>
+      <div class="q"><b>Captions for 47 frames</b>The groups are sorted in Plate 09 but most frames are still called IMG_0045. Titles, places and dates are writing only you can do.</div>
+      <div class="q"><b>Button treatment</b>Five in Plate 05, applied live. My pick is Crop. Tell me which.</div>
+    </div>
+  </section>
+
+  <footer class="colophon">
+    <span class="mono">Noe Elamine · Design Language · Rev 03</span>
+    <span class="mono">Silvestre · Range Sans · Departure Mono · Ndot-55 · Abacaxi</span>
+  </footer>
+</div>
+
+<script>__GSAP__</script>
+<script>__SCROLLTRIGGER__</script>
+<script>
+(function(){
+  "use strict";
+  var $=function(id){return document.getElementById(id)};
+  var reduced=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ---------------- shared ASCII engine ---------------- */
+  var cv=document.createElement('canvas'), ctx=cv.getContext('2d',{willReadFrequently:true});
+  function render(img,cols,ramp){
+    if(!img.naturalWidth) return '';
+    var rows=Math.max(1,Math.round(cols*(img.naturalHeight/img.naturalWidth)*0.5));
+    cv.width=cols; cv.height=rows;
+    ctx.drawImage(img,0,0,cols,rows);
+    var d;
+    try{ d=ctx.getImageData(0,0,cols,rows).data; }catch(e){ return ''; }
+    var last=ramp.length-1,s='',x,y,i,lum;
+    for(y=0;y<rows;y++){
+      for(x=0;x<cols;x++){
+        i=(y*cols+x)*4;
+        lum=(0.299*d[i]+0.587*d[i+1]+0.114*d[i+2])/255;
+        s+=ramp.charAt(Math.round((1-lum)*last));
+      }
+      s+='\n';
+    }
+    return s;
+  }
+  var hero=$('heroimg');
+  function whenReady(img,fn){ if(img.complete&&img.naturalWidth) fn(); else img.addEventListener('load',fn); }
+
+  /* ---------------- ghost field: a photograph, barely present ---------------- */
+  var ghostImg=new Image(), CH=0.6;   /* Departure Mono advance width, as a share of em */
+  var GHOSTS={
+    tree:"data:image/jpeg;base64,__IMG_TREEGHOST__",
+    funkturm:"data:image/jpeg;base64,__IMG_GHOST__",
+    cards:"data:image/jpeg;base64,__IMG_HERO__"
+  };
+  function paintGhost(){
+    if(!ghostImg.naturalWidth) return;
+    var g=$('ghost'), cols=248,
+        rows=Math.max(1,Math.round(cols*(ghostImg.naturalHeight/ghostImg.naturalWidth)*0.5));
+    g.textContent=render(ghostImg,cols,' .:-=+*#%@');
+    /* size the type so the character block covers the viewport in both axes */
+    g.style.fontSize=Math.ceil(Math.max(window.innerWidth/(cols*CH),window.innerHeight/rows))+'px';
+  }
+  ghostImg.onload=paintGhost;
+  ghostImg.src=GHOSTS.tree;
+  var gsBtns=Array.prototype.slice.call(document.querySelectorAll('[data-gs]'));
+  gsBtns.forEach(function(btn){
+    btn.addEventListener('click',function(){
+      gsBtns.forEach(function(g){g.setAttribute('aria-pressed','false')});
+      btn.setAttribute('aria-pressed','true');
+      ghostImg.src=GHOSTS[btn.dataset.gs];
+    });
+  });
+
+  /* ---------------- the opening ---------------- */
+  var op=$('openerAscii'), pct=$('openerPct'), hint=$('openerHint'), stage=$('openerStage'),
+      lastCols=-1, lastP=0, mode='mc';
+  function opener(p){
+    lastP=p;
+    /* start coarse but already legible as a picture, then refine */
+    var cols=Math.round(72+p*138);
+    if(Math.abs(cols-lastCols)>=2){
+      op.textContent=render(hero,cols,' .:-=+*#%@');
+      /* the character block always fills the frame, so only the grain of it changes */
+      var w=op.parentElement.clientWidth||760;
+      op.style.setProperty('--osz',(w/(cols*CH)).toFixed(2)+'px');
+      lastCols=cols;
+    }
+    /* stage one: characters give way to a black and white photograph */
+    var reveal=Math.min(1,Math.max(0,(p-0.42)/0.33));
+    hero.style.opacity=reveal;
+    op.style.opacity=1-reveal;
+    /* stage two: colour arrives last, so it is the thing the opening earns */
+    var col = mode==='colour' ? 1 : mode==='mono' ? 0 : Math.min(1,Math.max(0,(p-0.76)/0.24));
+    hero.style.filter='grayscale('+(1-col).toFixed(3)+') contrast('+(1+0.14*(1-col)).toFixed(3)+')';
+    hint.style.opacity=1-Math.min(1,p*2.2);
+    pct.textContent=('00'+Math.round(p*100)).slice(-3);
+    stage.textContent = reveal<1 ? 'characters' : (col<1 ? 'monochrome' : 'colour');
+  }
+  whenReady(hero,function(){
+    opener(0);
+    if(window.gsap && window.ScrollTrigger && !reduced){
+      gsap.registerPlugin(ScrollTrigger);
+      ScrollTrigger.create({
+        trigger:"#opener", start:"top top", end:"+=180%", pin:true, scrub:.6,
+        onUpdate:function(self){ opener(self.progress); }
+      });
+    } else {
+      opener(1);   /* no motion: show the photograph */
+    }
+  });
+
+  /* ---------------- texture controls ---------------- */
+  function fill(el){ el.style.setProperty('--fill',((el.value-el.min)/(el.max-el.min)*100)+'%'); }
+  var gr=$('gr'), go=$('go'), gh=$('gh'), gho=$('gho'), dt=$('dt'), dto=$('do'),
+      grainEl=document.querySelector('.grain'), ghostEl=$('ghost'), dotsEl=document.querySelector('.dots');
+
+  /* film grain: per pixel noise, Photoshop style */
+  function noiseTile(size,amount){
+    var c=document.createElement('canvas'); c.width=c.height=size;
+    var x=c.getContext('2d'), im=x.createImageData(size,size), d=im.data, i, v;
+    for(i=0;i<d.length;i+=4){
+      /* three uniforms summed approximates a gaussian, which is what grain actually looks like.
+         Centred on mid grey so an overlay blend leaves the underlying tone alone. */
+      v=128+(Math.random()+Math.random()+Math.random()-1.5)*amount;
+      d[i]=d[i+1]=d[i+2]=v<0?0:v>255?255:v; d[i+3]=255;
+    }
+    x.putImageData(im,0,0);
+    return 'url('+c.toDataURL('image/png')+')';
+  }
+  var TILES=[noiseTile(180,58),noiseTile(180,58),noiseTile(180,58)], tileAt=0;
+  document.documentElement.style.setProperty('--noise',TILES[0]);
+  grainEl.style.backgroundImage=TILES[0];
+  if(!reduced){
+    setInterval(function(){
+      tileAt=(tileAt+1)%TILES.length;
+      grainEl.style.backgroundImage=TILES[tileAt];
+    },90);
+  }
+  function tex(){
+    grainEl.style.opacity=gr.value/100;
+    dotsEl.style.opacity=dt.value/100;
+    ghostEl.style.opacity=gh.value/1000;
+    go.textContent=gr.value; dto.textContent=dt.value; gho.textContent=gh.value;
+    fill(gr); fill(dt); fill(gh);
+  }
+  [gr,dt,gh].forEach(function(el){ el.addEventListener('input',tex) }); tex();
+
+  /* the blue: one hue drives every blue on the page */
+  var kh=$('kh'), kho=$('kho'), kleinHex=$('kleinHex');
+  function hslHex(h,sPct,lPct){
+    var sN=sPct/100, lN=lPct/100,
+        c=(1-Math.abs(2*lN-1))*sN, x=c*(1-Math.abs((h/60)%2-1)), m=lN-c/2,
+        t=h<60?[c,x,0]:h<120?[x,c,0]:h<180?[0,c,x]:h<240?[0,x,c]:h<300?[x,0,c]:[c,0,x];
+    return t.map(function(v){ return ('0'+Math.round((v+m)*255).toString(16)).slice(-2) }).join('').toUpperCase();
+  }
+  function blue(){
+    document.documentElement.style.setProperty('--kh',kh.value);
+    kho.textContent=kh.value;
+    kleinHex.textContent=hslHex(+kh.value,100,30);
+    fill(kh);
+  }
+  kh.addEventListener('input',blue); blue();
+
+  /* ---------------- ascii plate ---------------- */
+  var out=$('ascii'), ac=$('ac'), aco=$('aco'), asz=$('asz'), aszo=$('aszo'), ameta=$('asciimeta'), ramp=' .:-=+*#%@';
+  function ascii(){
+    out.textContent=render(hero,parseInt(ac.value,10),ramp)||'preview unavailable';
+    aco.textContent=ac.value; ameta.textContent=ac.value; fill(ac);
+  }
+  function asciiSize(){ out.style.setProperty('--asz',asz.value+'px'); aszo.textContent=asz.value; fill(asz); }
+  ac.addEventListener('input',ascii); asz.addEventListener('input',asciiSize);
+  var ramps=Array.prototype.slice.call(document.querySelectorAll('[data-r]'));
+  ramps.forEach(function(btn){
+    btn.addEventListener('click',function(){
+      ramps.forEach(function(r){r.setAttribute('aria-pressed','false')});
+      btn.setAttribute('aria-pressed','true'); ramp=btn.dataset.r; ascii();
+    });
+  });
+  asciiSize(); whenReady(hero,ascii);
+
+  /* ---------------- contact sheet ---------------- */
+  var FRAMES=[
+    ["__IMG_HERO__","001","Cards","self portrait"],
+    ["__IMG_14__","002","Broken bike","Betteride 2026"],
+    ["__IMG_42__","003","Unseen scenes","Berlin"],
+    ["__IMG_12__","004","Identitee","poster · 2026"],
+    ["__IMG_13__","005","Funkturm","photograph"],
+    ["__IMG_41__","006","Cyclist","photograph"],
+    ["__IMG_10__","007","Can we trust AI","Builder Club"],
+    ["__IMG_30__","008","St. Pauli","photograph"],
+    ["__IMG_34__","009","Exposed is fine","Betteride 2026"]
+  ];
+  var sheet=$('sheet');
+  FRAMES.forEach(function(f){
+    var b=document.createElement('button');
+    b.className='frame'; b.type='button';
+    b.innerHTML='<span class="frame-img"><img src="data:image/jpeg;base64,'+f[0]+'" alt="'+f[2]+'"></span>'+
+      '<span class="frame-meta"><span class="n">'+f[1]+'</span>'+
+      '<span class="t">'+f[2]+'<br>'+f[3]+'</span></span>';
+    sheet.appendChild(b);
+  });
+
+  var modes=Array.prototype.slice.call(document.querySelectorAll('[data-m]'));
+  modes.forEach(function(btn){
+    btn.addEventListener('click',function(){
+      modes.forEach(function(m){m.setAttribute('aria-pressed','false')});
+      btn.setAttribute('aria-pressed','true');
+      mode=btn.dataset.m; opener(lastP);
+    });
+  });
+
+  /* ---------------- the tree, as dots ---------------- */
+  var tcan=$('treedots'), tctx=tcan.getContext('2d'),
+      scv=document.createElement('canvas'), sctx=scv.getContext('2d',{willReadFrequently:true}),
+      treeImg=new Image(), td=$('td'), tdo=$('tdo'), ts=$('ts'), tso=$('tso');
+  /* denser ink gets a heavier glyph, the same ramp idea as the opener */
+  var TREE_RAMP=' .:-=+ixX*#%@', TREE_MODE='chars';
+  function paintTree(){
+    var dpr=Math.min(2,window.devicePixelRatio||1), w=window.innerWidth, h=window.innerHeight;
+    tcan.width=w*dpr; tcan.height=h*dpr; tcan.style.width=w+'px'; tcan.style.height=h+'px';
+    tctx.setTransform(dpr,0,0,dpr,0,0); tctx.clearRect(0,0,w,h);
+    if(!treeImg.naturalWidth) return;
+    var step=parseInt(ts.value,10);
+    /* fit the drawing inside the viewport, then sample it once per dot cell */
+    var sc=Math.min(w/treeImg.naturalWidth,h/treeImg.naturalHeight)*0.94;
+    var dw=treeImg.naturalWidth*sc, dh=treeImg.naturalHeight*sc;
+    var ox=(w-dw)/2, oy=(h-dh)/2;
+    var cols=Math.max(1,Math.ceil(dw/step)), rows=Math.max(1,Math.ceil(dh/step));
+    scv.width=cols; scv.height=rows;
+    sctx.clearRect(0,0,cols,rows);
+    sctx.drawImage(treeImg,0,0,cols,rows);
+    var d;
+    try{ d=sctx.getImageData(0,0,cols,rows).data; }catch(e){ return; }
+    tctx.fillStyle='#FFFFFF';
+    tctx.textAlign='center';
+    tctx.textBaseline='middle';
+    tctx.font=(step*1.25).toFixed(1)+'px "Departure Mono", ui-monospace, monospace';
+    var last=TREE_RAMP.length-1;
+    for(var j=0;j<rows;j++){
+      for(var i=0;i<cols;i++){
+        var k=(j*cols+i)*4;
+        /* dark characters on a transparent ground: alpha gates it, luminance shades it,
+           so a transparent pixel plots nothing instead of reading as solid black */
+        var a=d[k+3]/255;
+        var ink=a*(1-(0.299*d[k]+0.587*d[k+1]+0.114*d[k+2])/255);
+        if(ink<0.10) continue;
+        tctx.globalAlpha=Math.min(1,ink*1.2);
+        if(TREE_MODE==='dots'){
+          tctx.beginPath();
+          tctx.arc(ox+i*step+step/2, oy+j*step+step/2, ink*step*0.44, 0, 6.2832);
+          tctx.fill();
+        } else {
+          tctx.fillText(TREE_RAMP.charAt(Math.round(ink*last)), ox+i*step+step/2, oy+j*step+step/2);
+        }
+      }
+    }
+    tctx.globalAlpha=1;
+  }
+  treeImg.onload=paintTree;
+  treeImg.src="data:image/png;base64,__IMG_TREEDOTS__";
+  /* the glyphs need the face loaded before the canvas can measure them */
+  if(document.fonts&&document.fonts.ready) document.fonts.ready.then(paintTree);
+  var trBtns=Array.prototype.slice.call(document.querySelectorAll('[data-tr]'));
+  trBtns.forEach(function(btn){
+    btn.addEventListener('click',function(){
+      trBtns.forEach(function(t){t.setAttribute('aria-pressed','false')});
+      btn.setAttribute('aria-pressed','true');
+      if(btn.dataset.tr==='dots') TREE_MODE='dots';
+      else { TREE_MODE='chars'; TREE_RAMP=btn.dataset.tr; }
+      paintTree();
+    });
+  });
+  function treeCtl(){
+    tcan.style.opacity=td.value/100; tdo.textContent=td.value;
+    tso.textContent=ts.value; fill(td); fill(ts); paintTree();
+  }
+  td.addEventListener('input',treeCtl); ts.addEventListener('input',treeCtl); treeCtl();
+
+  /* keep both character fields sized to the window */
+  var rt;
+  window.addEventListener('resize',function(){
+    clearTimeout(rt);
+    rt=setTimeout(function(){ paintGhost(); paintTree(); lastCols=-1; opener(lastP); },160);
+  });
+
+  /* ---------------- zones resolve on entry ----------------
+     The opening is not a one time trick. Every zone arrives the same way, so the
+     transition is the site's grammar rather than an intro animation. */
+  (function(){
+    var shots=Array.prototype.slice.call(document.querySelectorAll('.zshot'));
+    if(!shots.length) return;
+    if(reduced||!('IntersectionObserver' in window)){
+      shots.forEach(function(sh){ sh.classList.add('is-resolved'); });
+      return;
+    }
+    function play(sh){
+      var img=sh.querySelector('img'), pre=sh.querySelector('.zascii');
+      if(!img||!pre) return;
+      if(!img.naturalWidth){ img.addEventListener('load',function(){play(sh)}); return; }
+      var w=sh.clientWidth||320, t0=performance.now(), DUR=900, lastC=-1;
+      img.style.opacity='0';
+      (function tick(now){
+        var pr=Math.min(1,(now-t0)/DUR);
+        var cols=Math.round(18+pr*120);
+        if(Math.abs(cols-lastC)>=3){
+          pre.textContent=render(img,cols,' .:-=+*#%@');
+          pre.style.setProperty('--zsz',(w/(cols*CH)).toFixed(2)+'px');
+          lastC=cols;
+        }
+        var rev=Math.max(0,(pr-0.5)/0.5);
+        img.style.opacity=rev;
+        pre.style.opacity=1-rev;
+        if(pr<1) requestAnimationFrame(tick);
+        else { img.style.opacity='1'; sh.classList.add('is-resolved'); }
+      })(t0);
+    }
+    var io=new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting && !e.target.dataset.ran){
+          e.target.dataset.ran='1'; play(e.target); io.unobserve(e.target);
+        }
+      });
+    },{threshold:.35});
+    shots.forEach(function(sh){ io.observe(sh); });
+  })();
+
+  /* ---------------- button treatment switcher ---------------- */
+  var bsBtns=Array.prototype.slice.call(document.querySelectorAll('[data-bs]'));
+  bsBtns.forEach(function(btn){
+    btn.addEventListener('click',function(){
+      bsBtns.forEach(function(b){b.setAttribute('aria-pressed','false')});
+      btn.setAttribute('aria-pressed','true');
+      document.documentElement.setAttribute('data-btn',btn.dataset.bs);
+    });
+  });
+
+  /* Resolve: the label scrambles and settles. Characters land left to right with a
+     little jitter, so it reads as something resolving rather than a uniform flicker.
+     Length never changes, so the button cannot reflow while it runs. */
+  var GLY='!<>-_\\/[]{}=+*^?#%@$&';
+  function scramble(btn,dur){
+    var sp=btn.querySelector('span'); if(!sp||sp.dataset.busy) return;
+    var real=sp.dataset.real||(sp.dataset.real=sp.textContent);
+    sp.dataset.busy='1'; btn.classList.add('is-working');
+    var t0=performance.now();
+    var jitter=real.split('').map(function(){ return Math.random()*0.34; });
+    (function tick(now){
+      var pr=Math.min(1,(now-t0)/dur), out='', i, ch, at;
+      for(i=0;i<real.length;i++){
+        ch=real.charAt(i);
+        if(ch===' '){ out+=' '; continue; }
+        at=(i/real.length)*0.62+jitter[i];
+        out+= pr>=at ? ch : GLY.charAt((Math.random()*GLY.length)|0);
+      }
+      sp.textContent=out;
+      if(pr<1) requestAnimationFrame(tick);
+      else { sp.textContent=real; delete sp.dataset.busy; btn.classList.remove('is-working'); }
+    })(t0);
+  }
+  function resolveMode(){
+    var m=document.documentElement.getAttribute('data-btn');
+    return m==='resolve'||m==='terminal';
+  }
+  document.addEventListener('mouseover',function(e){
+    if(!resolveMode()) return;
+    var b=e.target.closest && e.target.closest('.btn');
+    if(b) scramble(b,420);
+  });
+  /* clicking runs it again and longer: the label comes apart, then commits */
+  document.addEventListener('click',function(e){
+    if(!resolveMode()) return;
+    var b=e.target.closest && e.target.closest('.btn');
+    if(b) scramble(b,620);
+  },true);
+
+  /* ---------------- wordmark switcher ---------------- */
+  var wm=$('wm'), fonts=Array.prototype.slice.call(document.querySelectorAll('[data-f]'));
+  fonts.forEach(function(btn){
+    btn.addEventListener('click',function(){
+      fonts.forEach(function(f){f.setAttribute('aria-pressed','false')});
+      btn.setAttribute('aria-pressed','true');
+      wm.style.setProperty('--wm',btn.dataset.f);
+    });
+  });
+})();
+</script>
