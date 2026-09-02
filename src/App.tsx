@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import { Grain, DotScreen, TreeField } from "@/components/Texture";
+import { SiteNav } from "@/components/Chrome";
 import Index from "@/pages/Index";
 import Photography from "@/pages/Photography";
 import Archive from "@/pages/Archive";
@@ -23,10 +24,11 @@ function ScrollTop() {
  * disagree, and a light Google page with film grain over it would be neither
  * one thing nor the other.
  */
+const ZONES = ["/google", "/aube", "/betteride", "/nothing", "/berlin"];
+
 function Texture() {
   const { pathname } = useLocation();
-  const zone = ["/google", "/aube", "/betteride", "/nothing", "/berlin"].includes(pathname);
-  if (zone) return null;
+  if (ZONES.includes(pathname)) return null;
   return (
     <>
       <TreeField />
@@ -36,11 +38,19 @@ function Texture() {
   );
 }
 
+/** The nav is fixed on archive pages; each zone carries its own way back. */
+function Nav() {
+  const { pathname } = useLocation();
+  if (ZONES.includes(pathname)) return null;
+  return <SiteNav />;
+}
+
 export default function App() {
   return (
     <BrowserRouter>
       <ScrollTop />
       <Texture />
+      <Nav />
       <Routes>
         <Route path="/" element={<Index />} />
         <Route path="/photography" element={<Photography />} />

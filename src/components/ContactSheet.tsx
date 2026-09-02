@@ -19,16 +19,26 @@ function Cell({ f }: { f: Frame }) {
     </>
   );
 
-  const cls = "group relative flex flex-col gap-2 text-left";
+  const flag = fresh ? (
+    <span className="num absolute -top-2 right-0 text-[11px]" style={{ color: "var(--klein-lift)" }}>new</span>
+  ) : null;
+
+  // A frame that opens says so. Everything else is plainly not a link.
   return f.route ? (
-    <Link to={f.route} className={cls}>
+    <Link to={f.route}
+      className="group relative flex cursor-pointer flex-col gap-2 text-left outline-offset-4
+                 ring-klein-lift transition-shadow hover:ring-2 focus-visible:ring-2">
       {body}
-      {fresh && <span className="num absolute -top-2 right-0 text-[11px]" style={{ color: "var(--klein-lift)" }}>new</span>}
+      <span className="mono-sm absolute left-1.5 top-1.5 z-20 bg-klein px-1.5 py-1 text-white opacity-0
+                       transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
+        Open {f.route}
+      </span>
+      {flag}
     </Link>
   ) : (
-    <div className={cls}>
+    <div className="group relative flex flex-col gap-2 text-left">
       {body}
-      {fresh && <span className="num absolute -top-2 right-0 text-[11px]" style={{ color: "var(--klein-lift)" }}>new</span>}
+      {flag}
     </div>
   );
 }

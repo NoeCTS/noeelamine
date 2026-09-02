@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Back } from "@/components/Chrome";
 import { toAscii, fitSize } from "@/lib/ascii";
 import { publicFrames, NEWEST } from "@/data/frames";
 
@@ -40,7 +40,7 @@ export default function Colophon() {
   }, []);
 
   return (
-    <div className="wrap relative z-[1] pt-16">
+    <div className="wrap pt-nav relative z-[1]">
       <div className="grid gap-10 md:grid-cols-2">
         <pre ref={pre} aria-hidden="true" className="m-0 overflow-hidden whitespace-pre text-ink"
           style={{ fontFamily: "var(--data)", lineHeight: 1.06 }} />
@@ -49,7 +49,7 @@ export default function Colophon() {
           {`\n  ${publicFrames().length} frames. Last added ${NEWEST}.\n`}
         </pre>
       </div>
-      <p className="mt-12"><Link to="/" className="stamp inline-block"><span>Back to the index</span></Link></p>
+      <p className="mt-12"><Back /></p>
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Nav, Masthead, Foot } from "@/components/Chrome";
+import { Masthead, Foot, Back } from "@/components/Chrome";
 import { byAdded, publicFrames, GROUP_LABEL, NEWEST } from "@/data/frames";
 
 /** The whole archive as a list. Every frame, dated, in the order it arrived. */
@@ -13,7 +13,7 @@ export default function Archive() {
   const order = Object.keys(months).sort();
 
   return (
-    <div className="wrap relative z-[1]">
+    <div className="wrap pt-nav relative z-[1]">
       <Masthead title="The archive" note="Everything, dated" />
       <p className="mt-9 max-w-[56ch] text-[clamp(1.02rem,1.5vw,1.2rem)] leading-snug">
         Every frame carries two dates: when it was made, and when it entered the
@@ -21,7 +21,6 @@ export default function Archive() {
         newest first, so it reads as a record of the thing growing rather than an
         arbitrary grid.</span>
       </p>
-      <div className="mt-8"><Nav /></div>
 
       <section className="mt-16">
         <div className="flex items-end gap-0.5 overflow-x-auto pb-2">
@@ -52,7 +51,7 @@ export default function Archive() {
         ))}
       </section>
 
-      <p className="mt-10"><Link to="/" className="stamp inline-block"><span>Back to the index</span></Link></p>
+      <p className="mt-10"><Back /></p>
       <Foot />
     </div>
   );

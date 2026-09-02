@@ -53,6 +53,8 @@
 
 @layer components {
   .wrap{width:var(--sheet);margin-inline:auto}
+  /* clearance for the fixed nav */
+  .pt-nav{padding-top:4.5rem}
   .mono{font-family:var(--dot);font-size:13px;letter-spacing:.04em;text-transform:uppercase;color:var(--grey)}
   .mono-sm{font-family:var(--data);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--grey)}
   .num{font-family:var(--dot);font-variant-numeric:tabular-nums}
@@ -71,6 +73,13 @@
     background-image:radial-gradient(circle at center,#FFFFFF 0 .6px,transparent .8px);
     background-size:4px 4px}
   .treefield{position:fixed;inset:0;pointer-events:none;z-index:0;opacity:var(--tree)}
+
+  /* Entrances are CSS, not a JS state flip. Content that starts at opacity 0
+     and waits for React to say otherwise can get stuck invisible. */
+  @keyframes riseIn{from{opacity:0;transform:translateY(2rem)}to{opacity:1;transform:none}}
+  .rise{animation:riseIn .9s cubic-bezier(.2,.8,.25,1) both}
+  .rise-2{animation-delay:.22s}
+  .rise-3{animation-delay:.5s}
 
   /* ---- the stamp control ---- */
   .stamp{position:relative;isolation:isolate;background:transparent;border:none;border-radius:0;
@@ -101,5 +110,6 @@
 @media (prefers-reduced-motion:reduce){
   *{transition:none!important}
   .grain,.field::before{animation:none}
+  .rise{animation:none}
   html{scroll-behavior:auto}
 }

@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Resolve } from "@/components/Texture";
-import { Nav, Masthead, Foot } from "@/components/Chrome";
+import { Masthead, Foot, Back } from "@/components/Chrome";
 import { FRAMES } from "@/data/frames";
 
 export default function Photography() {
@@ -9,7 +9,7 @@ export default function Photography() {
   const rest = shots.filter((f) => f.made !== "2026.04");
 
   return (
-    <div className="wrap relative z-[1]">
+    <div className="wrap pt-nav relative z-[1]">
       <Masthead title="Photography" note="Lisbon and elsewhere" />
       <p className="mt-9 max-w-[56ch] text-[clamp(1.02rem,1.5vw,1.2rem)] leading-snug">
         No client and no brief. <span className="text-grey">
@@ -18,7 +18,6 @@ export default function Photography() {
         largest single group in the archive, and the clearest evidence that it is
         an archive rather than a portfolio.</span>
       </p>
-      <div className="mt-8"><Nav /></div>
 
       <section className="mt-20">
         <div className="mb-6 flex flex-wrap items-baseline gap-4">
@@ -67,7 +66,7 @@ export default function Photography() {
         </p>
       </div>
 
-      <p className="mt-10"><Link to="/" className="stamp inline-block"><span>Back to the index</span></Link></p>
+      <p className="mt-10"><Back /></p>
       <Foot />
     </div>
   );

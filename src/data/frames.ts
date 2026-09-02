@@ -41,7 +41,6 @@ export const FRAMES: Frame[] = [
   { n: "026", title: "Facade",           kind: "photograph",       group: "photography", made: "2026.04", added: "2026.09" },
   { n: "028", title: "Parakeets",        kind: "photograph",       group: "photography", made: "2026.05", added: "2026.09" },
   { n: "029", title: "Museum",           kind: "photograph",       group: "photography", made: "2026.01", added: "2026.09" },
-  { n: "030", title: "St. Pauli",        kind: "photograph",       group: "photography", made: "2025.05", added: "2026.09" },
 
   { n: "014", title: "Broken bike",      kind: "flyer",            group: "betteride", route: "/betteride", made: "2026.03", added: "2026.03" },
   { n: "034", title: "Exposed is fine",  kind: "flyer",            group: "betteride", route: "/betteride", made: "2026.03", added: "2026.03" },

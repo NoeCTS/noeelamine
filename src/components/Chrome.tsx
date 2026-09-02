@@ -10,21 +10,31 @@ const NAV = [
   { to: "/betteride", label: "Betteride" },
   { to: "/nothing", label: "Nothing" },
   { to: "/berlin", label: "Berlin" },
+  { to: "/archive", label: "Archive" },
 ];
 
-/** Buttons are objects, not rectangles. This one is a rubber stamp. */
-export function Nav() {
+/**
+ * Fixed, so navigation never requires scrolling back past the opener. That was
+ * the actual bug: returning to the index dumped you at a full screen photograph
+ * with the links buried underneath it.
+ */
+export function SiteNav() {
   const { pathname } = useLocation();
   return (
-    <nav className="flex flex-wrap gap-2.5 py-2" aria-label="Sections">
-      {NAV.map((n, i) => (
-        <Link key={n.to} to={n.to} className="stamp"
-          aria-current={pathname === n.to ? "true" : undefined}
-          style={{ ["--tilt" as string]: i % 2 ? "1.1deg" : "-1.4deg" }}>
-          <span>{n.label}</span>
-        </Link>
-      ))}
-    </nav>
+    <div className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-void/85 backdrop-blur-sm">
+      <nav className="wrap flex flex-wrap items-center gap-2 py-2.5" aria-label="Sections">
+        {NAV.map((n, i) => {
+          const on = pathname === n.to;
+          return (
+            <Link key={n.to} to={n.to} className="stamp" aria-current={on ? "true" : undefined}
+              style={{ ["--tilt" as string]: i % 2 ? "1.1deg" : "-1.4deg" }}>
+              <span>{n.label}</span>
+            </Link>
+          );
+        })}
+        <Link to="/index.txt" className="mono ml-auto hover:text-ink">index.txt</Link>
+      </nav>
+    </div>
   );
 }
 
@@ -42,6 +52,11 @@ export function Masthead({ title, note }: { title: ReactNode; note?: string }) {
       </div>
     </header>
   );
+}
+
+/** A link that looks like a link, in a document with no rules anywhere else. */
+export function Back({ to = "/", label = "Back to the index" }: { to?: string; label?: string }) {
+  return <Link to={to} className="stamp inline-block"><span>{label}</span></Link>;
 }
 
 export function Foot() {
