@@ -1,68 +1,74 @@
 import { Link } from "react-router-dom";
 
 /**
- * The Chrome zone. Deliberately the furthest thing from the archive's language:
- * white, centred, Google Sans, a blue pill. Modelled on the live Gemini in
- * Chrome page. Landing here from a black archive should feel like stepping into
- * a different building, and that contrast is the argument.
+ * The Google zone. Deliberately the furthest thing from the archive's language:
+ * white, centred, Google Sans, a blue pill. Landing here from a black archive
+ * should feel like walking into a different building.
  *
- * Everything on this page is publicly announced. Nothing about unshipped work
- * goes here without a sign off first.
+ * Kept general on purpose. Nothing here names a specific product or unshipped
+ * work, so it needs no sign off and does not go stale when things change.
  */
 export default function Google() {
   return (
     <main className="min-h-screen bg-white text-[#1F1F1F]" style={{ fontFamily: '"Google Sans", Archivo, sans-serif' }}>
       <div className="mx-auto w-[min(1080px,100%-2.5rem)] py-8">
-        <div className="flex items-center gap-2">
-          <svg viewBox="0 0 24 24" className="h-6 w-6" aria-hidden="true">
-            <defs>
-              <linearGradient id="gg" x1="0" y1="1" x2="1" y2="0">
-                <stop offset="0" stopColor="#34A853" /><stop offset=".35" stopColor="#4285F4" />
-                <stop offset=".72" stopColor="#EA4335" /><stop offset="1" stopColor="#FBBC04" />
-              </linearGradient>
-            </defs>
-            <path fill="url(#gg)" d="M12 0c0 6.63 5.37 12 12 12-6.63 0-12 5.37-12 12 0-6.63-5.37-12-12-12C6.63 12 12 6.63 12 0Z" />
-          </svg>
-          <span className="text-[1.05rem] font-medium">Gemini</span>
-          <Link to="/" className="ml-auto rounded-full border border-[#DADCE0] px-4 py-2 text-[13px] hover:bg-[#F8F9FA]">
+
+        <div className="flex items-center gap-3">
+          <span className="flex gap-1" aria-hidden="true">
+            {["#4285F4", "#EA4335", "#FBBC04", "#34A853"].map((c) => (
+              <i key={c} className="block h-2 w-2 rounded-full" style={{ background: c }} />
+            ))}
+          </span>
+          <span className="text-[1.05rem] font-medium">Google</span>
+          <Link to="/" className="ml-auto rounded-full border border-[#DADCE0] px-4 py-2 text-[13px] transition-colors hover:bg-[#F8F9FA]">
             Back to the archive
           </Link>
         </div>
 
-        <section className="flex flex-col items-center gap-5 py-20 text-center">
-          <h1 className="m-0 max-w-[16ch] text-[clamp(2rem,5.5vw,3.6rem)] font-medium leading-[1.12] tracking-[-.028em]">
-            Meet <span className="text-[#1B72E8]">Gemini</span> in Chrome
+        <section className="flex flex-col items-center gap-6 py-24 text-center">
+          <span className="text-[.78rem] uppercase tracking-[.12em] text-[#80868B]">Current work</span>
+          <h1 className="m-0 max-w-[18ch] text-[clamp(2rem,5.5vw,3.6rem)] font-medium leading-[1.12] tracking-[-.028em]">
+            Product marketing at <span className="text-[#1B72E8]">Google</span>
           </h1>
-          <p className="m-0 max-w-[46ch] text-[clamp(1rem,1.6vw,1.15rem)] leading-relaxed text-[#5F6368]">
-            AI assistance, right in your browser. I do product marketing for the
-            Chrome browser team.
+          <p className="m-0 max-w-[48ch] text-[clamp(1rem,1.6vw,1.15rem)] leading-relaxed text-[#5F6368]">
+            Associate Product Marketing Manager on the Chrome browser team, based
+            in London. Joined through the APMM programme in 2026.
           </p>
           <div className="flex flex-wrap justify-center gap-2.5">
-            <span className="rounded-full bg-[#4285F4] px-6 py-3 text-[.95rem] font-medium text-white">Coming soon</span>
+            <span className="rounded-full bg-[#1F1F1F] px-6 py-3 text-[.95rem] font-medium text-white">Chrome</span>
             <span className="rounded-full border border-[#DADCE0] px-6 py-3 text-[.95rem]">APMM programme</span>
+            <span className="rounded-full border border-[#DADCE0] px-6 py-3 text-[.95rem]">London</span>
           </div>
         </section>
 
         <div className="rounded-[28px] bg-[#EEF1F6] p-4 md:p-6">
-          <img src="/frames/048.jpg" alt="Noe at the Google London office"
+          <img src="/frames/048.jpg" alt="Noe Elamine at the Google London office"
             className="block w-full rounded-[16px] object-cover" style={{ aspectRatio: "16 / 10" }} />
           <p className="m-0 pt-4 text-center text-[.85rem] text-[#80868B]">
-            Noe Elamine · Associate Product Marketing Manager, Chrome · London
+            Frame 048 · Google London
           </p>
         </div>
 
-        <section className="grid gap-8 py-20 md:grid-cols-3">
+        <section className="grid gap-10 py-24 md:grid-cols-3">
           {[
-            ["The role", "Associate Product Marketing Manager on Chrome, through the APMM programme."],
-            ["The work", "Bringing Gemini into the browser people already use every day."],
-            ["The page", "A fuller case study follows once the work is public."],
+            ["The programme", "APMM is Google's product marketing rotation: a small intake, deliberately moved across products so you learn the company rather than one corner of it."],
+            ["The team", "Chrome. A browser used by billions of people, which changes what marketing means. The work is less about persuasion and more about making something enormous feel comprehensible."],
+            ["The work", "Positioning, launch narrative and the research underneath both. Case studies follow here once the work is public."],
           ].map(([h, p]) => (
             <div key={h} className="flex flex-col gap-2">
-              <span className="text-[.8rem] uppercase tracking-[.1em] text-[#80868B]">{h}</span>
+              <span className="text-[.78rem] uppercase tracking-[.1em] text-[#80868B]">{h}</span>
               <p className="m-0 text-[.98rem] leading-relaxed text-[#3C4043]">{p}</p>
             </div>
           ))}
         </section>
+
+        <footer className="flex flex-wrap items-center justify-between gap-6 border-t border-[#E8EAED] py-10">
+          <span className="text-[.85rem] text-[#5F6368]">Noe Elamine · Associate Product Marketing Manager</span>
+          <span className="text-[.78rem] text-[#9AA0A6]">A personal archive. Views my own, not Google's.</span>
+          <Link to="/" className="rounded-full border border-[#DADCE0] px-4 py-2 text-[13px] transition-colors hover:bg-[#F8F9FA]">
+            Back to the archive
+          </Link>
+        </footer>
       </div>
     </main>
   );

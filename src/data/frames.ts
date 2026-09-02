@@ -24,7 +24,7 @@ export interface Frame {
 
 export const FRAMES: Frame[] = [
   { n: "027", title: "Cards",            kind: "self portrait",    group: "portrait",    made: "2025.08", added: "2026.02" },
-  { n: "048", title: "Google, Dalek",    kind: "London office",    group: "google",   route: "/google",     added: "2026.09" },
+  { n: "048", title: "Google",           kind: "London office",    group: "google",   route: "/google", made: "2026.08", added: "2026.09" },
   { n: "049", title: "Tree",             kind: "artwork",          group: "posters",     made: "2026.07", added: "2026.09" },
   { n: "031", title: "Tree",             kind: "ASCII study",      group: "posters",     made: "2026.07", added: "2026.09" },
 
