@@ -1,42 +1,58 @@
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import ScrollToTop from "./components/ScrollToTop";
-import { PageTransitionProvider } from "./components/PageTransition";
-import Index from "./pages/Index";
-import Nothing from "./pages/Nothing";
-import Pangaia from "./pages/Pangaia";
-import Berlin from "./pages/Berlin";
-import Aube from "./pages/Aube";
-import Betteride from "./pages/Betteride";
-import NotFound from "./pages/NotFound";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { useEffect } from "react";
+import { Grain, DotScreen, TreeField } from "@/components/Texture";
+import Index from "@/pages/Index";
+import Photography from "@/pages/Photography";
+import Archive from "@/pages/Archive";
+import Colophon from "@/pages/Colophon";
+import Google from "@/pages/Google";
+import Aube from "@/pages/Aube";
+import Betteride from "@/pages/Betteride";
+import Nothing from "@/pages/Nothing";
+import Berlin from "@/pages/Berlin";
+import NotFound from "@/pages/NotFound";
 
-const queryClient = new QueryClient();
+function ScrollTop() {
+  const { pathname } = useLocation();
+  useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
+  return null;
+}
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <PageTransitionProvider>
-          <ScrollToTop />
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/nothing" element={<Nothing />} />
-            <Route path="/pangaia" element={<Pangaia />} />
-            <Route path="/berlin" element={<Berlin />} />
-            <Route path="/aube" element={<Aube />} />
-            <Route path="/betteride" element={<Betteride />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </PageTransitionProvider>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+/**
+ * Texture belongs to the archive, not to the zones. A zone is allowed to
+ * disagree, and a light Google page with film grain over it would be neither
+ * one thing nor the other.
+ */
+function Texture() {
+  const { pathname } = useLocation();
+  const zone = ["/google", "/aube", "/betteride", "/nothing", "/berlin"].includes(pathname);
+  if (zone) return null;
+  return (
+    <>
+      <TreeField />
+      <DotScreen />
+      <Grain />
+    </>
+  );
+}
 
-export default App;
+export default function App() {
+  return (
+    <BrowserRouter>
+      <ScrollTop />
+      <Texture />
+      <Routes>
+        <Route path="/" element={<Index />} />
+        <Route path="/photography" element={<Photography />} />
+        <Route path="/archive" element={<Archive />} />
+        <Route path="/index.txt" element={<Colophon />} />
+        <Route path="/google" element={<Google />} />
+        <Route path="/aube" element={<Aube />} />
+        <Route path="/betteride" element={<Betteride />} />
+        <Route path="/nothing" element={<Nothing />} />
+        <Route path="/berlin" element={<Berlin />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </BrowserRouter>
+  );
+}

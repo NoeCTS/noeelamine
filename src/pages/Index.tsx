@@ -1,281 +1,32 @@
-import { useEffect, useRef } from 'react';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import Lenis from 'lenis';
+import { Opener } from "@/components/Opener";
+import { ContactSheet } from "@/components/ContactSheet";
+import { Nav, Masthead, Foot } from "@/components/Chrome";
+import { publicFrames } from "@/data/frames";
 
-import GrainOverlay from '@/components/GrainOverlay';
-import CustomCursor from '@/components/CustomCursor';
-import Orb from '@/components/Orb';
-import HeroSection from '@/components/HeroSection';
-import PositioningSection from '@/components/PositioningSection';
-import RealWorkSection from '@/components/RealWorkSection';
-import ProjectsSection from '@/components/ProjectsSection';
-import ConceptCampaignsSection from '@/components/ConceptCampaignsSection';
-import ExperienceSection from '@/components/ExperienceSection';
-import EducationSection from '@/components/EducationSection';
-import PhilosophySection from '@/components/PhilosophySection';
-import ContactSection from '@/components/ContactSection';
-
-gsap.registerPlugin(ScrollTrigger);
-
-const Index = () => {
-  const cursorRef = useRef<HTMLDivElement>(null);
-  const mainOrbRef = useRef<HTMLDivElement>(null);
-  const heroRef = useRef<HTMLElement>(null);
-  const heroNameRef = useRef<HTMLHeadingElement>(null);
-  const scrollIndicatorRef = useRef<HTMLDivElement>(null);
-  const positioningRef = useRef<HTMLElement>(null);
-  const projectsRef = useRef<HTMLElement>(null);
-  const realWorkRef = useRef<HTMLElement>(null);
-  const conceptCampaignsRef = useRef<HTMLElement>(null);
-  const experienceRef = useRef<HTMLElement>(null);
-  const educationRef = useRef<HTMLElement>(null);
-  const philosophyRef = useRef<HTMLElement>(null);
-  const contactRef = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    // Scroll to top on mount
-    window.scrollTo(0, 0);
-    
-    // Reset orb state on mount
-    if (mainOrbRef.current) {
-      mainOrbRef.current.style.opacity = '0';
-      mainOrbRef.current.classList.remove('breathing');
-    }
-
-    // Initialize Lenis smooth scroll (faster)
-    const lenis = new Lenis({
-      duration: 0.8,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-    });
-
-    // Scroll lenis to top as well
-    lenis.scrollTo(0, { immediate: true });
-
-    function raf(time: number) {
-      lenis.raf(time);
-      requestAnimationFrame(raf);
-    }
-    requestAnimationFrame(raf);
-
-    lenis.on('scroll', ScrollTrigger.update);
-    gsap.ticker.add((time) => {
-      lenis.raf(time * 1000);
-    });
-    gsap.ticker.lagSmoothing(0);
-
-    // Custom Cursor
-    const handleMouseMove = (e: MouseEvent) => {
-      if (cursorRef.current) {
-        gsap.to(cursorRef.current, {
-          x: e.clientX,
-          y: e.clientY,
-          duration: 0.1,
-          ease: 'power2.out',
-        });
-      }
-    };
-
-    window.addEventListener('mousemove', handleMouseMove);
-
-    // Cursor hover effect using event delegation (only for links, not project cards)
-    const handleMouseOver = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      if (target.closest('a')) {
-        cursorRef.current?.classList.add('hovering');
-      }
-    };
-    
-    const handleMouseOut = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      const relatedTarget = e.relatedTarget as HTMLElement | null;
-      if (target.closest('a') && !relatedTarget?.closest('a')) {
-        cursorRef.current?.classList.remove('hovering');
-      }
-    };
-    
-    document.addEventListener('mouseover', handleMouseOver);
-    document.addEventListener('mouseout', handleMouseOut);
-
-    // Split Hero Text (preserve mobile line break)
-    // SECURITY NOTE: Only use hardcoded strings here - never user input
-    if (heroNameRef.current) {
-      const firstPart = 'NOE';
-      const secondPart = 'ELAMINE';
-      
-      // Safe DOM manipulation - uses textContent which auto-escapes
-      const createCharSpans = (text: string): DocumentFragment => {
-        const fragment = document.createDocumentFragment();
-        text.split('').forEach(char => {
-          const span = document.createElement('span');
-          span.className = 'hero-char inline-block';
-          span.textContent = char; // Safe - automatically escapes content
-          fragment.appendChild(span);
-        });
-        return fragment;
-      };
-      
-      // Clear existing content safely
-      heroNameRef.current.textContent = '';
-      
-      // Append first part
-      heroNameRef.current.appendChild(createCharSpans(firstPart));
-      
-      // Add mobile line break
-      const br = document.createElement('br');
-      br.className = 'md:hidden';
-      heroNameRef.current.appendChild(br);
-      
-      // Add desktop spacer
-      const spacer = document.createElement('span');
-      spacer.className = 'inline-block w-4 hidden md:inline-block';
-      spacer.innerHTML = '&nbsp;'; // Safe - hardcoded non-breaking space
-      heroNameRef.current.appendChild(spacer);
-      
-      // Append second part
-      heroNameRef.current.appendChild(createCharSpans(secondPart));
-    }
-
-    // Load Animation Sequence
-    const loadTL = gsap.timeline({ delay: 0.2 });
-
-    loadTL
-      .to(mainOrbRef.current, { opacity: 0.9, duration: 2, ease: 'power2.out', overwrite: 'auto' })
-      .to('.hero-char', { opacity: 1, y: 0, stagger: 0.05, duration: 0.8, ease: 'power2.out' }, '-=1.5')
-      .to(scrollIndicatorRef.current, { opacity: 0.5, duration: 1 }, '-=0.5');
-
-    // Add breathing class after load
-    const breathingTimeoutId = window.setTimeout(() => {
-      mainOrbRef.current?.classList.add('breathing');
-    }, 2000);
-
-    // Hero Scroll Out - fade out both text and orb
-    gsap.to('.hero-name', {
-      y: -100,
-      opacity: 0,
-      scrollTrigger: {
-        trigger: '#hero',
-        start: 'top top',
-        end: 'bottom center',
-        scrub: 1.5,
-      },
-    });
-
-    // Fade out orb as hero scrolls away - pure progress-based opacity (no onEnterBack flash)
-    ScrollTrigger.create({
-      trigger: '#hero',
-      start: 'center top',
-      end: 'bottom top',
-      scrub: 0.3,
-      fastScrollEnd: true,
-      preventOverlaps: true,
-      onUpdate: (self) => {
-        if (!mainOrbRef.current) return;
-
-        // Kill any intro animation tweens to ensure scroll-driven state wins
-        gsap.killTweensOf(mainOrbRef.current);
-        
-        const progress = Math.min(1, Math.max(0, self.progress));
-        
-        // Remove breathing during scroll
-        if (progress > 0) {
-          mainOrbRef.current.classList.remove('breathing');
-        }
-        
-        // Pure progress-based opacity and scale
-        const opacity = 0.9 - progress * 0.9;
-        const scale = 1 - progress * 0.2;
-        
-        mainOrbRef.current.style.opacity = String(Math.max(0, opacity));
-        mainOrbRef.current.style.transform = `translate(-50%, -50%) scale(${scale})`;
-        
-        // Re-add breathing only when fully visible at top
-        if (progress === 0) {
-          mainOrbRef.current.classList.add('breathing');
-        }
-      },
-    });
-
-    // Positioning Section text reveals
-    gsap.utils.toArray('.reveal-text').forEach((el, i) => {
-      gsap.to(el as Element, {
-        opacity: 1,
-        y: 0,
-        duration: 1,
-        scrollTrigger: {
-          trigger: '#positioning',
-          start: `top ${60 - i * 10}%`,
-          end: `top ${40 - i * 10}%`,
-          scrub: true,
-        },
-      });
-    });
-
-    gsap.to('.reveal-sub', {
-      opacity: 1,
-      scrollTrigger: {
-        trigger: '#positioning',
-        start: 'top 40%',
-        end: 'center center',
-        scrub: true,
-      },
-    });
-
-    // Timeline items are now always visible - no scroll animation needed
-
-    // Contact Reveal
-    gsap.utils.toArray('.contact-reveal').forEach((el, i) => {
-      gsap.to(el as Element, {
-        y: 0,
-        opacity: 1,
-        duration: 1,
-        delay: i * 0.1,
-        scrollTrigger: {
-          trigger: '#contact',
-          start: 'top 60%',
-        },
-      });
-    });
-
-    return () => {
-      window.clearTimeout(breathingTimeoutId);
-      window.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseover', handleMouseOver);
-      document.removeEventListener('mouseout', handleMouseOut);
-      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
-      lenis.destroy();
-    };
-  }, []);
-
+export default function Index() {
+  const total = publicFrames().length;
   return (
     <>
-      {/* Global Elements */}
-      <GrainOverlay />
-      <CustomCursor cursorRef={cursorRef} />
-
-      {/* Orb */}
-      <Orb ref={mainOrbRef} />
-
-      {/* Scroll Wrapper */}
-      <div id="smooth-wrapper">
-        <div id="smooth-content">
-          <HeroSection 
-            ref={heroRef}
-            nameRef={heroNameRef}
-            scrollIndicatorRef={scrollIndicatorRef}
-          />
-          <PositioningSection ref={positioningRef} />
-          <RealWorkSection ref={realWorkRef} />
-          <ConceptCampaignsSection ref={conceptCampaignsRef} />
-          <ProjectsSection ref={projectsRef} />
-          <ExperienceSection ref={experienceRef} />
-          <EducationSection ref={educationRef} />
-          <PhilosophySection ref={philosophyRef} />
-          <ContactSection ref={contactRef} />
-        </div>
+      <Opener src="/frames/027.jpg" label="Cards, self portrait" />
+      <div className="wrap relative z-[1]">
+        <Masthead title="Noe Elamine" note="Archive, not a CV" />
+        <p className="mt-9 max-w-[54ch] text-[clamp(1.05rem,1.6vw,1.28rem)] leading-snug">
+          An archive, not a CV. Product marketing at Google on Chrome, building Aube,
+          and everything else I have made. <span className="text-grey">
+          The index below is a contact sheet ordered by when each frame entered the
+          archive, so a campaign and a photograph sit at the same rank.</span>
+        </p>
+        <div className="mt-8"><Nav /></div>
+        <section className="mt-20">
+          <div className="mb-6 flex flex-wrap items-baseline gap-4">
+            <span className="num text-[1.4rem] text-grey">01</span>
+            <h2 className="m-0 font-display text-[clamp(1.5rem,4vw,2.5rem)] uppercase leading-none" style={{ fontWeight: 400 }}>The index</h2>
+            <span className="mono ml-auto">{total} frames</span>
+          </div>
+          <ContactSheet />
+        </section>
+        <Foot />
       </div>
     </>
   );
-};
-
-export default Index;
+}
