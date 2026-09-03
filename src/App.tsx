@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { useEffect } from "react";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Grain, DotScreen, TreeField } from "@/components/Texture";
 import { SiteNav } from "@/components/Chrome";
 import Index from "@/pages/Index";
@@ -26,6 +27,9 @@ function ScrollTop() {
     let second = 0;
     const first = window.requestAnimationFrame(() => {
       second = window.requestAnimationFrame(() => {
+        // the opener is pinned, so its spacer height must be recomputed before
+        // the anchor is measured, otherwise the jump lands on stale geometry
+        ScrollTrigger.refresh();
         document.getElementById(hash.slice(1))?.scrollIntoView({ block: "start" });
       });
     });

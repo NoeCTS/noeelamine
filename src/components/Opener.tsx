@@ -23,12 +23,16 @@ export function Opener({ src, label, frame }: { src: string; label: string; fram
     const i = img.current, p = pre.current, box = inner.current;
     if (!i || !p || !box) return;
     let lastCols = -1;
+    let lastProgress = 0;
 
     const draw = (progress: number) => {
-      const cols = Math.round(72 + progress * 138);
+      lastProgress = progress;
+      // fewer columns on a narrow screen, or each glyph lands below a pixel
+      const base = window.innerWidth < 640 ? 44 : 72;
+      const cols = Math.round(base + progress * (window.innerWidth < 640 ? 96 : 138));
       if (Math.abs(cols - lastCols) >= 2) {
         p.textContent = toAscii(i, cols);
-        p.style.fontSize = `${fitSize(box.clientWidth || 760, cols).toFixed(2)}px`;
+        p.style.fontSize = `${fitSize(box.getBoundingClientRect().width || 360, cols).toFixed(2)}px`;
         lastCols = cols;
       }
       // characters give way to black and white, and colour arrives last
@@ -53,14 +57,25 @@ export function Opener({ src, label, frame }: { src: string; label: string; fram
         scrub: 0.6,
         onUpdate: (self) => draw(self.progress),
       });
-      return () => st.kill();
+      return () => st.kill(true);
     };
+
+    let raf = 0;
+    const onResize = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => { lastCols = -1; draw(lastProgress); ScrollTrigger.refresh(); });
+    };
+    window.addEventListener("resize", onResize);
 
     let cleanup: (() => void) | undefined;
     if (i.complete && i.naturalWidth) cleanup = start();
     else i.addEventListener("load", () => { cleanup = start(); }, { once: true });
 
-    return () => { cleanup?.(); };
+    return () => {
+      window.removeEventListener("resize", onResize);
+      cancelAnimationFrame(raf);
+      cleanup?.();
+    };
   }, [src]);
 
   return (
@@ -73,7 +88,7 @@ export function Opener({ src, label, frame }: { src: string; label: string; fram
           style={{ fontFamily: "var(--data)", lineHeight: 1.15 }} />
         <img ref={img} src={src} alt={label}
           className="absolute inset-0 h-full w-full object-cover opacity-0" />
-        <div className="absolute bottom-4 left-4 z-[3] flex gap-5">
+        <div className="absolute inset-x-0 bottom-0 z-[3] flex flex-wrap gap-x-5 gap-y-1 scrim-soft px-3 py-2">
           <span className="mono">Frame {frame}</span>
           <span className="mono" ref={stage}>characters</span>
           <span className="num text-[13px]" style={{ color: "var(--klein-lift)" }} ref={pct}>000</span>

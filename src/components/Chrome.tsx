@@ -21,7 +21,7 @@ const NAV = [
 export function SiteNav() {
   const { pathname } = useLocation();
   return (
-    <div className="fixed inset-x-0 top-0 z-50 bg-void/95">
+    <div className="nav-shell scrim fixed inset-x-0 top-0 z-50">
       <nav className="nav-rail wrap flex flex-nowrap items-center gap-2 overflow-x-auto py-2.5" aria-label="Sections">
         {NAV.map((n, i) => {
           const on = pathname === n.to;

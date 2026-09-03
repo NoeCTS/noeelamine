@@ -57,6 +57,27 @@
   .pt-nav{padding-top:4.5rem}
   .nav-rail{scrollbar-width:none;-webkit-overflow-scrolling:touch}
   .nav-rail::-webkit-scrollbar{display:none}
+  /* A rail that scrolls should say so. The fade is the only affordance a
+     hidden scrollbar leaves you, so it stays until the row fits. */
+  /* Tailwind cannot inject alpha into a bare var() colour, so bg-void/95 emitted
+     nothing at all and the page scrolled visibly through the nav. Solid first,
+     then a translucent override where color-mix is supported. */
+  .scrim{background:var(--void)}
+  @supports (background:color-mix(in srgb,#000 50%,transparent)){
+    .scrim{background:color-mix(in srgb,var(--void) 94%,transparent)}
+  }
+  .scrim-soft{background:var(--void)}
+  @supports (background:color-mix(in srgb,#000 50%,transparent)){
+    .scrim-soft{background:color-mix(in srgb,var(--void) 84%,transparent)}
+  }
+
+  .nav-shell{position:relative}
+  .nav-shell::after{content:"";position:absolute;inset-block:0;right:0;width:3rem;pointer-events:none;
+    background:linear-gradient(90deg,transparent,var(--void) 78%)}
+  @media (min-width:900px){
+    .nav-rail{flex-wrap:wrap;overflow-x:visible}
+    .nav-shell::after{display:none}
+  }
   .mono{font-family:var(--dot);font-size:13px;letter-spacing:.04em;text-transform:uppercase;color:var(--grey)}
   .mono-sm{font-family:var(--data);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--grey)}
   .num{font-family:var(--dot);font-variant-numeric:tabular-nums}
