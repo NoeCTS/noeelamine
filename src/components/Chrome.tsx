@@ -21,18 +21,18 @@ const NAV = [
 export function SiteNav() {
   const { pathname } = useLocation();
   return (
-    <div className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-void/85 backdrop-blur-sm">
-      <nav className="wrap flex flex-wrap items-center gap-2 py-2.5" aria-label="Sections">
+    <div className="fixed inset-x-0 top-0 z-50 bg-void/95">
+      <nav className="nav-rail wrap flex flex-nowrap items-center gap-2 overflow-x-auto py-2.5" aria-label="Sections">
         {NAV.map((n, i) => {
           const on = pathname === n.to;
           return (
-            <Link key={n.to} to={n.to} className="stamp" aria-current={on ? "true" : undefined}
+            <Link key={n.to} to={n.to} className="stamp min-h-11 flex-none" aria-current={on ? "page" : undefined}
               style={{ ["--tilt" as string]: i % 2 ? "1.1deg" : "-1.4deg" }}>
               <span>{n.label}</span>
             </Link>
           );
         })}
-        <Link to="/index.txt" className="mono ml-auto hover:text-ink">index.txt</Link>
+        <Link to="/index.txt" className="mono flex min-h-11 flex-none items-center px-2 hover:text-ink">index.txt</Link>
       </nav>
     </div>
   );
@@ -42,10 +42,10 @@ export function SiteNav() {
 export function Masthead({ title, note }: { title: ReactNode; note?: string }) {
   const count = publicFrames().length;
   return (
-    <header className="grid grid-cols-[1fr_auto] items-start gap-x-8 gap-y-5 pt-10">
+    <header className="grid grid-cols-1 items-start gap-x-8 gap-y-5 pt-10 sm:grid-cols-[minmax(0,1fr)_auto]">
       <h1 className="m-0 font-display uppercase leading-[.86]"
         style={{ fontSize: "clamp(2.4rem,9vw,5.6rem)", fontWeight: 400 }}>{title}</h1>
-      <div className="flex flex-col items-end gap-1.5 text-right">
+      <div className="flex flex-row flex-wrap items-baseline gap-x-4 gap-y-1.5 sm:flex-col sm:items-end sm:text-right">
         <span className="mono">{note ?? "Archive"}</span>
         <span className="mono">{count} frames</span>
         <span className="num text-[13px]" style={{ color: "var(--klein-lift)" }}>{NEWEST}</span>
@@ -55,8 +55,8 @@ export function Masthead({ title, note }: { title: ReactNode; note?: string }) {
 }
 
 /** A link that looks like a link, in a document with no rules anywhere else. */
-export function Back({ to = "/", label = "Back to the index" }: { to?: string; label?: string }) {
-  return <Link to={to} className="stamp inline-block"><span>{label}</span></Link>;
+export function Back({ to = "/#index", label = "Back to the index" }: { to?: string; label?: string }) {
+  return <Link to={to} className="stamp inline-flex min-h-11 items-center"><span>{label}</span></Link>;
 }
 
 export function Foot() {

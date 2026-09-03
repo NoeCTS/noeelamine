@@ -24,21 +24,21 @@ export interface Frame {
 
 export const FRAMES: Frame[] = [
   { n: "027", title: "Cards",            kind: "self portrait",    group: "portrait",    made: "2025.08", added: "2026.02" },
-  { n: "048", title: "Google",           kind: "London office",    group: "google",   route: "/google", made: "2026.08", added: "2026.09" },
+  { n: "048", title: "Google",           kind: "London office",    group: "google",   route: "/google", made: "2026.07", added: "2026.09" },
   { n: "049", title: "Tree",             kind: "artwork",          group: "posters",     made: "2026.07", added: "2026.09" },
   { n: "031", title: "Tree",             kind: "ASCII study",      group: "posters",     made: "2026.07", added: "2026.09" },
 
-  { n: "016", title: "Ponte 25 de Abril",kind: "photograph",       group: "photography", made: "2026.04", added: "2026.09" },
-  { n: "017", title: "Cais do Sodré",    kind: "photograph",       group: "photography", made: "2026.04", added: "2026.09" },
-  { n: "018", title: "Tiled facade",     kind: "photograph",       group: "photography", made: "2026.04", added: "2026.09" },
-  { n: "019", title: "Rua",              kind: "photograph",       group: "photography", made: "2026.04", added: "2026.09" },
-  { n: "020", title: "Passage",          kind: "photograph",       group: "photography", made: "2026.04", added: "2026.09" },
-  { n: "021", title: "Apartment block",  kind: "photograph",       group: "photography", made: "2026.04", added: "2026.09" },
-  { n: "022", title: "Glasshouse",       kind: "photograph",       group: "photography", made: "2026.04", added: "2026.09" },
-  { n: "023", title: "Framed work",      kind: "photograph",       group: "photography", made: "2026.04", added: "2026.09" },
-  { n: "024", title: "Interior",         kind: "photograph",       group: "photography", made: "2026.04", added: "2026.09" },
-  { n: "025", title: "Balcony",          kind: "photograph",       group: "photography", made: "2026.04", added: "2026.09" },
-  { n: "026", title: "Facade",           kind: "photograph",       group: "photography", made: "2026.04", added: "2026.09" },
+  { n: "016", title: "Ponte 25 de Abril",kind: "photograph",       group: "photography", made: "2024.04", added: "2026.09" },
+  { n: "017", title: "Cais do Sodré",    kind: "photograph",       group: "photography", made: "2024.04", added: "2026.09" },
+  { n: "018", title: "Tiled facade",     kind: "photograph",       group: "photography", made: "2024.04", added: "2026.09" },
+  { n: "019", title: "Rua",              kind: "photograph",       group: "photography", made: "2024.04", added: "2026.09" },
+  { n: "020", title: "Passage",          kind: "photograph",       group: "photography", made: "2024.04", added: "2026.09" },
+  { n: "021", title: "Apartment block",  kind: "photograph",       group: "photography", made: "2024.04", added: "2026.09" },
+  { n: "022", title: "Glasshouse",       kind: "photograph",       group: "photography", made: "2024.04", added: "2026.09" },
+  { n: "023", title: "Framed work",      kind: "photograph",       group: "photography", made: "2024.04", added: "2026.09" },
+  { n: "024", title: "Interior",         kind: "photograph",       group: "photography", made: "2024.04", added: "2026.09" },
+  { n: "025", title: "Balcony",          kind: "photograph",       group: "photography", made: "2024.04", added: "2026.09" },
+  { n: "026", title: "Facade",           kind: "photograph",       group: "photography", made: "2024.04", added: "2026.09" },
   { n: "028", title: "Parakeets",        kind: "photograph",       group: "photography", made: "2026.05", added: "2026.09" },
   { n: "029", title: "Museum",           kind: "photograph",       group: "photography", made: "2026.01", added: "2026.09" },
 
@@ -60,7 +60,7 @@ export const FRAMES: Frame[] = [
   { n: "039", title: "Studio",           kind: "concept ad",       group: "nothing",   route: "/nothing",   made: "2025.11", added: "2025.12" },
   { n: "040", title: "Handover",         kind: "concept ad",       group: "nothing",   route: "/nothing",   made: "2025.11", added: "2026.01" },
 
-  { n: "042", title: "Unseen Scenes",    kind: "title card",       group: "berlin",    route: "/berlin",    made: "2026.02", added: "2026.02" },
+  { n: "042", title: "Unseen Scenes",    kind: "title card",       group: "berlin",    route: "/berlin",                       added: "2026.02" },
   { n: "013", title: "Funkturm",         kind: "photograph",       group: "berlin",    route: "/berlin",    made: "2026.01", added: "2026.02" },
 
   { n: "012", title: "Identitee",        kind: "poster",           group: "posters",     made: "2026.02", added: "2026.02" },

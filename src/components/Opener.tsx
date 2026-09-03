@@ -10,7 +10,7 @@ gsap.registerPlugin(ScrollTrigger);
  * field of characters. Scrolling refines the grid until the image resolves
  * into itself, then black and white, then colour last. Scrolling is developing.
  */
-export function Opener({ src, label }: { src: string; label: string }) {
+export function Opener({ src, label, frame }: { src: string; label: string; frame: string }) {
   const wrap = useRef<HTMLDivElement>(null);
   const inner = useRef<HTMLDivElement>(null);
   const img = useRef<HTMLImageElement>(null);
@@ -65,7 +65,7 @@ export function Opener({ src, label }: { src: string; label: string }) {
 
   return (
     <div ref={wrap} className="relative flex min-h-[520px] items-center justify-center overflow-hidden bg-void"
-      style={{ height: "100vh", width: "100vw", marginInline: "calc(50% - 50vw)" }}>
+      style={{ height: "100svh", width: "100vw", marginInline: "calc(50% - 50vw)" }}>
       <div ref={inner} className="relative max-w-[96vw]"
         style={{ aspectRatio: "3 / 2", height: "min(86vh, calc(96vw / 1.5))" }}>
         <pre ref={pre} aria-hidden="true"
@@ -74,7 +74,7 @@ export function Opener({ src, label }: { src: string; label: string }) {
         <img ref={img} src={src} alt={label}
           className="absolute inset-0 h-full w-full object-cover opacity-0" />
         <div className="absolute bottom-4 left-4 z-[3] flex gap-5">
-          <span className="mono">Frame 001</span>
+          <span className="mono">Frame {frame}</span>
           <span className="mono" ref={stage}>characters</span>
           <span className="num text-[13px]" style={{ color: "var(--klein-lift)" }} ref={pct}>000</span>
         </div>

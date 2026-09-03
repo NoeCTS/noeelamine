@@ -1,12 +1,11 @@
-import { Link } from "react-router-dom";
 import { Resolve } from "@/components/Texture";
 import { Masthead, Foot, Back } from "@/components/Chrome";
 import { FRAMES } from "@/data/frames";
 
 export default function Photography() {
   const shots = FRAMES.filter((f) => f.group === "photography" && !f.sensitive);
-  const lisbon = shots.filter((f) => f.made === "2026.04");
-  const rest = shots.filter((f) => f.made !== "2026.04");
+  const lisbon = shots.filter((f) => f.made === "2024.04");
+  const rest = shots.filter((f) => f.made !== "2024.04");
 
   return (
     <div className="wrap pt-nav relative z-[1]">
@@ -23,7 +22,7 @@ export default function Photography() {
         <div className="mb-6 flex flex-wrap items-baseline gap-4">
           <span className="num text-[1.4rem] text-grey">01</span>
           <h2 className="m-0 font-display text-[clamp(1.4rem,3.6vw,2.2rem)] uppercase leading-none" style={{ fontWeight: 400 }}>Lisbon</h2>
-          <span className="mono ml-auto">2026.04 · {lisbon.length} frames</span>
+          <span className="mono ml-auto">2024.04 · {lisbon.length} frames</span>
         </div>
         <div className="grid gap-x-4 gap-y-7" style={{ gridTemplateColumns: "repeat(auto-fill,minmax(240px,1fr))" }}>
           {lisbon.map((f) => (

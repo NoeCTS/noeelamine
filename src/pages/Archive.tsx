@@ -37,18 +37,28 @@ export default function Archive() {
       </section>
 
       <section className="mt-16">
-        {rows.map((f) => (
-          <div key={f.n} className="grid grid-cols-[52px_1fr_auto] items-baseline gap-4 px-1.5 py-3 transition-colors hover:bg-void-2">
-            <span className="num text-[14px] text-grey">{f.n}</span>
-            <span className="text-[15px]">
-              {f.route ? <Link to={f.route} className="hover:text-klein-lift">{f.title}</Link> : f.title}
-              <span className="text-grey"> · {f.kind} · {GROUP_LABEL[f.group]}</span>
-            </span>
-            <span className="num whitespace-nowrap text-[12px] text-grey-dim">
-              {f.made ?? "—"} <span style={{ color: f.added === NEWEST ? "var(--klein-lift)" : undefined }}>{f.added}</span>
-            </span>
-          </div>
-        ))}
+        {rows.map((f) => {
+          const content = (
+            <>
+              <span className="num text-[14px] text-grey">{f.n}</span>
+              <span className="text-[15px]">
+                {f.title}<span className="text-grey"> · {f.kind} · {GROUP_LABEL[f.group]}</span>
+              </span>
+              <span className="num col-start-2 flex flex-wrap items-center justify-between gap-x-2 whitespace-nowrap text-[12px] text-grey-dim sm:col-start-auto sm:block">
+                {f.route && <b className="bg-klein px-1.5 py-0.5 font-normal uppercase text-white sm:mr-3">Open</b>}
+                {f.made ?? "—"} <span style={{ color: f.added === NEWEST ? "var(--klein-lift)" : undefined }}>{f.added}</span>
+              </span>
+            </>
+          );
+          const cls = "grid grid-cols-[38px_minmax(0,1fr)] items-baseline gap-x-3 gap-y-1 px-1.5 py-3 hover:bg-void-2 sm:grid-cols-[52px_minmax(0,1fr)_auto] sm:gap-4";
+          return f.route ? (
+            <Link key={f.n} to={f.route} className={cls} aria-label={`Open ${f.title} case study`}>
+              {content}
+            </Link>
+          ) : (
+            <div key={f.n} className={cls}>{content}</div>
+          );
+        })}
       </section>
 
       <p className="mt-10"><Back /></p>

@@ -4,13 +4,14 @@ import { byAdded, publicFrames, NEWEST, type Frame } from "@/data/frames";
 
 function Cell({ f }: { f: Frame }) {
   const fresh = f.added === NEWEST;
+  const destination = f.route?.slice(1) || "";
   const body = (
     <>
       <Resolve src={`/frames/${f.n}.jpg`} alt={f.title} />
       <span className="relative flex items-baseline justify-between gap-2 px-1.5 py-1">
-        <span className="absolute inset-0 z-0 origin-bottom scale-y-0 bg-klein transition-transform duration-300 group-hover:scale-y-100 group-focus-visible:scale-y-100" />
-        <span className="num relative z-10 text-[14px] text-grey transition-colors group-hover:text-white">{f.n}</span>
-        <span className="mono-sm relative z-10 text-right leading-snug transition-colors group-hover:text-white">
+        <span className="absolute inset-0 z-0 origin-bottom scale-y-0 bg-klein group-hover:scale-y-100 group-focus-visible:scale-y-100" />
+        <span className="num relative z-10 text-[14px] text-grey group-hover:text-white">{f.n}</span>
+        <span className="mono-sm relative z-10 text-right leading-snug group-hover:text-white">
           {f.title}
           <br />
           {f.kind}
@@ -26,12 +27,11 @@ function Cell({ f }: { f: Frame }) {
   // A frame that opens says so. Everything else is plainly not a link.
   return f.route ? (
     <Link to={f.route}
-      className="group relative flex cursor-pointer flex-col gap-2 text-left outline-offset-4
-                 ring-klein-lift transition-shadow hover:ring-2 focus-visible:ring-2">
+      aria-label={`Open ${destination} case study: ${f.title}`}
+      className="group relative flex cursor-pointer flex-col gap-2 text-left outline-offset-4 ring-klein-lift hover:ring-2 focus-visible:ring-2">
       {body}
-      <span className="mono-sm absolute left-1.5 top-1.5 z-20 bg-klein px-1.5 py-1 text-white opacity-0
-                       transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
-        Open {f.route}
+      <span className="mono-sm absolute left-1.5 top-1.5 z-20 bg-klein px-2 py-1.5 text-white">
+        Open {destination}
       </span>
       {flag}
     </Link>

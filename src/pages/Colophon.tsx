@@ -6,11 +6,11 @@ import { publicFrames, NEWEST } from "@/data/frames";
 const TEXT = `NOE ELAMINE
 ================================================
 
-  Product marketing at Google, on Chrome.
-  Currently working on Gemini in Chrome.
+  Associate Product Marketing Manager at Google,
+  based in London through the APMM programme.
 
   Building Aube, a cultural intelligence platform
-  that analyses campaigns across 90+ markets.
+  that analyses campaigns across 92 markets.
 
   Before: Betteride in Berlin, Publicis in Hamburg.
   ESCP for the undergrad, Imperial for the postgrad.

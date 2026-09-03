@@ -55,6 +55,8 @@
   .wrap{width:var(--sheet);margin-inline:auto}
   /* clearance for the fixed nav */
   .pt-nav{padding-top:4.5rem}
+  .nav-rail{scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .nav-rail::-webkit-scrollbar{display:none}
   .mono{font-family:var(--dot);font-size:13px;letter-spacing:.04em;text-transform:uppercase;color:var(--grey)}
   .mono-sm{font-family:var(--data);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--grey)}
   .num{font-family:var(--dot);font-variant-numeric:tabular-nums}
@@ -84,7 +86,7 @@
   /* ---- the stamp control ---- */
   .stamp{position:relative;isolation:isolate;background:transparent;border:none;border-radius:0;
     padding:.52rem .95rem;cursor:pointer;font-family:var(--dot);font-size:13px;letter-spacing:.04em;
-    text-transform:uppercase;line-height:1;color:var(--grey);transition:none;
+    text-transform:uppercase;line-height:1;color:var(--grey);transition:none;align-items:center;
     transform:rotate(var(--tilt,-1.4deg))}
   .stamp > span{position:relative;z-index:2}
   .stamp::before{content:"";position:absolute;inset:0;z-index:0;border:2px solid var(--grey-dim)}
