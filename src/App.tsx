@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Grain, DotScreen, TreeField } from "@/components/Texture";
 import { SiteNav } from "@/components/Chrome";
+import { ScanController } from "@/components/Scan";
 import Index from "@/pages/Index";
 import Photography from "@/pages/Photography";
 import Archive from "@/pages/Archive";
@@ -72,6 +73,7 @@ export default function App() {
     <BrowserRouter>
       <ScrollTop />
       <Texture />
+      <ScanController />
       <Nav />
       <Routes>
         <Route path="/" element={<Index />} />

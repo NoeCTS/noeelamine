@@ -59,7 +59,7 @@ export default function Photography() {
             {list.map((f) => {
               const i = shots.indexOf(f);
               return (
-                <li key={f.n} className="rule-top">
+                <li key={f.n} className="scan scan-row rule-top">
                   <button type="button" onClick={() => setOpen(i)} onMouseEnter={() => setHover(i)}
                     className="index-row grid w-full grid-cols-[46px_1fr_auto] items-baseline gap-4 py-3.5 text-left sm:grid-cols-[56px_1fr_120px_92px]">
                     <span className="num text-[13px] text-grey-dim transition-colors">{f.n}</span>
@@ -78,7 +78,7 @@ export default function Photography() {
               const i = shots.indexOf(f);
               return (
                 <button key={f.n} type="button" onClick={() => setOpen(i)} onMouseEnter={() => setHover(i)}
-                  className="col-rule group block p-3 text-left sm:p-4">
+                  className="scan col-rule group block p-3 text-left sm:p-4">
                   <span className="block overflow-hidden bg-void-2" style={{ aspectRatio: "4 / 3" }}>
                     <img src={`/frames/${f.n}.jpg`} alt={f.title} loading="lazy"
                       className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04]" />

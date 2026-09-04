@@ -144,6 +144,32 @@
   .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
     clip:rect(0,0,0,0);white-space:nowrap;border:0}
 
+  /* ---- scan ----
+     A photocopier reads a page with a moving light bar. Elements arrive already
+     visible and the bar passes over them once; nothing is ever hidden waiting
+     for JavaScript, so a failed observer costs an effect, not the content. */
+  .scan{position:relative}
+  .scan::after{content:"";position:absolute;inset:0;z-index:6;pointer-events:none;opacity:0;
+    background:linear-gradient(100deg,
+      transparent 40%,
+      rgba(255,255,255,.10) 47%,
+      rgba(255,255,255,.55) 50%,
+      rgba(255,255,255,.10) 53%,
+      transparent 60%);
+    background-size:280% 100%;background-position:120% 0}
+  .scan.is-lit::after{animation:scanBar .9s cubic-bezier(.32,.72,.3,1) both}
+  .scan.is-lit{animation:scanLit .9s cubic-bezier(.32,.72,.3,1) both}
+  @keyframes scanBar{
+    0%{opacity:0;background-position:120% 0}
+    12%{opacity:1}
+    88%{opacity:1}
+    100%{opacity:0;background-position:-40% 0}
+  }
+  @keyframes scanLit{from{filter:brightness(.52) contrast(1.08)}to{filter:none}}
+  /* a row is read edge to edge, so its bar is quicker and tighter */
+  .scan-row.is-lit::after{animation-duration:.55s}
+  .scan-row.is-lit{animation-duration:.55s}
+
   /* ---- the stamp control ---- */
   .stamp{position:relative;isolation:isolate;background:transparent;border:none;border-radius:0;
     padding:.52rem .95rem;cursor:pointer;font-family:var(--dot);font-size:13px;letter-spacing:.04em;
@@ -175,6 +201,7 @@
   .grain,.field::before{animation:none}
   .rise{animation:none}
   .lightbox,.lb-img{animation:none}
+  .scan.is-lit,.scan.is-lit::after{animation:none}
   .index-row > span:nth-child(2){transition:none}
   html{scroll-behavior:auto}
 }
