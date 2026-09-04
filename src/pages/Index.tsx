@@ -1,75 +1,76 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Opener } from "@/components/Opener";
-import { ContactSheet } from "@/components/ContactSheet";
-import { Masthead, Foot } from "@/components/Chrome";
-import { publicFrames } from "@/data/frames";
+import { Masthead, Foot, SiteNav } from "@/components/Chrome";
 
-let openerSeenInMemory = false;
+// Whether the opening has already run in this JS session. Module scope rather
+// than sessionStorage, which would survive a reload: loading the site afresh is
+// a genuine arrival and earns the opener again. Returning to the index from
+// inside the site is not, and does not.
+let openerPlayed = false;
 
 export default function Index() {
-  const total = publicFrames().length;
   const { hash } = useLocation();
-  // The opener is an arrival, not a toll gate. Once it has appeared in this
-  // tab, route links and browser Back return directly to the archive content.
-  const [playOpener] = useState(() => {
-    const seenInMemory = openerSeenInMemory;
-    openerSeenInMemory = true;
-    try {
-      const seen = seenInMemory || sessionStorage.getItem("archive-opener-seen") === "1";
-      sessionStorage.setItem("archive-opener-seen", "1");
-      return hash !== "#index" && !seen;
-    } catch {
-      return hash !== "#index" && !seenInMemory;
-    }
-  });
+  // The opener is an arrival, not a toll gate. The nav and every zone's way
+  // back carry #index, which skips it outright; the flag covers the rest.
+  const [playOpener] = useState(() => hash !== "#index" && !openerPlayed);
+  // Recorded in an effect, not in the initializer above. That keeps the
+  // initializer pure, so a StrictMode double-render cannot set the flag before
+  // the second call reads it and quietly suppress the opening for good.
+  useEffect(() => { openerPlayed = true; }, []);
 
   return (
     <>
-      {!playOpener ? (
-        <div className="wrap flex items-end gap-4 pt-24">
-          <img src="/frames/027.jpg" alt="Cards, self portrait"
-            className="h-20 w-32 flex-none object-cover sm:h-24 sm:w-36" />
-          <span className="mono pb-1">Frame 027 · developed</span>
-        </div>
-      ) : (
-        <Opener src="/frames/027.jpg" label="Cards, self portrait" frame="027" />
+      {/* A return to the index goes straight to the name. The frame that used to
+          stand in for the opening here was a third photograph on a page that is
+          meant to be the sections and not a gallery. */}
+      {playOpener && (
+        <Opener src="/frames/027.jpg" label="Noe Elamine, self portrait" frame="027" />
       )}
       <div className="wrap relative z-[1] pt-6">
         <Masthead title="Noe Elamine" note="Archive, not a CV" />
-        <div className="mt-9 flex max-w-[62ch] flex-col gap-4">
-          <p className="m-0 text-[clamp(1.05rem,1.6vw,1.28rem)] leading-snug">
-            I am Noé Elamine. I work as an <strong className="font-medium">Associate Product
-            Marketing Manager at Google</strong>, on the Chrome browser team, in London.
-          </p>
-          <p className="m-0 text-[clamp(1.05rem,1.6vw,1.28rem)] leading-snug">
-            In my own time I am the <strong className="font-medium">founder of{" "}
-            <Link to="/aube" className="underline decoration-1 underline-offset-4 hover:text-klein-lift">Aube</Link></strong>,
-            a platform that reads marketing campaigns for cultural appropriation,
-            tokenism, stereotyping and visual authenticity across 90+ markets.
-          </p>
-          <p className="m-0 text-[15px] leading-relaxed text-grey">
-            Before that, strategy and growth at Betteride in Berlin and marketing at
-            Publicis in Hamburg. Undergrad at ESCP, postgrad at Imperial. Ten years at a
-            French school in Hamburg, which is where the German comes from. I like
-            learning about AI and building things.
-          </p>
-          <p className="m-0 text-[15px] leading-relaxed text-grey">
-            <strong className="font-medium text-ink">This is my archive.</strong> Not a CV
-            and not quite a portfolio: everything I have made, ordered by when it entered
-            rather than by how impressive it is, so a campaign and a photograph sit at the
-            same rank.
-          </p>
-        </div>
-        <section id="index" className="scroll-mt-20 pt-20">
-          <div className="mb-6 flex flex-wrap items-baseline gap-4">
-            <span className="num text-[1.4rem] text-grey">01</span>
-            <h2 className="m-0 font-display text-[clamp(1.5rem,4vw,2.5rem)] uppercase leading-none" style={{ fontWeight: 400 }}>The index</h2>
-            <span className="mono ml-auto">{total} frames</span>
+        <div className="mt-5 grid items-start gap-x-10 gap-y-8 lg:grid-cols-[minmax(0,1fr)_300px]">
+          <div className="min-w-0 max-w-[68ch]">
+            <p className="typed-rule mb-5" aria-hidden="true">{"=".repeat(200)}</p>
+            <div className="typed typed-lead flex flex-col gap-5">
+              <p>
+                I work as an <strong>Associate Product Marketing Manager at
+                Google</strong> on the Chrome browser team.
+              </p>
+              <p>
+                In my free time I am also building{" "}
+                <strong><Link to="/aube">Aube</Link></strong>, a platform that analyses
+                marketing campaigns for cultural appropriation, tokenism, stereotypes,
+                and visual authenticity etc, across 90+ markets.
+              </p>
+              <p>
+                I did my undergrad at ESCP and my postgrad at Imperial.
+              </p>
+              <p>
+                I like learning about AI and building cool stuff.
+              </p>
+            </div>
           </div>
-          <ContactSheet />
+
+          {/* The archive is full of frames and none of them were me. The intro
+              should say what I look like before it says what I have made. */}
+          {/* Stacked, the portrait belongs under the name, not after four
+              paragraphs of text. Beside the column it can sit where it falls. */}
+          <figure className="order-first m-0 w-[min(300px,72%)] lg:order-none lg:w-full">
+            <span className="plate block">
+              <img src="/portrait.jpg" alt="Noe Elamine"
+                className="w-full object-cover" style={{ aspectRatio: "1 / 1" }} />
+            </span>
+            <figcaption className="mono mt-2">Noé Elamine · London</figcaption>
+          </figure>
+        </div>
+        {/* The sections themselves are the landing page. The work sits inside
+            them rather than being spilled out here as a wall of thumbnails. */}
+        <section id="index" className="scroll-mt-20 pt-16">
+          <p className="mono mb-2">The sections</p>
+          <SiteNav scale="main" />
         </section>
-        <Foot />
+        <Foot nav={false} />
       </div>
     </>
   );

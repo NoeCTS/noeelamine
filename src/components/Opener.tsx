@@ -1,21 +1,17 @@
 import { useEffect, useRef } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { toAscii, fitSize, prefersReducedMotion } from "@/lib/ascii";
-
-gsap.registerPlugin(ScrollTrigger);
 
 /**
  * The opening. The site starts on a photograph that does not exist yet: a
- * field of characters. Scrolling refines the grid until the image resolves
- * into itself, then black and white, then colour last. Scrolling is developing.
+ * field of characters. Scrolling refines the grid, so the picture sharpens
+ * without ever arriving — it stays made of characters the whole way down. The
+ * photograph itself is only ever the source the glyphs are sampled from.
  */
 export function Opener({ src, label, frame }: { src: string; label: string; frame: string }) {
   const wrap = useRef<HTMLDivElement>(null);
   const inner = useRef<HTMLDivElement>(null);
   const img = useRef<HTMLImageElement>(null);
   const pre = useRef<HTMLPreElement>(null);
-  const stage = useRef<HTMLSpanElement>(null);
   const pct = useRef<HTMLSpanElement>(null);
   const hint = useRef<HTMLSpanElement>(null);
 
@@ -27,47 +23,75 @@ export function Opener({ src, label, frame }: { src: string; label: string; fram
 
     const draw = (progress: number) => {
       lastProgress = progress;
-      // fewer columns on a narrow screen, or each glyph lands below a pixel
-      const base = window.innerWidth < 640 ? 44 : 72;
-      const cols = Math.round(base + progress * (window.innerWidth < 640 ? 96 : 138));
+      // Resolution is the whole animation now that the photograph never fades
+      // up, so the grid has to run fine enough for a face to become legible in
+      // it. Small type alone would only flatten the tone, so contrast is lifted
+      // in step with the column count to keep the glyphs separating.
+      const narrow = window.innerWidth < 640;
+      const cols = Math.round((narrow ? 52 : 88) + progress * (narrow ? 116 : 212));
+      const contrast = 1 + progress * 0.55;
       if (Math.abs(cols - lastCols) >= 2) {
-        p.textContent = toAscii(i, cols);
+        p.textContent = toAscii(i, cols, undefined, contrast);
         p.style.fontSize = `${fitSize(box.getBoundingClientRect().width || 360, cols).toFixed(2)}px`;
         lastCols = cols;
       }
-      // characters give way to black and white, and colour arrives last
-      const reveal = Math.min(1, Math.max(0, (progress - 0.42) / 0.33));
-      const colour = Math.min(1, Math.max(0, (progress - 0.76) / 0.24));
-      i.style.opacity = String(reveal);
-      p.style.opacity = String(1 - reveal);
-      i.style.filter = `grayscale(${(1 - colour).toFixed(3)}) contrast(${(1 + 0.14 * (1 - colour)).toFixed(3)})`;
+      // The source image is never faded up. Resolution is the whole animation:
+      // the grid gets finer, the picture gets legible, the glyphs stay glyphs.
       if (hint.current) hint.current.style.opacity = String(1 - Math.min(1, progress * 2.2));
       if (pct.current) pct.current.textContent = `00${Math.round(progress * 100)}`.slice(-3);
-      if (stage.current) stage.current.textContent = reveal < 1 ? "characters" : colour < 1 ? "monochrome" : "colour";
     };
 
+    /**
+     * Progress is read from the page, never written back to it. This used to be
+     * a GSAP ScrollTrigger, which owns the scroller: locking the body for the
+     * lightbox made it renormalise and settle the page somewhere else, and the
+     * reader lost their place in the index behind the open frame. Nothing here
+     * touches scroll position, so there is nothing to fight.
+     */
     const start = () => {
       draw(0);
       if (prefersReducedMotion()) { draw(1); return; }
-      const trigger = wrap.current;
-      if (!trigger) return;
-      const st = ScrollTrigger.create({
-        trigger,
-        start: "top top",
-        // The outer element is 280svh tall and its child is CSS-sticky, so
-        // bottom-to-bottom gives the same 180vh development distance without
-        // ScrollTrigger wrapping or moving React-owned DOM nodes.
-        end: "bottom bottom",
-        scrub: 0.6,
-        onUpdate: (self) => draw(self.progress),
-      });
-      return () => st.kill();
+      const el = wrap.current;
+      if (!el) return;
+
+      // The element is 280svh tall with a 100svh sticky child, so it develops
+      // over the 180svh between its top meeting the top of the screen and its
+      // bottom meeting the bottom.
+      const measure = () => {
+        const run = el.offsetHeight - window.innerHeight;
+        if (run <= 0) return 0;
+        return Math.min(1, Math.max(0, -el.getBoundingClientRect().top / run));
+      };
+
+      let target = measure();
+      let current = target;
+      let ticking = false;
+      let frame = 0;
+      const tick = () => {
+        // eased rather than tied hard to the scroll, which is the lag that made
+        // the old scrub feel like something developing rather than a slider
+        current += (target - current) * 0.16;
+        if (Math.abs(target - current) < 0.0015) { current = target; ticking = false; }
+        draw(current);
+        if (ticking) frame = requestAnimationFrame(tick);
+      };
+      const onScroll = () => {
+        target = measure();
+        if (!ticking) { ticking = true; frame = requestAnimationFrame(tick); }
+      };
+
+      window.addEventListener("scroll", onScroll, { passive: true });
+      draw(current);
+      return () => {
+        window.removeEventListener("scroll", onScroll);
+        cancelAnimationFrame(frame);
+      };
     };
 
     let raf = 0;
     const onResize = () => {
       cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => { lastCols = -1; draw(lastProgress); ScrollTrigger.refresh(); });
+      raf = requestAnimationFrame(() => { lastCols = -1; draw(lastProgress); });
     };
     window.addEventListener("resize", onResize);
 
@@ -97,11 +121,13 @@ export function Opener({ src, label, frame }: { src: string; label: string; fram
           <pre ref={pre} aria-hidden="true"
             className="absolute inset-0 m-0 flex items-center justify-center overflow-hidden whitespace-pre text-ink"
             style={{ fontFamily: "var(--data)", lineHeight: 1.15 }} />
+          {/* Never shown. It is the pixel source toAscii samples, and the
+              accessible description of what the character field depicts. */}
           <img ref={img} src={src} alt={label}
             className="absolute inset-0 h-full w-full object-cover opacity-0" />
           <div className="absolute inset-x-0 bottom-0 z-[3] flex flex-wrap gap-x-5 gap-y-1 scrim-soft px-3 py-2">
             <span className="mono">Frame {frame}</span>
-            <span className="mono" ref={stage}>characters</span>
+            <span className="mono">characters</span>
             <span className="num text-[13px]" style={{ color: "var(--klein-lift)" }} ref={pct}>000</span>
           </div>
         </div>

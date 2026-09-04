@@ -5,49 +5,43 @@ import { useFrameParam } from "@/lib/useFrameParam";
 import { FRAMES, type Frame } from "@/data/frames";
 
 /**
- * A studio index rather than a gallery: every entry the same size, set out line
- * by line, with hairline rules doing the separating. The archive's no-lines rule
- * is suspended here on purpose, because a list of works is exactly the case
- * where a rule carries information instead of decorating.
+ * The still work: posters, artwork and single graphics. Same grammar as the
+ * photography index — pictures first, then the same set again as a line-by-line
+ * list — because a poster is judged whole before it is judged by its caption.
  */
-export default function Photography() {
-  const shots = useMemo(() => FRAMES.filter((f) => f.group === "photography" && !f.sensitive), []);
-  const { open, openFrame, moveFrame, closeFrame } = useFrameParam(shots);
+export default function GraphicDesign() {
+  const works = useMemo(
+    () => FRAMES.filter((f) => f.group === "posters" && !f.sensitive && !f.route), []);
+  const { open, openFrame, moveFrame, closeFrame } = useFrameParam(works);
   const [hover, setHover] = useState<number>(0);
 
-  // The Lisbon run is whichever shoot date carries the most frames. Deriving it
-  // rather than hardcoding a date means correcting a date in the manifest does
-  // not silently empty the section.
-  const sets: [string, string, Frame[]][] = useMemo(() => {
-    const counts = new Map<string, number>();
-    shots.forEach((f) => f.made && counts.set(f.made, (counts.get(f.made) ?? 0) + 1));
-    const run = [...counts.entries()].sort((a, b) => b[1] - a[1])[0]?.[0];
-    return [
-      ["01", "Lisbon", shots.filter((f) => f.made === run)],
-      ["02", "Elsewhere", shots.filter((f) => f.made !== run)],
-    ];
-  }, [shots]);
+  // Split on what the piece is rather than when it was made: a poster is set
+  // to be read at distance, a graphic or a study is not.
+  const sets: [string, string, Frame[]][] = useMemo(() => [
+    ["01", "Posters", works.filter((f) => f.kind === "poster")],
+    ["02", "Graphics and studies", works.filter((f) => f.kind !== "poster")],
+  ], [works]);
 
   return (
     <div className="wrap page-top relative z-[1]">
-      <Masthead title="Photography" note="Lisbon and elsewhere" />
+      <Masthead title="Graphic design" note="Posters, artwork, graphics" />
 
       <div className="rule-top mt-10 grid gap-y-6 py-6 sm:grid-cols-3">
         <p className="col-rule text-[.95rem] leading-relaxed text-grey">
-          No client and no brief. Eleven of these were shot in one run, which is
-          why they hold together as a set rather than a scatter.
+          Work made to be looked at rather than read through. Some of it was set
+          for a wall, some of it never left the screen it was drawn on.
         </p>
         <p className="col-rule text-[.95rem] leading-relaxed text-grey">
-          The largest single group in the archive, and the clearest evidence that
-          this is an archive rather than a portfolio.
+          Campaign work lives in its own zone. What is collected here stands on
+          its own, without a brief behind it to explain the decisions.
         </p>
         <p className="col-rule text-[.95rem] leading-relaxed text-grey">
-          <span className="num text-ink">{shots.length}</span> frames. Click any
-          line or any frame to open it.
+          <span className="num text-ink">{works.length}</span> frames. Click any
+          frame or any line to open it.
         </p>
       </div>
 
-      {sets.map(([n, label, list]) => (
+      {sets.map(([n, label, list]) => list.length > 0 && (
         <section key={n} className="mt-16">
           <div className="rule-top flex flex-wrap items-baseline gap-4 py-3">
             <span className="num text-[1.15rem] text-grey">{n}</span>
@@ -55,16 +49,18 @@ export default function Photography() {
             <span className="mono ml-auto">{list.length} frames</span>
           </div>
 
-          {/* three columns, separated by rules, nothing else */}
-          <div className="rule-top grid grid-cols-2 sm:grid-cols-3">
+          {/* Set in their own proportions. These are not all one shape the way a
+              contact sheet is, and cropping a poster to a grid cell would be
+              deciding for the reader which part of it mattered. */}
+          <div className="rule-top grid grid-cols-1 gap-x-4 gap-y-2 sm:grid-cols-2">
             {list.map((f) => {
-              const i = shots.indexOf(f);
+              const i = works.indexOf(f);
               return (
                 <button key={f.n} type="button" onClick={() => openFrame(i)} onMouseEnter={() => setHover(i)}
                   className="col-rule group block p-3 text-left sm:p-4">
-                  <span className="block overflow-hidden bg-void-2" style={{ aspectRatio: "4 / 3" }}>
+                  <span className="block bg-void-2">
                     <img src={`/frames/${f.n}.jpg`} alt={f.title} loading="lazy"
-                      className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04]" />
+                      className="block w-full transition-transform duration-500 ease-out group-hover:scale-[1.02]" />
                   </span>
                   <span className="mt-2.5 flex items-baseline justify-between gap-2">
                     <span className="num text-[12px] text-grey-dim">{f.n}</span>
@@ -75,12 +71,9 @@ export default function Photography() {
             })}
           </div>
 
-          {/* the same set again as an index: one line per work, everything the
-              same size. It reads as a caption to the grid above it, not a menu
-              you have to get past to reach the pictures. */}
           <ol className="m-0 mt-12 list-none p-0">
             {list.map((f) => {
-              const i = shots.indexOf(f);
+              const i = works.indexOf(f);
               return (
                 <li key={f.n} className="rule-top">
                   <button type="button" onClick={() => openFrame(i)} onMouseEnter={() => setHover(i)}
@@ -97,14 +90,10 @@ export default function Photography() {
         </section>
       ))}
 
-      <p className="mono mt-14">
-        Titled by what they show. Places and dates are still to be written.
-      </p>
-
       <Foot />
 
-      <Lightbox frames={shots} index={open} onClose={closeFrame} onMove={moveFrame} />
-      <span className="sr-only" aria-live="polite">{shots[hover]?.title}</span>
+      <Lightbox frames={works} index={open} onClose={closeFrame} onMove={moveFrame} />
+      <span className="sr-only" aria-live="polite">{works[hover]?.title}</span>
     </div>
   );
 }

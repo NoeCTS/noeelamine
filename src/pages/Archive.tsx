@@ -1,28 +1,20 @@
 import { useMemo } from "react";
-import { Link, useSearchParams } from "react-router-dom";
-import { Masthead, Foot, Back } from "@/components/Chrome";
+import { Link } from "react-router-dom";
+import { Masthead, Foot } from "@/components/Chrome";
 import { byAdded, publicFrames, GROUP_LABEL, NEWEST } from "@/data/frames";
 import { Lightbox } from "@/components/Lightbox";
+import { useFrameParam } from "@/lib/useFrameParam";
 
 /** The whole archive as a list. Every frame, dated, in the order it arrived. */
 export default function Archive() {
   const rows = useMemo(() => byAdded(publicFrames()), []);
-  const [searchParams, setSearchParams] = useSearchParams();
-  const requested = searchParams.get("frame");
-  const requestedIndex = requested ? rows.findIndex((f) => f.n === requested) : -1;
-  const open = requestedIndex >= 0 ? requestedIndex : null;
-
-  const showFrame = (index: number) => {
-    const next = new URLSearchParams(searchParams);
-    next.set("frame", rows[index].n);
-    setSearchParams(next, { replace: true });
-  };
-
-  const closeFrame = () => {
-    const next = new URLSearchParams(searchParams);
-    next.delete("frame");
-    setSearchParams(next, { replace: true });
-  };
+  // The viewer is for frames that have nowhere else to go. A case study is not
+  // one of them, so the paging arrows must not wander into work the lightbox
+  // offers no way to actually open.
+  const viewable = useMemo(() => rows.filter((f) => !f.route), [rows]);
+  const viewableIndex = useMemo(
+    () => new Map(viewable.map((f, i) => [f.n, i])), [viewable]);
+  const { open, openFrame, moveFrame, closeFrame } = useFrameParam(viewable);
   const months = rows.reduce<Record<string, number>>((acc, f) => {
     acc[f.added] = (acc[f.added] ?? 0) + 1;
     return acc;
@@ -31,7 +23,7 @@ export default function Archive() {
   const order = Object.keys(months).sort();
 
   return (
-    <div className="wrap calm pt-nav relative z-[1]">
+    <div className="wrap page-top relative z-[1]">
       <Masthead title="The archive" note="Everything, dated" />
       <p className="mt-9 max-w-[56ch] text-[clamp(1.02rem,1.5vw,1.2rem)] leading-snug">
         Every frame carries two dates: when it was made, and when it entered the
@@ -69,13 +61,12 @@ export default function Archive() {
             </>
           );
           const cls = "grid grid-cols-[38px_minmax(0,1fr)] items-baseline gap-x-3 gap-y-1 px-1.5 py-3 hover:bg-void-2 sm:grid-cols-[52px_minmax(0,1fr)_auto] sm:gap-4";
-          const index = rows.indexOf(f);
           return f.route ? (
             <Link key={f.n} to={f.route} className={cls} aria-label={`Open ${f.title} case study`}>
               {content}
             </Link>
           ) : (
-            <button key={f.n} type="button" onClick={() => showFrame(index)}
+            <button key={f.n} type="button" onClick={() => openFrame(viewableIndex.get(f.n)!)}
               className={`${cls} w-full border-0 bg-transparent text-left font-body text-inherit`}
               aria-label={`Open ${f.title}`}>
               {content}
@@ -84,9 +75,8 @@ export default function Archive() {
         })}
       </section>
 
-      <p className="mt-10"><Back /></p>
       <Foot />
-      <Lightbox frames={rows} index={open} onClose={closeFrame} onMove={showFrame} />
+      <Lightbox frames={viewable} index={open} onClose={closeFrame} onMove={moveFrame} />
     </div>
   );
 }

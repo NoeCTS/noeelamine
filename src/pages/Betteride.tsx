@@ -7,7 +7,12 @@ import { FRAMES } from "@/data/frames";
  * of the printed flyers. That split is the actual story of the launch.
  */
 export default function Betteride() {
-  const frames = FRAMES.filter((f) => f.group === "betteride");
+  // Frames that are another frame again. 035 is 014 under the same headline in
+  // the same layout, differing only in the QR block; 033 is 032 with the two
+  // text bars swapped. Side by side they read as a mistake rather than as two
+  // separate pieces of work, so only the first of each pair runs.
+  const REPEATED = new Set(["035", "033"]);
+  const frames = FRAMES.filter((f) => f.group === "betteride" && !REPEATED.has(f.n));
   const flyers = frames.filter((f) => f.kind === "flyer");
   const rest = frames.filter((f) => f.kind !== "flyer");
 

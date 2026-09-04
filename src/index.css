@@ -22,19 +22,25 @@
     --ink:#F2F0EC;
     --grey:#8A8A92;
     --grey-dim:#3B3B42;
-    --kh:228;
-    --klein:hsl(var(--kh) 100% 30%);
-    --klein-lift:hsl(var(--kh) 82% 56%);
+    /* The accent runs greyscale. It was Klein blue, which fought the black
+       rather than sitting in it. The names and the machinery are kept so the
+       colour is two numbers away: raise the saturations to 100% and 82%. */
+    --kh:240;
+    --klein:hsl(var(--kh) 4% 32%);
+    --klein-lift:hsl(var(--kh) 5% 76%);
 
     --display:"Silvestre","Archivo",sans-serif;
     --body:"range-sans-variable","Range Sans","Archivo",system-ui,sans-serif;
     --data:"Departure Mono",ui-monospace,monospace;
     --dot:"Ndot55","Departure Mono",monospace;
 
-    /* texture, set from the design language document */
-    --grain:0.36;
-    --screen:0.07;
-    --tree:0.38;
+    /* texture, set from the design language document. The tree is wallpaper:
+       it has to stay behind the type rather than read as a second picture
+       competing with it. The pages that are dense fields of type in their own
+       right carry no tree at all, so this can sit up where it reads. */
+    --grain:0.26;
+    --screen:0.05;
+    --tree:0.30;
 
     --sheet:min(1180px,100% - 2.5rem);
   }
@@ -53,34 +59,34 @@
 
 @layer components {
   .wrap{width:var(--sheet);margin-inline:auto}
-  /* Reading pages let the texture step back. The grain is the house style, but
-     it should not compete with a list you are meant to scan. */
-  .calm{--tree:.14;--grain:.24}
+  /* Reading pages let the texture step back. This has to be set on the root:
+     .treefield and .grain are fixed siblings of the page, not descendants of
+     it, so a variable declared on the page wrapper never reaches them. */
+  :root[data-quiet]{--grain:.16}
+
+  /* A photograph opened at full size is the one thing here that should be seen
+     clean. The house texture comes off entirely while the viewer is up. */
+  :root[data-viewing] .grain,
+  :root[data-viewing] .dotscreen,
+  :root[data-viewing] .treefield{display:none}
   /* clearance for the fixed nav */
-  .pt-nav{padding-top:4.5rem}
-  .nav-rail{scrollbar-width:none;-webkit-overflow-scrolling:touch}
-  .nav-rail::-webkit-scrollbar{display:none}
-  /* A rail that scrolls should say so. The fade is the only affordance a
-     hidden scrollbar leaves you, so it stays until the row fits. */
-  /* Tailwind cannot inject alpha into a bare var() colour, so bg-void/95 emitted
-     nothing at all and the page scrolled visibly through the nav. Solid first,
-     then a translucent override where color-mix is supported. */
-  .scrim{background:var(--void)}
-  @supports (background:color-mix(in srgb,#000 50%,transparent)){
-    .scrim{background:color-mix(in srgb,var(--void) 94%,transparent)}
-  }
+  .page-top{padding-top:1.75rem}
+
+  /* A section, set as a row in an index: rule, number, name. The same shape as
+     every list on the site, so the navigation is part of the document. */
+  .nav-row{border-top:1px solid rgba(242,240,236,.14);padding-inline:.4rem;
+    color:var(--grey);transition:background .18s ease,color .18s ease}
+  .nav-row:hover,.nav-row:focus-visible{background:var(--void-2);color:var(--ink)}
+  .nav-row[aria-current="page"]{color:var(--ink)}
+  .nav-row[aria-current="page"] .num{color:var(--klein-lift)}
+  /* Tailwind cannot inject alpha into a bare var() colour, so bg-void/95 emits
+     nothing at all. Solid first, then a translucent override where color-mix
+     is supported. */
   .scrim-soft{background:var(--void)}
   @supports (background:color-mix(in srgb,#000 50%,transparent)){
     .scrim-soft{background:color-mix(in srgb,var(--void) 84%,transparent)}
   }
 
-  .nav-shell{position:relative}
-  .nav-shell::after{content:"";position:absolute;inset-block:0;right:0;width:3rem;pointer-events:none;
-    background:linear-gradient(90deg,transparent,var(--void) 78%)}
-  @media (min-width:900px){
-    .nav-rail{flex-wrap:wrap;overflow-x:visible}
-    .nav-shell::after{display:none}
-  }
   .mono{font-family:var(--dot);font-size:13px;letter-spacing:.04em;text-transform:uppercase;color:var(--grey)}
   .mono-sm{font-family:var(--data);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--grey)}
   .num{font-family:var(--dot);font-variant-numeric:tabular-nums}
@@ -149,47 +155,52 @@
   .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
     clip:rect(0,0,0,0);white-space:nowrap;border:0}
 
-  /* ---- scan ----
-     A photocopier reads a page with a moving light bar. Elements arrive already
-     visible and the bar passes over them once; nothing is ever hidden waiting
-     for JavaScript, so a failed observer costs an effect, not the content. */
-  .scan{position:relative}
-  .scan::after{content:"";position:absolute;inset:0;z-index:6;pointer-events:none;opacity:0;
-    background:linear-gradient(100deg,
-      transparent 40%,
-      rgba(255,255,255,.10) 47%,
-      rgba(255,255,255,.55) 50%,
-      rgba(255,255,255,.10) 53%,
-      transparent 60%);
-    background-size:280% 100%;background-position:120% 0}
-  .scan.is-lit::after{animation:scanBar .9s cubic-bezier(.32,.72,.3,1) both}
-  .scan.is-lit{animation:scanLit .9s cubic-bezier(.32,.72,.3,1) both}
-  @keyframes scanBar{
-    0%{opacity:0;background-position:120% 0}
-    12%{opacity:1}
-    88%{opacity:1}
-    100%{opacity:0;background-position:-40% 0}
-  }
-  @keyframes scanLit{from{filter:brightness(.52) contrast(1.08)}to{filter:none}}
-  /* a row is read edge to edge, so its bar is quicker and tighter */
-  .scan-row.is-lit::after{animation-duration:.55s}
-  .scan-row.is-lit{animation-duration:.55s}
 
   /* ---- the stamp control ---- */
+  /* Flat, not rotated. Tilted boxes read as stickers next to a page built out
+     of hairline rules; square ones read as part of the same drawing. */
   .stamp{position:relative;isolation:isolate;background:transparent;border:none;border-radius:0;
     padding:.52rem .95rem;cursor:pointer;font-family:var(--dot);font-size:13px;letter-spacing:.04em;
-    text-transform:uppercase;line-height:1;color:var(--grey);transition:none;align-items:center;
-    transform:rotate(var(--tilt,-1.4deg))}
+    text-transform:uppercase;line-height:1;color:var(--grey);transition:none;align-items:center}
   .stamp > span{position:relative;z-index:2}
   .stamp::before{content:"";position:absolute;inset:0;z-index:0;border:2px solid var(--grey-dim)}
-  .stamp:hover{color:var(--ink);transform:rotate(var(--tilt,-1.4deg)) translate(-1px,-1px)}
+  .stamp:hover{color:var(--ink);transform:translate(-1px,-1px)}
   .stamp:hover::before{border-color:var(--klein-lift)}
-  .stamp[aria-current="page"],.stamp.on{color:#fff;transform:rotate(.6deg)}
+  .stamp[aria-current="page"],.stamp.on{color:#fff}
   .stamp[aria-current="page"]::before,.stamp.on::before{border-color:var(--klein);background:var(--klein)}
   .stamp[aria-current="page"]::after,.stamp.on::after{content:"";position:absolute;inset:0;z-index:1;
     background-image:var(--noise);background-size:180px 180px;mix-blend-mode:screen;opacity:.42}
 
-  /* ---- a Klein field is a block, never a tint ---- */
+  /* A photograph printed rather than displayed: colour off, and the house grain
+     sitting on the emulsion instead of floating over the page. --noise is the
+     same tile the site-wide grain cycles, so it is the same stock. */
+  .plate{position:relative;isolation:isolate;display:block}
+  .plate img{display:block;width:100%;filter:grayscale(1) contrast(1.08) brightness(1.03)}
+  /* ::before rather than ::after, so a future overlay on the same element has
+     the other pseudo-element free. */
+  .plate::before{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;
+    background-image:var(--noise);background-size:170px 170px;
+    mix-blend-mode:overlay;opacity:.62}
+
+  /* ---- the landing copy is typed, the way the colophon is ----
+     Set in the pixel face on one measure so the front of the site reads as a
+     document that was written, not a page that was laid out. The display face
+     still carries the headings; only the prose changes. */
+  .typed{font-family:var(--data);font-size:13.5px;line-height:1.8;
+    letter-spacing:.012em;color:var(--grey)}
+  .typed p{margin:0}
+  /* The landing page's own copy runs larger: it is the first thing read, and
+     13.5px is a caption size, not an opening statement. */
+  .typed-lead{font-size:clamp(15px,1.35vw,17.5px);line-height:1.75}
+  .typed strong{font-weight:400;color:var(--ink)}
+  .typed a{color:var(--ink);text-decoration:underline;text-decoration-thickness:1px;
+    text-underline-offset:3px}
+  .typed a:hover{color:var(--klein-lift)}
+  /* a typed rule: the row of "=" the colophon draws under its name */
+  .typed-rule{font-family:var(--data);font-size:13.5px;line-height:1;
+    color:var(--grey-dim);white-space:nowrap;overflow:hidden;user-select:none}
+
+  /* ---- a field is a block, never a tint ---- */
   .field{background:var(--klein);color:#fff;padding:clamp(1.6rem,4vw,2.6rem);
     position:relative;isolation:isolate;overflow:hidden}
   .field > *{position:relative;z-index:2}
@@ -206,7 +217,6 @@
   .grain,.field::before{animation:none}
   .rise{animation:none}
   .lightbox,.lb-img{animation:none}
-  .scan.is-lit,.scan.is-lit::after{animation:none}
   .index-row > span:nth-child(2){transition:none}
   .opener-scroll{height:100svh}
   html{scroll-behavior:auto}

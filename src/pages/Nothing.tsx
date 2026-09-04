@@ -83,14 +83,13 @@ export default function Nothing() {
             note="Standing apart in the crowd. The daily commute becomes a personal sanctuary." />
           <Plate src="/nothing/ad-2.jpg" index="02" place="Rush hour"
             note="Find clarity in chaos. When everyone looks down, you look forward." />
-          <Plate src="/frames/002.jpg" index="03" place="Key visual"
-            note="The product photographed the way the product is designed: nothing hidden." />
-          <Plate src="/frames/003.jpg" index="04" place="Tube takeover"
-            note="Full car placement. The campaign occupies the space it is talking about." />
-          <Plate src="/frames/038.jpg" index="05" place="Portrait"
+          {/* Frames 002 and 003 are the same two pictures as the plates above:
+              002 is ad-2 and 003 is ad-1, at a different size. They ran here as
+              well, so the sequence showed each key visual twice in a row. */}
+          <Plate src="/frames/038.jpg" index="03" place="Portrait"
             note="No expression to sell you anything. The point is the absence of the pitch." />
-          <Plate src="/frames/039.jpg" index="06" place="Studio" />
-          <Plate src="/frames/040.jpg" index="07" place="Handover"
+          <Plate src="/frames/039.jpg" index="04" place="Studio" />
+          <Plate src="/frames/040.jpg" index="05" place="Handover"
             note="Transparent hardware, transparent advertising." />
         </div>
       </section>
@@ -99,9 +98,9 @@ export default function Nothing() {
         <div className="mx-auto max-w-6xl">
           <p className="mb-12 text-center text-xs uppercase tracking-[0.5em] text-neutral-600">Outdoor activation</p>
           <div className="space-y-16">
-            <Plate src="/nothing/billboard-1.jpg" index="08" place="Underground billboard" />
-            <Plate src="/nothing/billboard-2.jpg" index="09" place="Crowd" />
-            <Plate src="/frames/043.jpg" index="10" place="Poster wall"
+            <Plate src="/nothing/billboard-1.jpg" index="06" place="Underground billboard" />
+            <Plate src="/nothing/billboard-2.jpg" index="07" place="Crowd" />
+            <Plate src="/frames/043.jpg" index="08" place="Poster wall"
               note="Repetition as the medium. One poster is an ad; forty is a presence." />
           </div>
         </div>

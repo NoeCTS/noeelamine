@@ -63,6 +63,9 @@ export const FRAMES: Frame[] = [
   { n: "042", title: "Unseen Scenes",    kind: "title card",       group: "berlin",    route: "/berlin",                       added: "2026.02" },
   { n: "013", title: "Funkturm",         kind: "photograph",       group: "berlin",    route: "/berlin",    made: "2026.01", added: "2026.02" },
 
+  { n: "050", title: "Untitled",         kind: "graphic",          group: "posters",                      added: "2026.09" },
+  { n: "051", title: "Untitled",         kind: "graphic",          group: "posters",                      added: "2026.09" },
+
   { n: "012", title: "Identitee",        kind: "poster",           group: "posters",     made: "2026.02", added: "2026.02" },
   { n: "010", title: "Can we trust AI",  kind: "poster",           group: "posters",     made: "2026.02", added: "2026.02" },
   { n: "011", title: "Crossing",         kind: "graphic",          group: "posters",     made: "2026.01", added: "2026.01" },
@@ -94,18 +97,5 @@ export const byAdded = (frames = FRAMES) =>
   [...frames].sort((a, b) => key(b).localeCompare(key(a)));
 
 export const publicFrames = () => FRAMES.filter((f) => !f.sensitive);
-
-/**
- * Every frame has somewhere useful to go. Project work keeps its case-study
- * route, photographs open on the photography page, and standalone archive
- * material opens in the archive viewer.
- */
-export const frameHref = (f: Frame) => {
-  if (f.route) return f.route;
-  const params = new URLSearchParams({ frame: f.n });
-  return f.group === "photography"
-    ? `/photography?${params}`
-    : `/archive?${params}`;
-};
 
 export const NEWEST = byAdded(publicFrames())[0]?.added ?? "";

@@ -13,8 +13,15 @@ export const CH = 0.6;
 const cv = typeof document !== "undefined" ? document.createElement("canvas") : null;
 const ctx = cv ? cv.getContext("2d", { willReadFrequently: true }) : null;
 
-/** Render an image as text. Character cells run about 2:1, hence the halving. */
-export function toAscii(img: HTMLImageElement, cols: number, ramp = RAMP): string {
+/**
+ * Render an image as text. Character cells run about 2:1, hence the halving.
+ *
+ * `contrast` pushes tone away from mid grey before the ramp is chosen. A fine
+ * grid needs it: the more columns there are, the fewer source pixels each cell
+ * averages, so neighbouring cells converge on the same character and the
+ * picture flattens into an even field exactly when it should be sharpening.
+ */
+export function toAscii(img: HTMLImageElement, cols: number, ramp = RAMP, contrast = 1): string {
   if (!ctx || !cv || !img.naturalWidth) return "";
   const rows = Math.max(1, Math.round(cols * (img.naturalHeight / img.naturalWidth) * 0.5));
   cv.width = cols;
@@ -34,7 +41,8 @@ export function toAscii(img: HTMLImageElement, cols: number, ramp = RAMP): strin
   for (let y = 0; y < rows; y++) {
     for (let x = 0; x < cols; x++) {
       const i = (y * cols + x) * 4;
-      const lum = (0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2]) / 255;
+      const raw = (0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2]) / 255;
+      const lum = contrast === 1 ? raw : Math.min(1, Math.max(0, (raw - 0.5) * contrast + 0.5));
       out += ramp.charAt(Math.round((1 - lum) * last));
     }
     out += "\n";

@@ -39,7 +39,12 @@ export function TreeField({ cell = 13 }: { cell?: number }) {
     const sample = document.createElement("canvas");
     const sctx = sample.getContext("2d", { willReadFrequently: true });
 
-    const paint = () => {
+    // The sampled tree, held between frames. Measuring is the expensive half and
+    // the picture does not change; only which character stands in for each cell.
+    let grid: Float32Array | null = null;
+    let cols = 0, rows = 0, ox = 0, oy = 0;
+
+    const measure = () => {
       if (!sctx) return;
       const dpr = Math.min(2, window.devicePixelRatio || 1);
       const w = window.innerWidth;
@@ -49,16 +54,16 @@ export function TreeField({ cell = 13 }: { cell?: number }) {
       c.style.width = `${w}px`;
       c.style.height = `${h}px`;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      ctx.clearRect(0, 0, w, h);
+      grid = null;
       if (!img.naturalWidth) return;
 
       const sc = Math.min(w / img.naturalWidth, h / img.naturalHeight) * 0.94;
       const dw = img.naturalWidth * sc;
       const dh = img.naturalHeight * sc;
-      const ox = (w - dw) / 2;
-      const oy = (h - dh) / 2;
-      const cols = Math.max(1, Math.ceil(dw / cell));
-      const rows = Math.max(1, Math.ceil(dh / cell));
+      ox = (w - dw) / 2;
+      oy = (h - dh) / 2;
+      cols = Math.max(1, Math.ceil(dw / cell));
+      rows = Math.max(1, Math.ceil(dh / cell));
 
       sample.width = cols;
       sample.height = rows;
@@ -70,38 +75,81 @@ export function TreeField({ cell = 13 }: { cell?: number }) {
       } catch {
         return;
       }
-
+      const g = new Float32Array(cols * rows);
+      for (let n = 0; n < cols * rows; n++) {
+        const k = n * 4;
+        // the source is dark characters on a transparent ground: alpha gates the ink
+        const a = d[k + 3] / 255;
+        g[n] = a * (1 - (0.299 * d[k] + 0.587 * d[k + 1] + 0.114 * d[k + 2]) / 255);
+      }
+      grid = g;
       ctx.fillStyle = "#FFFFFF";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
       ctx.font = `${(cell * 1.25).toFixed(1)}px "Departure Mono", ui-monospace, monospace`;
-      const last = TREE_RAMP.length - 1;
+    };
+
+    const last = TREE_RAMP.length - 1;
+
+    /**
+     * The tree does not move; the characters standing in for it do. Two slow
+     * sine waves cross the grid and push each cell a step or so along the ramp,
+     * which reads as leaves turning in wind. The push is scaled by (1 - ink), so
+     * the trunk and the dense centre hold still and only the light edges stir.
+     */
+    const render = (t: number) => {
+      if (!grid) return;
+      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
       for (let j = 0; j < rows; j++) {
         for (let i = 0; i < cols; i++) {
-          const k = (j * cols + i) * 4;
-          // the source is dark characters on a transparent ground: alpha gates the ink
-          const a = d[k + 3] / 255;
-          const ink = a * (1 - (0.299 * d[k] + 0.587 * d[k + 1] + 0.114 * d[k + 2]) / 255);
+          const ink = grid[j * cols + i];
           if (ink < 0.1) continue;
-          ctx.globalAlpha = Math.min(1, ink * 1.2);
-          ctx.fillText(TREE_RAMP.charAt(Math.round(ink * last)), ox + i * cell + cell / 2, oy + j * cell + cell / 2);
+          const sway =
+            Math.sin(i * 0.55 + j * 0.32 + t * 0.0014) +
+            0.5 * Math.sin(i * 0.21 - j * 0.47 + t * 0.0023);
+          const idx = Math.round(ink * last + sway * 1.15 * (1 - ink));
+          ctx.globalAlpha = Math.min(1, ink * 1.2 + sway * 0.05);
+          ctx.fillText(
+            TREE_RAMP.charAt(idx < 0 ? 0 : idx > last ? last : idx),
+            ox + i * cell + cell / 2,
+            oy + j * cell + cell / 2,
+          );
         }
       }
       ctx.globalAlpha = 1;
     };
 
-    img.onload = paint;
+    let frame = 0;
+    let stop = false;
+    const still = prefersReducedMotion();
+    const loop = (now: number) => {
+      if (stop) return;
+      render(now);
+      // a background at eight frames a second: enough for wind, cheap enough to
+      // sit under everything else, and in keeping with a dot matrix refresh
+      frame = window.setTimeout(() => requestAnimationFrame(loop), 125) as unknown as number;
+    };
+
+    const begin = () => {
+      measure();
+      if (still) render(0);
+      else if (!stop) requestAnimationFrame(loop);
+    };
+
+    img.onload = begin;
     img.src = "/frames/tree.png";
     // the glyphs need the face resolved before the canvas can measure them
-    document.fonts?.ready.then(paint);
+    document.fonts?.ready.then(() => { measure(); if (still) render(0); });
 
     let t: number;
     const onResize = () => {
       window.clearTimeout(t);
-      t = window.setTimeout(paint, 160);
+      t = window.setTimeout(() => { measure(); if (still) render(0); }, 160);
     };
     window.addEventListener("resize", onResize);
     return () => {
+      stop = true;
+      window.clearTimeout(frame);
       window.removeEventListener("resize", onResize);
       window.clearTimeout(t);
     };

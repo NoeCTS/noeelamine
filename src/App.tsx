@@ -1,10 +1,9 @@
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import { Grain, DotScreen, TreeField } from "@/components/Texture";
-import { SiteNav } from "@/components/Chrome";
-import { ScanController } from "@/components/Scan";
 import Index from "@/pages/Index";
 import Photography from "@/pages/Photography";
+import GraphicDesign from "@/pages/GraphicDesign";
 import Archive from "@/pages/Archive";
 import Colophon from "@/pages/Colophon";
 import Google from "@/pages/Google";
@@ -51,23 +50,33 @@ function ScrollTop() {
  */
 const ZONES = ["/google", "/aube", "/betteride", "/nothing", "/berlin"];
 
+/**
+ * Pages that are already a dense field of type. The tree is meant to be the
+ * paper the archive is printed on, but behind a list you are supposed to scan
+ * it stops reading as background and starts reading as a second picture laid
+ * over the first. These pages go without it, and their grain steps down too.
+ */
+const QUIET = ["/photography", "/graphic-design", "/archive"];
+
 function Texture() {
   const { pathname } = useLocation();
+  const quiet = QUIET.includes(pathname);
+
+  useEffect(() => {
+    const root = document.documentElement;
+    if (quiet) root.setAttribute("data-quiet", "");
+    else root.removeAttribute("data-quiet");
+    return () => root.removeAttribute("data-quiet");
+  }, [quiet]);
+
   if (ZONES.includes(pathname)) return null;
   return (
     <>
-      <TreeField />
+      {!quiet && <TreeField />}
       <DotScreen />
       <Grain />
     </>
   );
-}
-
-/** The nav is fixed on archive pages; each zone carries its own way back. */
-function Nav() {
-  const { pathname } = useLocation();
-  if (ZONES.includes(pathname)) return null;
-  return <SiteNav />;
 }
 
 export default function App() {
@@ -75,11 +84,10 @@ export default function App() {
     <BrowserRouter>
       <ScrollTop />
       <Texture />
-      <ScanController />
-      <Nav />
       <Routes>
         <Route path="/" element={<Index />} />
         <Route path="/photography" element={<Photography />} />
+        <Route path="/graphic-design" element={<GraphicDesign />} />
         <Route path="/archive" element={<Archive />} />
         <Route path="/index.txt" element={<Colophon />} />
         <Route path="/google" element={<Google />} />
