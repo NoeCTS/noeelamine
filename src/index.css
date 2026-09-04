@@ -100,6 +100,11 @@
     background-size:4px 4px}
   .treefield{position:fixed;inset:0;pointer-events:none;z-index:0;opacity:var(--tree)}
 
+  /* CSS owns the opener's pinning. ScrollTrigger only reads its progress;
+     it never wraps or moves a node that React may need to unmount. */
+  .opener-scroll{height:280svh}
+  .opener-stage{height:100svh}
+
   /* Entrances are CSS, not a JS state flip. Content that starts at opacity 0
      and waits for React to say otherwise can get stuck invisible. */
   @keyframes riseIn{from{opacity:0;transform:translateY(2rem)}to{opacity:1;transform:none}}
@@ -179,9 +184,9 @@
   .stamp::before{content:"";position:absolute;inset:0;z-index:0;border:2px solid var(--grey-dim)}
   .stamp:hover{color:var(--ink);transform:rotate(var(--tilt,-1.4deg)) translate(-1px,-1px)}
   .stamp:hover::before{border-color:var(--klein-lift)}
-  .stamp[aria-current="true"],.stamp.on{color:#fff;transform:rotate(.6deg)}
-  .stamp[aria-current="true"]::before,.stamp.on::before{border-color:var(--klein);background:var(--klein)}
-  .stamp[aria-current="true"]::after,.stamp.on::after{content:"";position:absolute;inset:0;z-index:1;
+  .stamp[aria-current="page"],.stamp.on{color:#fff;transform:rotate(.6deg)}
+  .stamp[aria-current="page"]::before,.stamp.on::before{border-color:var(--klein);background:var(--klein)}
+  .stamp[aria-current="page"]::after,.stamp.on::after{content:"";position:absolute;inset:0;z-index:1;
     background-image:var(--noise);background-size:180px 180px;mix-blend-mode:screen;opacity:.42}
 
   /* ---- a Klein field is a block, never a tint ---- */
@@ -203,5 +208,6 @@
   .lightbox,.lb-img{animation:none}
   .scan.is-lit,.scan.is-lit::after{animation:none}
   .index-row > span:nth-child(2){transition:none}
+  .opener-scroll{height:100svh}
   html{scroll-behavior:auto}
 }

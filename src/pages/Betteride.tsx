@@ -16,7 +16,7 @@ export default function Betteride() {
       <div className="mx-auto w-[min(1120px,100%-2.5rem)] py-8">
         <div className="flex items-center justify-between gap-4">
           <span className="text-[.95rem] font-bold uppercase tracking-tight">Betteride</span>
-          <Link to="/" className="border border-[#3A2F16] px-3 py-1.5 text-[.8rem] text-[#D7BD72] hover:text-[#FFC000]">
+          <Link to="/#index" className="border border-[#3A2F16] px-3 py-1.5 text-[.8rem] text-[#D7BD72] hover:text-[#FFC000]">
             Back to the archive
           </Link>
         </div>

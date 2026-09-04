@@ -1,10 +1,28 @@
-import { Link } from "react-router-dom";
+import { useMemo } from "react";
+import { Link, useSearchParams } from "react-router-dom";
 import { Masthead, Foot, Back } from "@/components/Chrome";
 import { byAdded, publicFrames, GROUP_LABEL, NEWEST } from "@/data/frames";
+import { Lightbox } from "@/components/Lightbox";
 
 /** The whole archive as a list. Every frame, dated, in the order it arrived. */
 export default function Archive() {
-  const rows = byAdded(publicFrames());
+  const rows = useMemo(() => byAdded(publicFrames()), []);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const requested = searchParams.get("frame");
+  const requestedIndex = requested ? rows.findIndex((f) => f.n === requested) : -1;
+  const open = requestedIndex >= 0 ? requestedIndex : null;
+
+  const showFrame = (index: number) => {
+    const next = new URLSearchParams(searchParams);
+    next.set("frame", rows[index].n);
+    setSearchParams(next, { replace: true });
+  };
+
+  const closeFrame = () => {
+    const next = new URLSearchParams(searchParams);
+    next.delete("frame");
+    setSearchParams(next, { replace: true });
+  };
   const months = rows.reduce<Record<string, number>>((acc, f) => {
     acc[f.added] = (acc[f.added] ?? 0) + 1;
     return acc;
@@ -45,24 +63,30 @@ export default function Archive() {
                 {f.title}<span className="text-grey"> · {f.kind} · {GROUP_LABEL[f.group]}</span>
               </span>
               <span className="num col-start-2 flex flex-wrap items-center justify-between gap-x-2 whitespace-nowrap text-[12px] text-grey-dim sm:col-start-auto sm:block">
-                {f.route && <b className="bg-klein px-1.5 py-0.5 font-normal uppercase text-white sm:mr-3">Open</b>}
+                <b className="bg-klein px-1.5 py-0.5 font-normal uppercase text-white sm:mr-3">Open</b>
                 {f.made ?? "—"} <span style={{ color: f.added === NEWEST ? "var(--klein-lift)" : undefined }}>{f.added}</span>
               </span>
             </>
           );
           const cls = "grid grid-cols-[38px_minmax(0,1fr)] items-baseline gap-x-3 gap-y-1 px-1.5 py-3 hover:bg-void-2 sm:grid-cols-[52px_minmax(0,1fr)_auto] sm:gap-4";
+          const index = rows.indexOf(f);
           return f.route ? (
             <Link key={f.n} to={f.route} className={cls} aria-label={`Open ${f.title} case study`}>
               {content}
             </Link>
           ) : (
-            <div key={f.n} className={cls}>{content}</div>
+            <button key={f.n} type="button" onClick={() => showFrame(index)}
+              className={`${cls} w-full border-0 bg-transparent text-left font-body text-inherit`}
+              aria-label={`Open ${f.title}`}>
+              {content}
+            </button>
           );
         })}
       </section>
 
       <p className="mt-10"><Back /></p>
       <Foot />
+      <Lightbox frames={rows} index={open} onClose={closeFrame} onMove={showFrame} />
     </div>
   );
 }

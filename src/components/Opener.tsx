@@ -49,15 +49,19 @@ export function Opener({ src, label, frame }: { src: string; label: string; fram
     const start = () => {
       draw(0);
       if (prefersReducedMotion()) { draw(1); return; }
+      const trigger = wrap.current;
+      if (!trigger) return;
       const st = ScrollTrigger.create({
-        trigger: wrap.current!,
+        trigger,
         start: "top top",
-        end: "+=180%",
-        pin: true,
+        // The outer element is 280svh tall and its child is CSS-sticky, so
+        // bottom-to-bottom gives the same 180vh development distance without
+        // ScrollTrigger wrapping or moving React-owned DOM nodes.
+        end: "bottom bottom",
         scrub: 0.6,
         onUpdate: (self) => draw(self.progress),
       });
-      return () => st.kill(true);
+      return () => st.kill();
     };
 
     let raf = 0;
@@ -67,11 +71,17 @@ export function Opener({ src, label, frame }: { src: string; label: string; fram
     };
     window.addEventListener("resize", onResize);
 
+    let disposed = false;
     let cleanup: (() => void) | undefined;
+    const onLoad = () => {
+      if (!disposed) cleanup = start();
+    };
     if (i.complete && i.naturalWidth) cleanup = start();
-    else i.addEventListener("load", () => { cleanup = start(); }, { once: true });
+    else i.addEventListener("load", onLoad, { once: true });
 
     return () => {
+      disposed = true;
+      i.removeEventListener("load", onLoad);
       window.removeEventListener("resize", onResize);
       cancelAnimationFrame(raf);
       cleanup?.();
@@ -79,22 +89,24 @@ export function Opener({ src, label, frame }: { src: string; label: string; fram
   }, [src]);
 
   return (
-    <div ref={wrap} className="relative flex min-h-[520px] items-center justify-center overflow-hidden bg-void"
-      style={{ height: "100svh", width: "100vw", marginInline: "calc(50% - 50vw)" }}>
-      <div ref={inner} className="relative max-w-[96vw]"
-        style={{ aspectRatio: "3 / 2", height: "min(86vh, calc(96vw / 1.5))" }}>
-        <pre ref={pre} aria-hidden="true"
-          className="absolute inset-0 m-0 flex items-center justify-center overflow-hidden whitespace-pre text-ink"
-          style={{ fontFamily: "var(--data)", lineHeight: 1.15 }} />
-        <img ref={img} src={src} alt={label}
-          className="absolute inset-0 h-full w-full object-cover opacity-0" />
-        <div className="absolute inset-x-0 bottom-0 z-[3] flex flex-wrap gap-x-5 gap-y-1 scrim-soft px-3 py-2">
-          <span className="mono">Frame {frame}</span>
-          <span className="mono" ref={stage}>characters</span>
-          <span className="num text-[13px]" style={{ color: "var(--klein-lift)" }} ref={pct}>000</span>
+    <div ref={wrap} className="opener-scroll relative bg-void"
+      style={{ width: "100vw", marginInline: "calc(50% - 50vw)" }}>
+      <div className="opener-stage sticky top-0 flex min-h-[520px] items-center justify-center overflow-hidden">
+        <div ref={inner} className="relative max-w-[96vw]"
+          style={{ aspectRatio: "3 / 2", height: "min(86vh, calc(96vw / 1.5))" }}>
+          <pre ref={pre} aria-hidden="true"
+            className="absolute inset-0 m-0 flex items-center justify-center overflow-hidden whitespace-pre text-ink"
+            style={{ fontFamily: "var(--data)", lineHeight: 1.15 }} />
+          <img ref={img} src={src} alt={label}
+            className="absolute inset-0 h-full w-full object-cover opacity-0" />
+          <div className="absolute inset-x-0 bottom-0 z-[3] flex flex-wrap gap-x-5 gap-y-1 scrim-soft px-3 py-2">
+            <span className="mono">Frame {frame}</span>
+            <span className="mono" ref={stage}>characters</span>
+            <span className="num text-[13px]" style={{ color: "var(--klein-lift)" }} ref={pct}>000</span>
+          </div>
         </div>
+        <span ref={hint} className="mono absolute bottom-8 left-1/2 z-[3] -translate-x-1/2">Keep scrolling</span>
       </div>
-      <span ref={hint} className="mono absolute bottom-8 left-1/2 z-[3] -translate-x-1/2">Keep scrolling</span>
     </div>
   );
 }

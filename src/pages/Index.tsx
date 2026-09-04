@@ -1,20 +1,32 @@
+import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Opener } from "@/components/Opener";
 import { ContactSheet } from "@/components/ContactSheet";
 import { Masthead, Foot } from "@/components/Chrome";
 import { publicFrames } from "@/data/frames";
 
+let openerSeenInMemory = false;
+
 export default function Index() {
   const total = publicFrames().length;
-  // Arriving with an anchor means someone clicked back from a case study. Play
-  // the opening only on a fresh visit: scrolling an anchor past a pinned,
-  // three-viewport-tall opener is unreliable, and landing on the photograph
-  // again is exactly what the link was trying to avoid.
-  const returning = useLocation().hash === "#index";
+  const { hash } = useLocation();
+  // The opener is an arrival, not a toll gate. Once it has appeared in this
+  // tab, route links and browser Back return directly to the archive content.
+  const [playOpener] = useState(() => {
+    const seenInMemory = openerSeenInMemory;
+    openerSeenInMemory = true;
+    try {
+      const seen = seenInMemory || sessionStorage.getItem("archive-opener-seen") === "1";
+      sessionStorage.setItem("archive-opener-seen", "1");
+      return hash !== "#index" && !seen;
+    } catch {
+      return hash !== "#index" && !seenInMemory;
+    }
+  });
 
   return (
     <>
-      {returning ? (
+      {!playOpener ? (
         <div className="wrap flex items-end gap-4 pt-24">
           <img src="/frames/027.jpg" alt="Cards, self portrait"
             className="h-20 w-32 flex-none object-cover sm:h-24 sm:w-36" />

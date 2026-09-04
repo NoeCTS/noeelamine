@@ -3,7 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { NEWEST, publicFrames } from "@/data/frames";
 
 const NAV = [
-  { to: "/", label: "Index" },
+  { to: "/#index", label: "Index" },
   { to: "/photography", label: "Photography" },
   { to: "/google", label: "Google" },
   { to: "/aube", label: "Aube" },
@@ -24,7 +24,7 @@ export function SiteNav() {
     <div className="nav-shell scrim fixed inset-x-0 top-0 z-50">
       <nav className="nav-rail wrap flex flex-nowrap items-center gap-2 overflow-x-auto py-2.5" aria-label="Sections">
         {NAV.map((n, i) => {
-          const on = pathname === n.to;
+          const on = pathname === n.to.split("#")[0];
           return (
             <Link key={n.to} to={n.to} className="stamp min-h-11 flex-none" aria-current={on ? "page" : undefined}
               style={{ ["--tilt" as string]: i % 2 ? "1.1deg" : "-1.4deg" }}>

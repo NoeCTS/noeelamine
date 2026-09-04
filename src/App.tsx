@@ -1,6 +1,5 @@
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { useEffect } from "react";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Grain, DotScreen, TreeField } from "@/components/Texture";
 import { SiteNav } from "@/components/Chrome";
 import { ScanController } from "@/components/Scan";
@@ -19,7 +18,10 @@ function ScrollTop() {
   const { pathname, hash } = useLocation();
   useEffect(() => {
     if (!hash) {
+      const previous = document.documentElement.style.scrollBehavior;
+      document.documentElement.style.scrollBehavior = "auto";
       window.scrollTo(0, 0);
+      document.documentElement.style.scrollBehavior = previous;
       return;
     }
 
@@ -28,10 +30,10 @@ function ScrollTop() {
     let second = 0;
     const first = window.requestAnimationFrame(() => {
       second = window.requestAnimationFrame(() => {
-        // the opener is pinned, so its spacer height must be recomputed before
-        // the anchor is measured, otherwise the jump lands on stale geometry
-        ScrollTrigger.refresh();
+        const previous = document.documentElement.style.scrollBehavior;
+        document.documentElement.style.scrollBehavior = "auto";
         document.getElementById(hash.slice(1))?.scrollIntoView({ block: "start" });
+        document.documentElement.style.scrollBehavior = previous;
       });
     });
     return () => {

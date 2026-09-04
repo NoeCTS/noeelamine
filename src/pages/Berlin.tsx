@@ -117,7 +117,7 @@ export default function Berlin() {
 
         <footer className="flex flex-wrap items-center justify-between gap-6 px-6 pb-20">
           <span className="text-[.72rem] uppercase tracking-[.16em] text-[#5A5750]">Unseen Scenes · Noe Elamine</span>
-          <Link to="/" className="border border-[#1B6B65] px-4 py-2 text-[.72rem] uppercase tracking-[.16em] text-[#E9E4D7] transition-colors hover:bg-[#1B6B65]">
+          <Link to="/#index" className="border border-[#1B6B65] px-4 py-2 text-[.72rem] uppercase tracking-[.16em] text-[#E9E4D7] transition-colors hover:bg-[#1B6B65]">
             Back to the archive
           </Link>
         </footer>

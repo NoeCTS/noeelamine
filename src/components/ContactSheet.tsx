@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Resolve } from "./Texture";
-import { byAdded, publicFrames, NEWEST, GROUP_LABEL, type Frame } from "@/data/frames";
+import { byAdded, frameHref, publicFrames, NEWEST, GROUP_LABEL, type Frame } from "@/data/frames";
 
 type View = "grid" | "list";
 
@@ -27,6 +27,7 @@ function Meta({ f }: { f: Frame }) {
 
 function Cell({ f }: { f: Frame }) {
   const fresh = f.added === NEWEST;
+  const href = frameHref(f);
   const flag = fresh ? (
     <span className="num absolute -top-2 right-0 z-20 text-[11px]" style={{ color: "var(--klein-lift)" }}>new</span>
   ) : null;
@@ -36,22 +37,21 @@ function Cell({ f }: { f: Frame }) {
       <Meta f={f} />
     </>
   );
-  return f.route ? (
-    <Link to={f.route}
+  return (
+    <Link to={href} aria-label={`Open ${f.title}`}
       className="scan group relative flex cursor-pointer flex-col gap-2 text-left outline-offset-4 ring-klein-lift transition-shadow hover:ring-2 focus-visible:ring-2">
       {inner}
       <span className="mono-sm absolute left-1.5 top-1.5 z-20 bg-klein px-1.5 py-1 text-white opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
-        Open {f.route}
+        Open {GROUP_LABEL[f.group]}
       </span>
       {flag}
     </Link>
-  ) : (
-    <div className="scan group relative flex flex-col gap-2 text-left">{inner}{flag}</div>
   );
 }
 
 function Row({ f }: { f: Frame }) {
   const fresh = f.added === NEWEST;
+  const href = frameHref(f);
   const body = (
     <span className="index-row grid w-full grid-cols-[46px_1fr_auto] items-baseline gap-4 py-2.5 text-left sm:grid-cols-[54px_1fr_150px_120px_74px]">
       <span className="num text-[13px] text-grey-dim">{f.n}</span>
@@ -63,7 +63,7 @@ function Row({ f }: { f: Frame }) {
   );
   return (
     <li className="scan scan-row rule-top">
-      {f.route ? <Link to={f.route} className="block">{body}</Link> : body}
+      <Link to={href} className="block" aria-label={`Open ${f.title}`}>{body}</Link>
     </li>
   );
 }

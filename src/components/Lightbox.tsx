@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, type MouseEvent } from "react";
 import type { Frame } from "@/data/frames";
 
 /**
@@ -12,11 +12,21 @@ export function Lightbox({
   const dialog = useRef<HTMLDivElement>(null);
   const restoreTo = useRef<Element | null>(null);
   const touchX = useRef<number | null>(null);
+  const closeOnBackdrop = (e: MouseEvent<HTMLElement>) => {
+    if (e.target === e.currentTarget) onClose();
+  };
 
   const step = useCallback((d: number) => {
     if (index === null) return;
     onMove((index + d + frames.length) % frames.length);
   }, [index, frames.length, onMove]);
+
+  const closeRef = useRef(onClose);
+  const stepRef = useRef(step);
+  useEffect(() => {
+    closeRef.current = onClose;
+    stepRef.current = step;
+  }, [onClose, step]);
 
   useEffect(() => {
     if (!open) return;
@@ -26,9 +36,9 @@ export function Lightbox({
     dialog.current?.focus();
 
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-      if (e.key === "ArrowRight") step(1);
-      if (e.key === "ArrowLeft") step(-1);
+      if (e.key === "Escape") closeRef.current();
+      if (e.key === "ArrowRight") stepRef.current(1);
+      if (e.key === "ArrowLeft") stepRef.current(-1);
     };
     window.addEventListener("keydown", onKey);
     return () => {
@@ -36,7 +46,7 @@ export function Lightbox({
       document.body.style.overflow = prev;
       (restoreTo.current as HTMLElement | null)?.focus?.();
     };
-  }, [open, onClose, step]);
+  }, [open]);
 
   if (index === null) return null;
   const f = frames[index];
@@ -49,7 +59,7 @@ export function Lightbox({
       aria-label={`${f.title}, frame ${f.n}`}
       tabIndex={-1}
       className="lightbox fixed inset-0 z-[200] flex flex-col outline-none"
-      onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+      onClick={closeOnBackdrop}
       onTouchStart={(e) => { touchX.current = e.touches[0].clientX; }}
       onTouchEnd={(e) => {
         if (touchX.current === null) return;
@@ -58,7 +68,7 @@ export function Lightbox({
         touchX.current = null;
       }}
     >
-      <div className="flex flex-none items-center gap-4 px-4 py-3 sm:px-6">
+      <div className="flex flex-none items-center gap-4 px-4 py-3 sm:px-6" onClick={closeOnBackdrop}>
         <span className="num text-[14px]" style={{ color: "var(--klein-lift)" }}>{f.n}</span>
         <span className="mono">{f.title}</span>
         <span className="mono-sm hidden sm:inline">{f.kind}{f.made ? ` · ${f.made}` : ""}</span>
@@ -67,7 +77,8 @@ export function Lightbox({
           className="stamp ml-2 min-h-11" style={{ ["--tilt" as string]: "1deg" }}><span>Close</span></button>
       </div>
 
-      <div className="relative flex min-h-0 flex-1 items-center justify-center px-4 pb-4 sm:px-6">
+      <div className="relative flex min-h-0 flex-1 items-center justify-center px-4 pb-4 sm:px-6"
+        onClick={closeOnBackdrop}>
         <button type="button" onClick={() => step(-1)} aria-label="Previous"
           className="lb-arrow left-2 sm:left-4">‹</button>
         <img key={f.n} src={`/frames/${f.n}.jpg`} alt={f.title}

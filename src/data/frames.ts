@@ -95,4 +95,17 @@ export const byAdded = (frames = FRAMES) =>
 
 export const publicFrames = () => FRAMES.filter((f) => !f.sensitive);
 
+/**
+ * Every frame has somewhere useful to go. Project work keeps its case-study
+ * route, photographs open on the photography page, and standalone archive
+ * material opens in the archive viewer.
+ */
+export const frameHref = (f: Frame) => {
+  if (f.route) return f.route;
+  const params = new URLSearchParams({ frame: f.n });
+  return f.group === "photography"
+    ? `/photography?${params}`
+    : `/archive?${params}`;
+};
+
 export const NEWEST = byAdded(publicFrames())[0]?.added ?? "";

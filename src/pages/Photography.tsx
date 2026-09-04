@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Masthead, Foot, Back } from "@/components/Chrome";
 import { Lightbox } from "@/components/Lightbox";
 import { FRAMES, type Frame } from "@/data/frames";
@@ -11,8 +12,26 @@ import { FRAMES, type Frame } from "@/data/frames";
  */
 export default function Photography() {
   const shots = useMemo(() => FRAMES.filter((f) => f.group === "photography" && !f.sensitive), []);
-  const [open, setOpen] = useState<number | null>(null);
+  const [searchParams, setSearchParams] = useSearchParams();
   const [hover, setHover] = useState<number>(0);
+
+  const requestedFrame = searchParams.get("frame");
+  const requestedIndex = requestedFrame
+    ? shots.findIndex((f) => f.n === requestedFrame)
+    : -1;
+  const open = requestedIndex >= 0 ? requestedIndex : null;
+
+  const showFrame = (index: number) => {
+    const next = new URLSearchParams(searchParams);
+    next.set("frame", shots[index].n);
+    setSearchParams(next, { replace: true });
+  };
+
+  const closeFrame = () => {
+    const next = new URLSearchParams(searchParams);
+    next.delete("frame");
+    setSearchParams(next, { replace: true });
+  };
 
   // The Lisbon run is whichever shoot date carries the most frames. Deriving it
   // rather than hardcoding a date means correcting a date in the manifest does
@@ -60,7 +79,7 @@ export default function Photography() {
               const i = shots.indexOf(f);
               return (
                 <li key={f.n} className="scan scan-row rule-top">
-                  <button type="button" onClick={() => setOpen(i)} onMouseEnter={() => setHover(i)}
+                  <button type="button" onClick={() => showFrame(i)} onMouseEnter={() => setHover(i)}
                     className="index-row grid w-full grid-cols-[46px_1fr_auto] items-baseline gap-4 py-3.5 text-left sm:grid-cols-[56px_1fr_120px_92px]">
                     <span className="num text-[13px] text-grey-dim transition-colors">{f.n}</span>
                     <span className="text-[15px] transition-transform">{f.title}</span>
@@ -77,7 +96,7 @@ export default function Photography() {
             {list.map((f) => {
               const i = shots.indexOf(f);
               return (
-                <button key={f.n} type="button" onClick={() => setOpen(i)} onMouseEnter={() => setHover(i)}
+                <button key={f.n} type="button" onClick={() => showFrame(i)} onMouseEnter={() => setHover(i)}
                   className="scan col-rule group block p-3 text-left sm:p-4">
                   <span className="block overflow-hidden bg-void-2" style={{ aspectRatio: "4 / 3" }}>
                     <img src={`/frames/${f.n}.jpg`} alt={f.title} loading="lazy"
@@ -101,7 +120,7 @@ export default function Photography() {
       <p className="mt-8"><Back /></p>
       <Foot />
 
-      <Lightbox frames={shots} index={open} onClose={() => setOpen(null)} onMove={setOpen} />
+      <Lightbox frames={shots} index={open} onClose={closeFrame} onMove={showFrame} />
       <span className="sr-only" aria-live="polite">{shots[hover]?.title}</span>
     </div>
   );

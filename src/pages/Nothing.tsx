@@ -44,7 +44,7 @@ export default function Nothing() {
           <span className="text-sm font-medium uppercase tracking-[0.3em]">Nothing</span>
           <span className="h-2 w-2 animate-pulse rounded-full bg-red-500" />
         </div>
-        <Link to="/" className="border border-neutral-900/60 px-3 py-1.5 text-[.72rem] uppercase tracking-[.16em] text-neutral-700 transition-colors hover:bg-neutral-900 hover:text-[#d8d8d8]">
+        <Link to="/#index" className="border border-neutral-900/60 px-3 py-1.5 text-[.72rem] uppercase tracking-[.16em] text-neutral-700 transition-colors hover:bg-neutral-900 hover:text-[#d8d8d8]">
           Back to the archive
         </Link>
       </header>
@@ -137,7 +137,7 @@ export default function Nothing() {
           <p className="text-center text-xs text-neutral-700">
             Speculative campaign made for portfolio purposes. Not affiliated with Nothing Technology Ltd.
           </p>
-          <Link to="/" className="border border-neutral-700 px-3 py-1.5 text-[.72rem] uppercase tracking-[.16em] text-neutral-400 transition-colors hover:border-white hover:text-white">
+          <Link to="/#index" className="border border-neutral-700 px-3 py-1.5 text-[.72rem] uppercase tracking-[.16em] text-neutral-400 transition-colors hover:border-white hover:text-white">
             Back to the archive
           </Link>
         </div>
