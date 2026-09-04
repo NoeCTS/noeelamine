@@ -13,7 +13,7 @@ export default function Archive() {
   const order = Object.keys(months).sort();
 
   return (
-    <div className="wrap pt-nav relative z-[1]">
+    <div className="wrap calm pt-nav relative z-[1]">
       <Masthead title="The archive" note="Everything, dated" />
       <p className="mt-9 max-w-[56ch] text-[clamp(1.02rem,1.5vw,1.2rem)] leading-snug">
         Every frame carries two dates: when it was made, and when it entered the

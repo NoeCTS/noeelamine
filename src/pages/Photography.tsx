@@ -1,72 +1,108 @@
-import { Resolve } from "@/components/Texture";
+import { useMemo, useState } from "react";
 import { Masthead, Foot, Back } from "@/components/Chrome";
-import { FRAMES } from "@/data/frames";
+import { Lightbox } from "@/components/Lightbox";
+import { FRAMES, type Frame } from "@/data/frames";
 
+/**
+ * A studio index rather than a gallery: every entry the same size, set out line
+ * by line, with hairline rules doing the separating. The archive's no-lines rule
+ * is suspended here on purpose, because a list of works is exactly the case
+ * where a rule carries information instead of decorating.
+ */
 export default function Photography() {
-  const shots = FRAMES.filter((f) => f.group === "photography" && !f.sensitive);
-  const lisbon = shots.filter((f) => f.made === "2024.04");
-  const rest = shots.filter((f) => f.made !== "2024.04");
+  const shots = useMemo(() => FRAMES.filter((f) => f.group === "photography" && !f.sensitive), []);
+  const [open, setOpen] = useState<number | null>(null);
+  const [hover, setHover] = useState<number>(0);
+
+  // The Lisbon run is whichever shoot date carries the most frames. Deriving it
+  // rather than hardcoding a date means correcting a date in the manifest does
+  // not silently empty the section.
+  const sets: [string, string, Frame[]][] = useMemo(() => {
+    const counts = new Map<string, number>();
+    shots.forEach((f) => f.made && counts.set(f.made, (counts.get(f.made) ?? 0) + 1));
+    const run = [...counts.entries()].sort((a, b) => b[1] - a[1])[0]?.[0];
+    return [
+      ["01", "Lisbon", shots.filter((f) => f.made === run)],
+      ["02", "Elsewhere", shots.filter((f) => f.made !== run)],
+    ];
+  }, [shots]);
 
   return (
-    <div className="wrap pt-nav relative z-[1]">
+    <div className="wrap calm pt-nav relative z-[1]">
       <Masthead title="Photography" note="Lisbon and elsewhere" />
-      <p className="mt-9 max-w-[56ch] text-[clamp(1.02rem,1.5vw,1.2rem)] leading-snug">
-        No client and no brief. <span className="text-grey">
-        Eleven of these were shot in one run in Lisbon, which is why they hold
-        together as a set rather than a scatter of travel pictures. This is the
-        largest single group in the archive, and the clearest evidence that it is
-        an archive rather than a portfolio.</span>
-      </p>
 
-      <section className="mt-20">
-        <div className="mb-6 flex flex-wrap items-baseline gap-4">
-          <span className="num text-[1.4rem] text-grey">01</span>
-          <h2 className="m-0 font-display text-[clamp(1.4rem,3.6vw,2.2rem)] uppercase leading-none" style={{ fontWeight: 400 }}>Lisbon</h2>
-          <span className="mono ml-auto">2024.04 · {lisbon.length} frames</span>
-        </div>
-        <div className="grid gap-x-4 gap-y-7" style={{ gridTemplateColumns: "repeat(auto-fill,minmax(240px,1fr))" }}>
-          {lisbon.map((f) => (
-            <figure key={f.n} className="m-0 flex flex-col gap-2">
-              <Resolve src={`/frames/${f.n}.jpg`} alt={f.title} />
-              <figcaption className="flex items-baseline justify-between gap-2">
-                <span className="num text-[14px] text-grey">{f.n}</span>
-                <span className="mono-sm text-right">{f.title}</span>
-              </figcaption>
-            </figure>
-          ))}
-        </div>
-      </section>
-
-      <section className="mt-20">
-        <div className="mb-6 flex flex-wrap items-baseline gap-4">
-          <span className="num text-[1.4rem] text-grey">02</span>
-          <h2 className="m-0 font-display text-[clamp(1.4rem,3.6vw,2.2rem)] uppercase leading-none" style={{ fontWeight: 400 }}>Elsewhere</h2>
-          <span className="mono ml-auto">{rest.length} frames</span>
-        </div>
-        <div className="grid gap-x-4 gap-y-7" style={{ gridTemplateColumns: "repeat(auto-fill,minmax(240px,1fr))" }}>
-          {rest.map((f) => (
-            <figure key={f.n} className="m-0 flex flex-col gap-2">
-              <Resolve src={`/frames/${f.n}.jpg`} alt={f.title} />
-              <figcaption className="flex items-baseline justify-between gap-2">
-                <span className="num text-[14px] text-grey">{f.n}</span>
-                <span className="mono-sm text-right">{f.title} · {f.made}</span>
-              </figcaption>
-            </figure>
-          ))}
-        </div>
-      </section>
-
-      <div className="field mt-20">
-        <h3 className="m-0 mb-2 font-display text-[clamp(1.3rem,3vw,1.9rem)] uppercase leading-none" style={{ fontWeight: 400 }}>Captions pending</h3>
-        <p className="m-0 max-w-[52ch] text-white/80">
-          These are titled by what they show rather than where they are. Real
-          places and dates are the one thing the archive still needs, and the one
-          thing only I can write.
+      <div className="rule-top mt-10 grid gap-y-6 py-6 sm:grid-cols-3">
+        <p className="col-rule text-[.95rem] leading-relaxed text-grey">
+          No client and no brief. Eleven of these were shot in one run, which is
+          why they hold together as a set rather than a scatter.
+        </p>
+        <p className="col-rule text-[.95rem] leading-relaxed text-grey">
+          The largest single group in the archive, and the clearest evidence that
+          this is an archive rather than a portfolio.
+        </p>
+        <p className="col-rule text-[.95rem] leading-relaxed text-grey">
+          <span className="num text-ink">{shots.length}</span> frames. Click any
+          line or any frame to open it.
         </p>
       </div>
 
-      <p className="mt-10"><Back /></p>
+      {sets.map(([n, label, list]) => (
+        <section key={n} className="mt-16">
+          <div className="rule-top flex flex-wrap items-baseline gap-4 py-3">
+            <span className="num text-[1.15rem] text-grey">{n}</span>
+            <h2 className="m-0 font-display text-[clamp(1.2rem,3vw,1.8rem)] uppercase leading-none" style={{ fontWeight: 400 }}>{label}</h2>
+            <span className="mono ml-auto">{list.length} frames</span>
+          </div>
+
+          {/* the index: one line per work, everything the same size */}
+          <ol className="m-0 list-none p-0">
+            {list.map((f) => {
+              const i = shots.indexOf(f);
+              return (
+                <li key={f.n} className="rule-top">
+                  <button type="button" onClick={() => setOpen(i)} onMouseEnter={() => setHover(i)}
+                    className="index-row grid w-full grid-cols-[46px_1fr_auto] items-baseline gap-4 py-3.5 text-left sm:grid-cols-[56px_1fr_120px_92px]">
+                    <span className="num text-[13px] text-grey-dim transition-colors">{f.n}</span>
+                    <span className="text-[15px] transition-transform">{f.title}</span>
+                    <span className="mono-sm hidden sm:block">{f.kind}</span>
+                    <span className="mono-sm text-right">{f.made ?? "—"}</span>
+                  </button>
+                </li>
+              );
+            })}
+          </ol>
+
+          {/* three columns, separated by rules, nothing else */}
+          <div className="rule-top mt-10 grid grid-cols-2 sm:grid-cols-3">
+            {list.map((f) => {
+              const i = shots.indexOf(f);
+              return (
+                <button key={f.n} type="button" onClick={() => setOpen(i)} onMouseEnter={() => setHover(i)}
+                  className="col-rule group block p-3 text-left sm:p-4">
+                  <span className="block overflow-hidden bg-void-2" style={{ aspectRatio: "4 / 3" }}>
+                    <img src={`/frames/${f.n}.jpg`} alt={f.title} loading="lazy"
+                      className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04]" />
+                  </span>
+                  <span className="mt-2.5 flex items-baseline justify-between gap-2">
+                    <span className="num text-[12px] text-grey-dim">{f.n}</span>
+                    <span className="mono-sm text-right">{f.title}</span>
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </section>
+      ))}
+
+      <p className="mono mt-14">
+        Titled by what they show. Places and dates are still to be written.
+      </p>
+
+      <p className="mt-8"><Back /></p>
       <Foot />
+
+      <Lightbox frames={shots} index={open} onClose={() => setOpen(null)} onMove={setOpen} />
+      <span className="sr-only" aria-live="polite">{shots[hover]?.title}</span>
     </div>
   );
 }

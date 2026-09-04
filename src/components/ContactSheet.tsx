@@ -51,7 +51,7 @@ function Cell({ f }: { f: Frame }) {
 export function ContactSheet({ frames = publicFrames() }: { frames?: Frame[] }) {
   const ordered = byAdded(frames);
   return (
-    <div className="grid gap-x-5 gap-y-8" style={{ gridTemplateColumns: "repeat(auto-fill,minmax(200px,1fr))" }}>
+    <div className="grid gap-x-3 gap-y-5 sm:gap-x-4 sm:gap-y-6" style={{ gridTemplateColumns: "repeat(auto-fill,minmax(clamp(132px,20vw,168px),1fr))" }}>
       {ordered.map((f) => <Cell key={f.n} f={f} />)}
     </div>
   );

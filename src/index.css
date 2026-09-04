@@ -53,6 +53,9 @@
 
 @layer components {
   .wrap{width:var(--sheet);margin-inline:auto}
+  /* Reading pages let the texture step back. The grain is the house style, but
+     it should not compete with a list you are meant to scan. */
+  .calm{--tree:.14;--grain:.24}
   /* clearance for the fixed nav */
   .pt-nav{padding-top:4.5rem}
   .nav-rail{scrollbar-width:none;-webkit-overflow-scrolling:touch}
@@ -104,6 +107,43 @@
   .rise-2{animation-delay:.22s}
   .rise-3{animation-delay:.5s}
 
+  /* ---- rules ----
+     The archive has no rules anywhere. The photography index does, because a
+     list of works is the one case where a hairline carries information rather
+     than decorating: it says these things are peers. */
+  .rule-top{border-top:1px solid rgba(242,240,236,.14)}
+  .col-rule{border-left:1px solid rgba(242,240,236,.14)}
+  .col-rule:first-child,
+  .grid-cols-2 > .col-rule:nth-child(2n+1){border-left:none}
+  @media (min-width:640px){
+    .grid-cols-2 > .col-rule:nth-child(2n+1){border-left:1px solid rgba(242,240,236,.14)}
+    .sm\:grid-cols-3 > .col-rule:nth-child(3n+1){border-left:none}
+  }
+
+  /* a row that knows it is a link, without a box around it */
+  .index-row{transition:none}
+  .index-row:hover .num,.index-row:focus-visible .num{color:var(--klein-lift)}
+  .index-row:hover > span:nth-child(2){transform:translateX(6px)}
+  .index-row > span:nth-child(2){transition:transform .22s cubic-bezier(.2,.85,.25,1)}
+  .index-row:hover,.index-row:focus-visible{background:rgba(242,240,236,.04)}
+
+  /* ---- lightbox ---- */
+  .lightbox{background:var(--void);animation:lbIn .18s ease-out both}
+  @supports (backdrop-filter:blur(2px)){
+    .lightbox{background:color-mix(in srgb,var(--void) 96%,transparent);backdrop-filter:blur(3px)}
+  }
+  @keyframes lbIn{from{opacity:0}to{opacity:1}}
+  .lb-img{animation:lbImg .32s cubic-bezier(.2,.85,.25,1) both}
+  @keyframes lbImg{from{opacity:0;transform:scale(.985)}to{opacity:1;transform:none}}
+  .lb-arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:2;
+    width:44px;height:64px;display:flex;align-items:center;justify-content:center;
+    background:transparent;border:none;cursor:pointer;color:var(--grey);
+    font-family:var(--body);font-size:2rem;line-height:1}
+  .lb-arrow:hover{color:var(--ink)}
+
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+    clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
   /* ---- the stamp control ---- */
   .stamp{position:relative;isolation:isolate;background:transparent;border:none;border-radius:0;
     padding:.52rem .95rem;cursor:pointer;font-family:var(--dot);font-size:13px;letter-spacing:.04em;
@@ -134,5 +174,7 @@
   *{transition:none!important}
   .grain,.field::before{animation:none}
   .rise{animation:none}
+  .lightbox,.lb-img{animation:none}
+  .index-row > span:nth-child(2){transition:none}
   html{scroll-behavior:auto}
 }
