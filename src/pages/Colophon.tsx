@@ -7,17 +7,24 @@ const TEXT = `NOE ELAMINE
 ================================================
 
   Associate Product Marketing Manager at Google,
-  based in London through the APMM programme.
+  on the Chrome browser team. London.
 
-  Building Aube, a cultural intelligence platform
-  that analyses campaigns across 92 markets.
+  Founder of Aube, a cultural intelligence platform
+  that analyses campaigns for appropriation,
+  tokenism, stereotyping and visual authenticity
+  across 90+ markets.
 
-  Before: Betteride in Berlin, Publicis in Hamburg.
-  ESCP for the undergrad, Imperial for the postgrad.
+  Before: strategy and growth at Betteride, Berlin.
+  Marketing at Publicis One Touch, Hamburg.
 
-  This site is an archive rather than a portfolio.
-  It is ordered by when things were added, not by
-  how impressive they are.
+  BSc Management, ESCP.
+  MSc Strategic Marketing, Imperial.
+
+  English, French, German.
+
+  This is an archive rather than a portfolio. It is
+  ordered by when things were added, not by how
+  impressive they are.
 
   noe.elmne@gmail.com
   linkedin.com/in/noeelamine
