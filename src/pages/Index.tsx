@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { Opener } from "@/components/Opener";
 import { Masthead, Foot, SiteNav } from "@/components/Chrome";
 
@@ -39,7 +39,11 @@ export default function Index() {
               </p>
               <p>
                 In my free time I am also building{" "}
-                <strong><Link to="/aube">Aube</Link></strong>, a platform that analyses
+                <strong>
+                  <a href="https://aube-ai.com" target="_blank" rel="noopener noreferrer">
+                    Aube
+                  </a>
+                </strong>, a platform that analyses
                 marketing campaigns for cultural appropriation, tokenism, stereotypes,
                 and visual authenticity etc, across 90+ markets.
               </p>

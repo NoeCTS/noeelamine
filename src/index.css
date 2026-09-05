@@ -196,6 +196,9 @@
   .typed a{color:var(--ink);text-decoration:underline;text-decoration-thickness:1px;
     text-underline-offset:3px}
   .typed a:hover{color:var(--klein-lift)}
+  /* A link that leaves the site says so, quietly. */
+  .typed a[target="_blank"]::after{content:" \2197";text-decoration:none;
+    font-size:.86em;vertical-align:.08em;color:var(--grey)}
   /* a typed rule: the row of "=" the colophon draws under its name */
   .typed-rule{font-family:var(--data);font-size:13.5px;line-height:1;
     color:var(--grey-dim);white-space:nowrap;overflow:hidden;user-select:none}
