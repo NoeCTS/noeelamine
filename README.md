@@ -1,73 +1,46 @@
-# Welcome to your Lovable project
+# noeelamine
 
-## Project info
+Personal site of Noé Elamine. An archive rather than a portfolio: work is
+ordered by when it entered rather than by how impressive it is, so a campaign
+and a photograph sit at the same rank.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
-
-## How can I edit this code?
-
-There are several ways of editing your application.
-
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
+## Running it
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+npm install
+npm run dev      # vite dev server on :8080
+npm run build    # production build to dist/
+npm run preview  # serve the built output
+npm run lint
 ```
 
-**Edit a file directly in GitHub**
+## How it is put together
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+Vite, React and TypeScript, with Tailwind for layout and a hand-written stylesheet
+in `src/index.css` for everything the design actually depends on.
 
-**Use GitHub Codespaces**
+- `src/pages` — one file per route. The archive pages (index, photography,
+  graphic design, archive, colophon) share a common chrome; the zones
+  (Google, Aube, Betteride, Nothing, Berlin) each carry their own palette and
+  deliberately do not.
+- `src/data/frames.ts` — the manifest. Every piece of work is a numbered frame
+  with a group, a kind and the month it was added. Adding a frame here is what
+  puts it on the site; images live in `public/frames/<n>.jpg`.
+- `src/lib/ascii.ts` — the reduction engine. Grain, the dot screen and the
+  character fields are three settings of the same idea, and the opening, the
+  background tree and the colophon all run through it.
+- `src/components/Texture.tsx` — grain, dot screen, and the tree drawn out of
+  characters. The tree redraws slowly so the glyphs standing in for leaves
+  turn, which reads as wind.
+- `src/components/Opener.tsx` — the opening. Scrolling refines a character grid;
+  the photograph underneath is only ever the source the glyphs are sampled from
+  and is never revealed.
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+Type is self hosted from `public/fonts` apart from Range Sans, which comes from
+Typekit and cannot be. Motion is held behind `prefers-reduced-motion` throughout.
 
-## What technologies are used for this project?
+## Deploying
 
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+`npm run build` produces a static `dist/`. Any static host will serve it, but it
+needs a SPA fallback — every unknown path should return `index.html`, or direct
+links to routes like `/photography` will 404.
