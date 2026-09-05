@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { FRAMES } from "@/data/frames";
+import { Ride } from "@/components/Ride";
 
 /**
  * Betteride runs two palettes and the case study carries both rather than
@@ -18,6 +19,11 @@ export default function Betteride() {
 
   return (
     <main className="min-h-screen bg-[#0C0902] text-[#FFC000]">
+      {/* The ride comes first: the work arrives along it rather than in a grid,
+          and the grid below is the same pieces for anyone who wants them all at
+          once. */}
+      <Ride frames={frames} />
+
       <div className="mx-auto w-[min(1120px,100%-2.5rem)] py-8">
         <div className="flex items-center justify-between gap-4">
           <span className="text-[.95rem] font-bold uppercase tracking-tight">Betteride</span>
