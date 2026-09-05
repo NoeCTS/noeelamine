@@ -45,7 +45,7 @@ export default function Photography() {
                 className="col-rule group block p-3 text-left sm:p-4">
                 <span className="block overflow-hidden bg-void-2" style={{ aspectRatio: "4 / 3" }}>
                   <img src={`/frames/${f.n}.jpg`} alt={f.title} loading="lazy"
-                    className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04]" />
+                    className="h-full w-full object-cover" />
                 </span>
                 <span className="mt-2.5 flex items-baseline justify-between gap-2">
                   <span className="num text-[12px] text-grey-dim">{f.n}</span>

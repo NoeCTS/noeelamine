@@ -299,6 +299,19 @@
   .theme-toggle b{display:inline-block;width:.62rem;height:.62rem;border-radius:50%;
     background:var(--ink);flex:none}
 
+  /* The dinosaur the way the offline page runs it: the animal stays put and
+     the ground goes past underneath, which is what reads as running. A slide
+     across the screen only reads as a slide. */
+  .dino-track{position:relative;overflow:hidden;height:132px}
+  .dino-track::after{content:"";position:absolute;left:0;right:0;bottom:26px;height:2px;
+    background-image:linear-gradient(90deg,#BDC1C6 0 14px,transparent 14px 26px);
+    background-size:26px 2px;animation:dinoGround .5s linear infinite}
+  .dino-run{position:absolute;bottom:24px;left:clamp(1rem,8vw,7rem)}
+  .dino-img{display:block;height:78px;width:auto;
+    animation:dinoBob .28s steps(2) infinite}
+  @keyframes dinoGround{from{background-position:0 0}to{background-position:-26px 0}}
+  @keyframes dinoBob{from{transform:translateY(0)}to{transform:translateY(-6px)}}
+
   /* ---- a field is a block, never a tint ---- */
   .field{background:var(--klein);color:#fff;padding:clamp(1.6rem,4vw,2.6rem);
     position:relative;isolation:isolate;overflow:hidden}
@@ -318,5 +331,6 @@
   .lightbox,.lb-img{animation:none}
   .index-row > span:nth-child(2){transition:none}
   .opener-scroll{height:100svh}
+  .dino-img,.dino-track::after{animation:none}
   html{scroll-behavior:auto}
 }

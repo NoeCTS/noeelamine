@@ -32,15 +32,6 @@ const COST: [string, string, string][] = [
   ["Burger King", "2021", "“Women belong in the kitchen” deleted within hours"],
 ];
 
-/** The market groups the product organises its coverage around. */
-const MARKETS: [string, string][] = [
-  ["Confucian", "Japan, China, South Korea, Vietnam, Singapore, Malaysia, Indonesia"],
-  ["Arab", "The Middle East and North Africa"],
-  ["Ubuntu-influenced", "Sub-Saharan Africa"],
-  ["Indigenous sensitivity", "The Americas and Oceania"],
-  ["Western", "Europe, North America, Australia"],
-];
-
 const CHECKS: [string, string, string][] = [
   ["Cultural appropriation", "Sacred and traditional imagery used decoratively, outside its context and without credit.", T.danger],
   ["Tokenism", "Representation that is present but powerless: background casting, no agency, no lines.", T.danger],
@@ -99,19 +90,6 @@ export default function Aube() {
                 <span className="text-[.8rem]" style={{ color: T.accent }}>{n}</span>
                 <h3 className="mb-2 mt-2 text-[1.05rem] font-medium">{h}</h3>
                 <p className="m-0 text-[.9rem] leading-relaxed" style={{ color: T.text2 }}>{p}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* The markets the product organises its coverage around. */}
-        <section className="py-8">
-          <p className="mb-6 text-[10px] uppercase tracking-[.16em]" style={{ color: T.text2 }}>Market coverage</p>
-          <div className="grid gap-x-10 gap-y-5 md:grid-cols-2">
-            {MARKETS.map(([group, where]) => (
-              <div key={group} className="border-t pt-4" style={{ borderColor: T.border }}>
-                <h3 className="m-0 text-[1rem] font-medium" style={{ color: T.accent }}>{group}</h3>
-                <p className="m-0 mt-1 text-[.9rem] leading-relaxed" style={{ color: T.text2 }}>{where}</p>
               </div>
             ))}
           </div>
