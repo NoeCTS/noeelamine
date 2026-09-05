@@ -27,6 +27,10 @@
     --read:#C4C4CB;                 /* body copy set over the tree */
     --glyph:#FFFFFF;                /* the dot screen and the tree's glyphs */
     --on-block:#fff;                /* type sitting on a filled block */
+    /* Google's own colours, in both modes. They are vivid enough to hold on
+       the near-black ground as well as on the light one. */
+    --g1:#4285F4; --g2:#EA4335; --g3:#FBBC04;
+    --g4:#4285F4; --g5:#34A853; --g6:#EA4335;
     /* The accent runs greyscale. It was Klein blue, which fought the black
        rather than sitting in it. The names and the machinery are kept so the
        colour is two numbers away: raise the saturations to 100% and 82%. */
@@ -85,6 +89,11 @@
     --grain:.10;
     --screen:.03;
     --tree:.34;
+    /* Google's darker on-light variants. The brand's display palette is built
+       for white logos, not for text inside a sentence: at #FBBC04 the yellow
+       came out at 1.5:1 on this ground, which is not readable. */
+    --g1:#185ABC; --g2:#C5221F; --g3:#A85B00;
+    --g4:#185ABC; --g5:#137333; --g6:#C5221F;
     color-scheme:light;
   }
   @media (prefers-color-scheme:light){
@@ -104,6 +113,11 @@
     --grain:.10;
     --screen:.03;
     --tree:.34;
+    /* Google's darker on-light variants. The brand's display palette is built
+       for white logos, not for text inside a sentence: at #FBBC04 the yellow
+       came out at 1.5:1 on this ground, which is not readable. */
+    --g1:#185ABC; --g2:#C5221F; --g3:#A85B00;
+    --g4:#185ABC; --g5:#137333; --g6:#C5221F;
     color-scheme:light;
     }
   }
@@ -154,6 +168,8 @@
     background-image:radial-gradient(circle at center,var(--glyph) 0 .6px,transparent .8px);
     background-size:4px 4px}
   .treefield{position:fixed;inset:0;pointer-events:none;z-index:0;opacity:var(--tree)}
+  /* On its own page it is the subject, so it runs at full strength. */
+  .tree-full{position:fixed;inset:0;pointer-events:none;z-index:0;opacity:1}
 
   /* CSS owns the opener's pinning. ScrollTrigger only reads its progress;
      it never wraps or moves a node that React may need to unmount. */
@@ -262,6 +278,14 @@
   /* The Swiss variant's list rows. Hover is a tint of the ground, not a colour. */
   .swiss-row{transition:background .15s ease}
   .swiss-row:hover{background:#F0F0EC}
+
+  .goog i{font-style:normal}
+  .goog i:nth-child(1){color:var(--g1)}
+  .goog i:nth-child(2){color:var(--g2)}
+  .goog i:nth-child(3){color:var(--g3)}
+  .goog i:nth-child(4){color:var(--g4)}
+  .goog i:nth-child(5){color:var(--g5)}
+  .goog i:nth-child(6){color:var(--g6)}
 
   /* A control, not chrome: it sits at the foot of the page in the corner, in
      the same dot face as every other label on the site. */

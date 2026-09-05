@@ -7,12 +7,11 @@ import { toAscii, fitSize, prefersReducedMotion } from "@/lib/ascii";
  * without ever arriving — it stays made of characters the whole way down. The
  * photograph itself is only ever the source the glyphs are sampled from.
  */
-export function Opener({ src, label, frame }: { src: string; label: string; frame: string }) {
+export function Opener({ src, label }: { src: string; label: string }) {
   const wrap = useRef<HTMLDivElement>(null);
   const inner = useRef<HTMLDivElement>(null);
   const img = useRef<HTMLImageElement>(null);
   const pre = useRef<HTMLPreElement>(null);
-  const pct = useRef<HTMLSpanElement>(null);
   const hint = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
@@ -38,7 +37,6 @@ export function Opener({ src, label, frame }: { src: string; label: string; fram
       // The source image is never faded up. Resolution is the whole animation:
       // the grid gets finer, the picture gets legible, the glyphs stay glyphs.
       if (hint.current) hint.current.style.opacity = String(1 - Math.min(1, progress * 2.2));
-      if (pct.current) pct.current.textContent = `00${Math.round(progress * 100)}`.slice(-3);
     };
 
     /**
@@ -125,11 +123,6 @@ export function Opener({ src, label, frame }: { src: string; label: string; fram
               accessible description of what the character field depicts. */}
           <img ref={img} src={src} alt={label}
             className="absolute inset-0 h-full w-full object-cover opacity-0" />
-          <div className="absolute inset-x-0 bottom-0 z-[3] flex flex-wrap gap-x-5 gap-y-1 scrim-soft px-3 py-2">
-            <span className="mono">Frame {frame}</span>
-            <span className="mono">characters</span>
-            <span className="num text-[13px]" style={{ color: "var(--klein-lift)" }} ref={pct}>000</span>
-          </div>
         </div>
         <span ref={hint} className="mono absolute bottom-8 left-1/2 z-[3] -translate-x-1/2">Keep scrolling</span>
       </div>

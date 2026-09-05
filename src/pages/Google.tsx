@@ -49,18 +49,6 @@ export default function Google() {
           </p>
         </div>
 
-        <section className="grid gap-10 py-20 sm:py-24 md:grid-cols-3">
-          {[
-            ["The role", "Product marketing on Chrome, for the UK market. Positioning and naming, competitive analysis, feature prioritisation, and the external narrative a launch is carried by, worked out with product, engineering, comms and legal."],
-            ["The programme", "APMM is Google's two year rotation for early career marketers, running since 2003. Between seventy and a hundred people join it each year across twenty nine offices, and everyone moves to a different role after the first."],
-            ["What appears here", "Only work that is already public. Gemini in Chrome reached the UK in July 2026 and that is on the record; anything unannounced is not described here, and case studies follow when they can be shared."],
-          ].map(([h, p]) => (
-            <div key={h} className="flex flex-col gap-2">
-              <span className="text-[.78rem] uppercase tracking-[.1em] text-[#80868B]">{h}</span>
-              <p className="m-0 text-[.98rem] leading-relaxed text-[#3C4043]">{p}</p>
-            </div>
-          ))}
-        </section>
 
         <footer className="flex flex-wrap items-center justify-between gap-6 border-t border-[#E8EAED] py-10">
           <span className="text-[.85rem] text-[#5F6368]">Noe Elamine · Associate Product Marketing Manager at Google</span>

@@ -12,7 +12,7 @@ export const RAMP = " .:-=+*#%@";
  * glyphs, and wind moving through it reads as flicker rather than motion.
  */
 export const TREE_RAMP =
-  " .'`^\",:;Il!i><~+_-?tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$";
+  " .'`^\",:;Il!i><~+_-?][}{1)(|\\/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$";
 
 /** Departure Mono's advance width as a share of the em. */
 export const CH = 0.6;

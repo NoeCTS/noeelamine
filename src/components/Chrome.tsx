@@ -10,6 +10,7 @@ const NAV = [
   { to: "/betteride", label: "Betteride" },
   { to: "/nothing", label: "Nothing" },
   { to: "/berlin", label: "Berlin" },
+  { to: "/tree", label: "Tree" },
   { to: "/archive", label: "Archive" },
   { to: "/#index", label: "Index" },
   { to: "/index.txt", label: "index.txt" },
@@ -60,12 +61,15 @@ export function SiteNav({ scale = "foot" }: { scale?: "foot" | "main" }) {
 }
 
 /** A number that goes up is the cheapest proof someone is still making things. */
-export function Masthead({ title, note }: { title: ReactNode; note?: string }) {
+export function Masthead({ title, note, ascii = false }:
+  { title: ReactNode; note?: string; ascii?: boolean }) {
   const count = publicFrames().length;
   return (
     <header className="grid grid-cols-1 items-start gap-x-8 gap-y-5 pt-10 sm:grid-cols-[minmax(0,1fr)_auto]">
-      <h1 className="m-0 font-display uppercase leading-[.86]"
-        style={{ fontSize: "clamp(2.4rem,9vw,5.6rem)", fontWeight: 400 }}>{title}</h1>
+      {ascii
+        ? <h1 className="m-0">{title}</h1>
+        : <h1 className="m-0 font-display uppercase leading-[.86]"
+            style={{ fontSize: "clamp(2.4rem,9vw,5.6rem)", fontWeight: 400 }}>{title}</h1>}
       <div className="flex flex-row flex-wrap items-baseline gap-x-4 gap-y-1.5 sm:flex-col sm:items-end sm:text-right">
         <span className="mono">{note ?? "Archive"}</span>
         <span className="mono">{count} frames</span>
@@ -82,9 +86,13 @@ export function Foot({ nav = true }: { nav?: boolean }) {
   return (
     <>
       {nav && <SiteNav />}
-      <footer className="mt-12 flex flex-wrap justify-between gap-x-10 gap-y-3 pb-16">
+      <footer className="mt-12 flex flex-wrap items-baseline justify-between gap-x-8 gap-y-3 pb-16">
         <span className="mono">Noe Elamine</span>
         <a href="mailto:noe.elmne@gmail.com" className="mono hover:text-ink">noe.elmne@gmail.com</a>
+        <a href="https://www.linkedin.com/in/noeelamine" target="_blank" rel="noopener noreferrer"
+          className="mono hover:text-ink">LinkedIn</a>
+        <a href="https://github.com/NoeCTS" target="_blank" rel="noopener noreferrer"
+          className="mono hover:text-ink">GitHub</a>
       </footer>
     </>
   );
