@@ -20,7 +20,7 @@ export function ThemeWipe({ run, onFlip, onDone }:
     const el = pre.current;
     if (!el) return;
 
-    const DUR = 290;
+    const DUR = 370;
     const start = performance.now();
     let flipped = false;
     let raf = 0;

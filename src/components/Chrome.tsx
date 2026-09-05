@@ -4,9 +4,9 @@ import { NEWEST, publicFrames } from "@/data/frames";
 import { AsciiName } from "./AsciiName";
 
 const NAV = [
-  { to: "/google", label: "Google" },
   { to: "/photography", label: "Photography" },
   { to: "/graphic-design", label: "Graphic design" },
+  { to: "/google", label: "Google" },
   { to: "/aube", label: "Aube" },
   { to: "/betteride", label: "Betteride" },
   { to: "/nothing", label: "Nothing" },
