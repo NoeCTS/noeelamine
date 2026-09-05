@@ -31,12 +31,12 @@ export default function Google() {
             Product marketing at <span className="text-[#1B72E8]">Google</span>
           </h1>
           <p className="m-0 max-w-[48ch] text-[clamp(1rem,1.6vw,1.15rem)] leading-relaxed text-[#5F6368]">
-            Associate Product Marketing Manager at Google, based in London.
-            Joined through the APMM programme in 2026.
+            Associate Product Marketing Manager on Chrome, based in London and
+            working the UK market. Joined through the APMM programme in 2026.
           </p>
           <div className="flex flex-wrap justify-center gap-2.5">
-            <span className="rounded-full bg-[#1F1F1F] px-6 py-3 text-[.95rem] font-medium text-white">Product marketing</span>
-            <span className="rounded-full border border-[#DADCE0] px-6 py-3 text-[.95rem]">APMM programme</span>
+            <span className="rounded-full bg-[#1F1F1F] px-6 py-3 text-[.95rem] font-medium text-white">Chrome and Gemini</span>
+            <span className="rounded-full border border-[#DADCE0] px-6 py-3 text-[.95rem]">UK market</span>
             <span className="rounded-full border border-[#DADCE0] px-6 py-3 text-[.95rem]">London</span>
           </div>
         </section>
@@ -51,9 +51,9 @@ export default function Google() {
 
         <section className="grid gap-10 py-20 sm:py-24 md:grid-cols-3">
           {[
-            ["The role", "Associate Product Marketing Manager, working across the research, positioning and planning that help products make sense to people."],
-            ["The programme", "Google's APMM programme is where I joined the company and continue to develop my product marketing practice."],
-            ["What appears here", "Only work that is already public belongs in this archive. Specific case studies will be added when they can be shared."],
+            ["The role", "Product marketing on Chrome, for the UK market. Positioning and naming, competitive analysis, feature prioritisation, and the external narrative a launch is carried by, worked out with product, engineering, comms and legal."],
+            ["The programme", "APMM is Google's two year rotation for early career marketers, running since 2003. Between seventy and a hundred people join it each year across twenty nine offices, and everyone moves to a different role after the first."],
+            ["What appears here", "Only work that is already public. Gemini in Chrome reached the UK in July 2026 and that is on the record; anything unannounced is not described here, and case studies follow when they can be shared."],
           ].map(([h, p]) => (
             <div key={h} className="flex flex-col gap-2">
               <span className="text-[.78rem] uppercase tracking-[.1em] text-[#80868B]">{h}</span>

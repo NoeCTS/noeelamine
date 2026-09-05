@@ -5,7 +5,14 @@
  * entrance all run through it.
  */
 export const RAMP = " .:-=+*#%@";
-export const TREE_RAMP = " .:-=+ixX*#%@";
+/**
+ * Sixty steps rather than thirteen, ordered by how much ink each character
+ * actually puts on the page. The tree is drawn by choosing a character per
+ * cell, so the ramp is the resolution: a coarse one can only lurch between
+ * glyphs, and wind moving through it reads as flicker rather than motion.
+ */
+export const TREE_RAMP =
+  " .'`^\",:;Il!i><~+_-?tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$";
 
 /** Departure Mono's advance width as a share of the em. */
 export const CH = 0.6;

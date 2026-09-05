@@ -92,25 +92,37 @@ export function TreeField({ cell = 13 }: { cell?: number }) {
     const last = TREE_RAMP.length - 1;
 
     /**
-     * The tree does not move; the characters standing in for it do. Two slow
-     * sine waves cross the grid and push each cell a step or so along the ramp,
-     * which reads as leaves turning in wind. The push is scaled by (1 - ink), so
-     * the trunk and the dense centre hold still and only the light edges stir.
+     * The tree does not move; the characters standing in for it do.
+     *
+     * A gust crosses the field from one side rather than the whole canopy
+     * shimmering at once, so the wind arrives from a direction. Its strength
+     * breathes on a slower cycle, the top of the tree gives more than the base,
+     * and the densest cells — the trunk, the heart of the canopy — barely move
+     * at all. Displacement is measured in ink rather than in ramp steps, so it
+     * stays the same size whatever the ramp's resolution.
      */
-    const render = (t: number) => {
+    const render = (now: number) => {
       if (!grid) return;
+      const t = now * 0.001;
       ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+      const front = ((t * 0.13) % 1.6) - 0.3;          // the gust, crossing
+      const breath = 0.55 + 0.45 * Math.sin(t * 0.37); // and rising and falling
+
       for (let j = 0; j < rows; j++) {
+        const canopy = 1 - (j / rows) * 0.78;
         for (let i = 0; i < cols; i++) {
           const ink = grid[j * cols + i];
           if (ink < 0.1) continue;
-          const sway =
-            Math.sin(i * 0.55 + j * 0.32 + t * 0.0014) +
-            0.5 * Math.sin(i * 0.21 - j * 0.47 + t * 0.0023);
-          const idx = Math.round(ink * last + sway * 1.15 * (1 - ink));
-          ctx.globalAlpha = Math.min(1, ink * 1.2 + sway * 0.05);
+          const gust = Math.exp(-((i / cols - front) ** 2) / 0.05);
+          const travel = i * 0.26 - t * 2.1;
+          const detail =
+            Math.sin(travel + j * 0.42) + 0.5 * Math.sin(travel * 0.55 - j * 0.29);
+          const sway = detail * breath * (0.3 + 0.7 * gust) * canopy * (1 - ink);
+          const v = ink + sway * 0.085;
+          const idx = Math.round((v < 0 ? 0 : v > 1 ? 1 : v) * last);
+          ctx.globalAlpha = Math.min(1, ink * 1.2 + sway * 0.06);
           ctx.fillText(
-            TREE_RAMP.charAt(idx < 0 ? 0 : idx > last ? last : idx),
+            TREE_RAMP.charAt(idx),
             ox + i * cell + cell / 2,
             oy + j * cell + cell / 2,
           );
@@ -125,9 +137,9 @@ export function TreeField({ cell = 13 }: { cell?: number }) {
     const loop = (now: number) => {
       if (stop) return;
       render(now);
-      // a background at eight frames a second: enough for wind, cheap enough to
-      // sit under everything else, and in keeping with a dot matrix refresh
-      frame = window.setTimeout(() => requestAnimationFrame(loop), 125) as unknown as number;
+      // eleven frames a second: enough that a gust reads as travelling rather
+      // than stepping, cheap enough to sit under everything else
+      frame = window.setTimeout(() => requestAnimationFrame(loop), 90) as unknown as number;
     };
 
     const begin = () => {

@@ -40,7 +40,7 @@
        right carry no tree at all, so this can sit up where it reads. */
     --grain:0.26;
     --screen:0.05;
-    --tree:0.30;
+    --tree:0.42;
 
     --sheet:min(1180px,100% - 2.5rem);
   }
