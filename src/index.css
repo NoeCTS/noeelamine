@@ -22,6 +22,11 @@
     --ink:#F2F0EC;
     --grey:#8A8A92;
     --grey-dim:#3B3B42;
+    --rule:rgba(242,240,236,.14);   /* hairlines */
+    --wash:rgba(242,240,236,.04);   /* the faintest hover */
+    --read:#C4C4CB;                 /* body copy set over the tree */
+    --glyph:#FFFFFF;                /* the dot screen and the tree's glyphs */
+    --on-block:#fff;                /* type sitting on a filled block */
     /* The accent runs greyscale. It was Klein blue, which fought the black
        rather than sitting in it. The names and the machinery are kept so the
        colour is two numbers away: raise the saturations to 100% and 82%. */
@@ -59,6 +64,27 @@
 
 @layer components {
   .wrap{width:var(--sheet);margin-inline:auto}
+  /* The landing page, inverted. Same drawing, same type, same tree — the ground
+     and the ink swap places and everything downstream follows, because nothing
+     above this point states a colour of its own any more. */
+  :root[data-theme="light"]{
+    --void:#F4F2EE;
+    --void-2:#E7E4DE;
+    --ink:#0B0B0D;
+    --grey:#5C5C63;
+    --grey-dim:#C2C0BA;
+    --rule:rgba(11,11,13,.16);
+    --wash:rgba(11,11,13,.045);
+    --read:#33333A;
+    --glyph:#0B0B0D;
+    --on-block:#F4F2EE;
+    --klein:hsl(var(--kh) 5% 74%);
+    --klein-lift:hsl(var(--kh) 6% 32%);
+    --grain:.10;
+    --screen:.03;
+    --tree:.34;
+  }
+
   /* Reading pages let the texture step back. This has to be set on the root:
      .treefield and .grain are fixed siblings of the page, not descendants of
      it, so a variable declared on the page wrapper never reaches them. */
@@ -74,7 +100,7 @@
 
   /* A section, set as a row in an index: rule, number, name. The same shape as
      every list on the site, so the navigation is part of the document. */
-  .nav-row{border-top:1px solid rgba(242,240,236,.14);padding-inline:.4rem;
+  .nav-row{border-top:1px solid var(--rule);padding-inline:.4rem;
     color:var(--grey);transition:background .18s ease,color .18s ease}
   .nav-row:hover,.nav-row:focus-visible{background:var(--void-2);color:var(--ink)}
   .nav-row[aria-current="page"]{color:var(--ink)}
@@ -102,7 +128,7 @@
     75%{transform:translate(6px,-6px)}  87.5%{transform:translate(-9px,-14px)}
   }
   .dotscreen{position:fixed;inset:0;pointer-events:none;z-index:99;opacity:var(--screen);
-    background-image:radial-gradient(circle at center,#FFFFFF 0 .6px,transparent .8px);
+    background-image:radial-gradient(circle at center,var(--glyph) 0 .6px,transparent .8px);
     background-size:4px 4px}
   .treefield{position:fixed;inset:0;pointer-events:none;z-index:0;opacity:var(--tree)}
 
@@ -122,12 +148,12 @@
      The archive has no rules anywhere. The photography index does, because a
      list of works is the one case where a hairline carries information rather
      than decorating: it says these things are peers. */
-  .rule-top{border-top:1px solid rgba(242,240,236,.14)}
-  .col-rule{border-left:1px solid rgba(242,240,236,.14)}
+  .rule-top{border-top:1px solid var(--rule)}
+  .col-rule{border-left:1px solid var(--rule)}
   .col-rule:first-child,
   .grid-cols-2 > .col-rule:nth-child(2n+1){border-left:none}
   @media (min-width:640px){
-    .grid-cols-2 > .col-rule:nth-child(2n+1){border-left:1px solid rgba(242,240,236,.14)}
+    .grid-cols-2 > .col-rule:nth-child(2n+1){border-left:1px solid var(--rule)}
     .sm\:grid-cols-3 > .col-rule:nth-child(3n+1){border-left:none}
   }
 
@@ -136,7 +162,7 @@
   .index-row:hover .num,.index-row:focus-visible .num{color:var(--klein-lift)}
   .index-row:hover > span:nth-child(2){transform:translateX(6px)}
   .index-row > span:nth-child(2){transition:transform .22s cubic-bezier(.2,.85,.25,1)}
-  .index-row:hover,.index-row:focus-visible{background:rgba(242,240,236,.04)}
+  .index-row:hover,.index-row:focus-visible{background:var(--wash)}
 
   /* ---- lightbox ---- */
   .lightbox{background:var(--void);animation:lbIn .18s ease-out both}
@@ -166,7 +192,7 @@
   .stamp::before{content:"";position:absolute;inset:0;z-index:0;border:2px solid var(--grey-dim)}
   .stamp:hover{color:var(--ink);transform:translate(-1px,-1px)}
   .stamp:hover::before{border-color:var(--klein-lift)}
-  .stamp[aria-current="page"],.stamp.on{color:#fff}
+  .stamp[aria-current="page"],.stamp.on{color:var(--on-block)}
   .stamp[aria-current="page"]::before,.stamp.on::before{border-color:var(--klein);background:var(--klein)}
   .stamp[aria-current="page"]::after,.stamp.on::after{content:"";position:absolute;inset:0;z-index:1;
     background-image:var(--noise);background-size:180px 180px;mix-blend-mode:screen;opacity:.42}
@@ -190,7 +216,7 @@
      --grey against a lit glyph comes out at 1.6:1, which is the grey on grey
      you get when a character lands inside a letter. */
   .typed{font-family:var(--data);font-size:13.5px;line-height:1.8;
-    letter-spacing:.012em;color:#C4C4CB}
+    letter-spacing:.012em;color:var(--read)}
   .typed p{margin:0}
   /* The landing page's own copy runs larger: it is the first thing read, and
      13.5px is a caption size, not an opening statement. */
@@ -209,9 +235,6 @@
   /* A link that leaves the site says so, quietly. */
   .typed a[target="_blank"]::after{content:" \2197";text-decoration:none;
     font-size:.86em;vertical-align:.08em;color:var(--grey)}
-  /* a typed rule: the row of "=" the colophon draws under its name */
-  .typed-rule{font-family:var(--data);font-size:13.5px;line-height:1;
-    color:var(--grey-dim);white-space:nowrap;overflow:hidden;user-select:none}
 
   /* The Swiss variant's list rows. Hover is a tint of the ground, not a colour. */
   .swiss-row{transition:background .15s ease}
@@ -225,7 +248,7 @@
     background-image:var(--noise);background-size:180px 180px;mix-blend-mode:soft-light;opacity:.9;
     animation:grainshift .7s steps(1) infinite}
   .field::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
-    background-image:radial-gradient(circle at center,#FFFFFF 0 .6px,transparent .8px);
+    background-image:radial-gradient(circle at center,var(--glyph) 0 .6px,transparent .8px);
     background-size:4px 4px;opacity:.22;mix-blend-mode:overlay}
 }
 

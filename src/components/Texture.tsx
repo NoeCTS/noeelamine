@@ -83,7 +83,10 @@ export function TreeField({ cell = 13 }: { cell?: number }) {
         g[n] = a * (1 - (0.299 * d[k] + 0.587 * d[k + 1] + 0.114 * d[k + 2]) / 255);
       }
       grid = g;
-      ctx.fillStyle = "#FFFFFF";
+      // the glyphs take the ink of whatever theme is running, so the tree
+      // inverts with the page instead of disappearing into a light ground
+      ctx.fillStyle =
+        getComputedStyle(document.documentElement).getPropertyValue("--glyph").trim() || "#FFFFFF";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
       ctx.font = `${(cell * 1.25).toFixed(1)}px "Departure Mono", ui-monospace, monospace`;

@@ -31,7 +31,6 @@ export default function Index() {
         <Masthead title="Noe Elamine" note="An archive of my work" />
         <div className="mt-5 grid items-start gap-x-10 gap-y-8 lg:grid-cols-[minmax(0,1fr)_300px]">
           <div className="min-w-0 max-w-[68ch]">
-            <p className="typed-rule mb-5" aria-hidden="true">{"=".repeat(200)}</p>
             <div className="typed typed-lead flex flex-col gap-5">
               <p>
                 I work as an <strong>Associate Product Marketing Manager at

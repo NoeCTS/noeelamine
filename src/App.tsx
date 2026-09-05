@@ -5,6 +5,7 @@ import Index from "@/pages/Index";
 import Photography from "@/pages/Photography";
 import GraphicDesign from "@/pages/GraphicDesign";
 import Swiss from "@/pages/Swiss";
+import Light from "@/pages/Light";
 import Archive from "@/pages/Archive";
 import Colophon from "@/pages/Colophon";
 import Google from "@/pages/Google";
@@ -90,6 +91,7 @@ export default function App() {
         <Route path="/photography" element={<Photography />} />
         <Route path="/graphic-design" element={<GraphicDesign />} />
         <Route path="/swiss" element={<Swiss />} />
+        <Route path="/light" element={<Light />} />
         <Route path="/archive" element={<Archive />} />
         <Route path="/index.txt" element={<Colophon />} />
         <Route path="/google" element={<Google />} />

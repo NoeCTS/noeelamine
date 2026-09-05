@@ -21,14 +21,6 @@ const T = {
   beta: "hsl(243 52% 50%)",
 };
 
-const FOUNDATIONS: [string, string][] = [
-  ["Hofstede cultural dimensions", "A comparative lens for how cultural values vary between markets."],
-  ["Confucian values", "Context for campaigns entering markets shaped by Confucian traditions."],
-  ["Ubuntu philosophy", "A communal lens for representation, dignity and interdependence."],
-  ["Islamic principles", "Market context for imagery, language and norms shaped by Islamic traditions."],
-  ["Indigenous perspectives", "Checks for appropriation, context and authorship across Indigenous cultures."],
-];
-
 /** Public record, and the reason the product exists. Taken from Aube's own
  *  page, where the same list carries the argument. */
 const COST: [string, string, string][] = [
@@ -112,23 +104,7 @@ export default function Aube() {
           </div>
         </section>
 
-        {/* The research foundations named by the live product. */}
-        <section className="py-20">
-          <p className="mb-6 text-[10px] uppercase tracking-[.16em]" style={{ color: T.text2 }}>Research foundations</p>
-          <div className="grid gap-x-10 gap-y-6 md:grid-cols-2">
-            {FOUNDATIONS.map(([name, what]) => (
-              <div key={name} className="flex gap-4">
-                <span className="mt-1 h-1.5 w-1.5 flex-none rounded-full" style={{ background: T.accent }} />
-                <div>
-                  <h3 className="m-0 text-[1rem] font-medium">{name}</h3>
-                  <p className="m-0 mt-1 text-[.9rem] leading-relaxed" style={{ color: T.text2 }}>{what}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Where those frameworks get applied. */}
+        {/* The markets the product organises its coverage around. */}
         <section className="py-8">
           <p className="mb-6 text-[10px] uppercase tracking-[.16em]" style={{ color: T.text2 }}>Market coverage</p>
           <div className="grid gap-x-10 gap-y-5 md:grid-cols-2">
