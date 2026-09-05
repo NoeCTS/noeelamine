@@ -28,7 +28,7 @@ export default function Index() {
         <Opener src="/frames/027.jpg" label="Noe Elamine, self portrait" frame="027" />
       )}
       <div className="wrap relative z-[1] pt-6">
-        <Masthead title="Noe Elamine" note="Archive, not a CV" />
+        <Masthead title="Noe Elamine" note="An archive of my work" />
         <div className="mt-5 grid items-start gap-x-10 gap-y-8 lg:grid-cols-[minmax(0,1fr)_300px]">
           <div className="min-w-0 max-w-[68ch]">
             <p className="typed-rule mb-5" aria-hidden="true">{"=".repeat(200)}</p>
@@ -52,6 +52,9 @@ export default function Index() {
               </p>
               <p>
                 I like learning about AI and building cool stuff.
+              </p>
+              <p>
+                This is an archive of all my work. Thanks for taking a look.
               </p>
             </div>
           </div>

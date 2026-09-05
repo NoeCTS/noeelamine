@@ -38,8 +38,8 @@ export default function Photography() {
           why they hold together as a set rather than a scatter.
         </p>
         <p className="col-rule text-[.95rem] leading-relaxed text-grey">
-          The largest single group in the archive, and the clearest evidence that
-          this is an archive rather than a portfolio.
+          The largest single group here by some way, which is mostly what happens
+          when you carry a camera around for a few years.
         </p>
         <p className="col-rule text-[.95rem] leading-relaxed text-grey">
           <span className="num text-ink">{shots.length}</span> frames. Click any

@@ -1,8 +1,8 @@
 # noeelamine
 
-Personal site of Noé Elamine. An archive rather than a portfolio: work is
-ordered by when it entered rather than by how impressive it is, so a campaign
-and a photograph sit at the same rank.
+Personal site of Noé Elamine. An archive of his work, ordered by when things
+were added rather than by how impressive they are, so a campaign and a
+photograph sit at the same rank.
 
 ## Running it
 

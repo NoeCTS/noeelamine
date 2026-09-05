@@ -77,6 +77,24 @@ export default function Nothing() {
         </div>
       </section>
 
+      {/* Before the images, not after them. Someone scrolling this should know
+          what they are looking at while they look at it. */}
+      <section className="relative z-20 bg-black px-6 pb-4 md:px-12 lg:px-24">
+        <div className="mx-auto max-w-4xl border-t border-neutral-900 pt-10">
+          <p className="mb-6 text-xs uppercase tracking-[0.5em] text-neutral-600">How this was made</p>
+          <p className="m-0 max-w-[62ch] text-[.98rem] leading-relaxed text-neutral-400">
+            The photography is generated. Very little else is: every frame was
+            graded in Photoshop, had elements composited into it by hand, and
+            carries type I set myself — none of the copy or the lockups are
+            generated. This is a self-directed concept, with no client and no
+            production behind it, so generating a base image was the quickest way
+            to think in pictures: casting, light, framing, and how a line sits
+            once it is on one. Made for real it would be shot. What is on show is
+            the campaign, not the photograph.
+          </p>
+        </div>
+      </section>
+
       <section className="relative z-20 bg-black px-6 py-16 md:px-12 lg:px-24">
         <div className="mx-auto max-w-6xl space-y-24">
           <Plate src="/nothing/ad-1.jpg" index="01" place="London Underground"

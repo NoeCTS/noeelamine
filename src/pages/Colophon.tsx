@@ -22,9 +22,8 @@ const TEXT = `NOE ELAMINE
 
   English, French, German.
 
-  This is an archive rather than a portfolio. It is
-  ordered by when things were added, not by how
-  impressive they are.
+  This is an archive of all my work, ordered by when
+  things were added. Thanks for taking a look.
 
   noe.elmne@gmail.com
   linkedin.com/in/noeelamine
