@@ -327,38 +327,38 @@
   .bare-exit:hover,.bare-exit:focus-visible{opacity:1;color:var(--ink)}
 
   /* ---- the Betteride ride ----
-     Six screens of scroll driving one sticky stage. The tall wrapper is the
-     scroll budget; nothing inside it moves the page. */
-  .ride{height:600svh;position:relative}
-  .ride-stage{position:sticky;top:0;height:100svh;overflow:hidden;
-    background:#0C0902}
-  /* each band grows away from the middle, so its inner edge stays put beside
-     the bike while the outer edge travels to the side of the screen */
-  .ride-edge{position:absolute;top:0;bottom:0;width:46vw;will-change:transform}
-  .ride-edge.is-left{left:0;transform-origin:100% 50%}
-  .ride-edge.is-right{right:0;transform-origin:0% 50%}
+     Eight screens of scroll driving one sticky stage. The scene is a plane in
+     CSS 3D so the camera can genuinely tilt and swing around it; everything on
+     the plane moves together, which is what makes it read as a camera rather
+     than as several things animating at once. */
+  .ride{height:800svh;position:relative}
+  .ride-stage{position:sticky;top:0;height:100svh;overflow:hidden;background:#0C0902}
+  .ride-camera{position:absolute;inset:0;perspective:1100px;perspective-origin:50% 44%}
+  .ride-plane{position:absolute;inset:0;transform-style:preserve-3d;will-change:transform}
   .ride-svg{position:absolute;inset:0;width:100%;height:100%}
-  .ride-cards{position:absolute;inset:0;pointer-events:none}
-  .ride-card{position:absolute;width:min(300px,34vw);opacity:0;
+
+  .ride-cards{position:absolute;inset:0;pointer-events:none;z-index:2}
+  .ride-card{position:absolute;width:min(300px,32vw);opacity:0;
     background:#0C0902;border:1px solid #3A2F16;padding:.5rem}
   .ride-card img{display:block;width:100%}
   .ride-card span{display:block;padding-top:.4rem;font-family:var(--data);
     font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#8C7A46}
-  .ride-card.is-left{left:6vw}
-  .ride-card.is-right{right:6vw}
-  .ride-card:nth-child(1){top:16%}
+  .ride-card.is-left{left:5vw}
+  .ride-card.is-right{right:5vw}
+  .ride-card:nth-child(1){top:14%}
   .ride-card:nth-child(2){top:30%}
-  .ride-card:nth-child(3){top:44%}
-  .ride-card:nth-child(4){top:14%}
-  .ride-card:nth-child(5){top:28%}
-  .ride-card:nth-child(6){top:42%}
-  .ride-card:nth-child(7){top:56%}
-  .ride-card:nth-child(8){top:20%}
+  .ride-card:nth-child(3){top:46%}
+  .ride-card:nth-child(4){top:16%}
+  .ride-card:nth-child(5){top:32%}
+  .ride-card:nth-child(6){top:48%}
+  .ride-card:nth-child(7){top:22%}
+  .ride-card:nth-child(8){top:38%}
   @media (max-width:640px){
-    .ride{height:520svh}
-    .ride-card{width:44vw}
-    .ride-card.is-left{left:3vw}
-    .ride-card.is-right{right:3vw}
+    .ride{height:620svh}
+    .ride-camera{perspective:800px}
+    .ride-card{width:46vw}
+    .ride-card.is-left{left:2vw}
+    .ride-card.is-right{right:2vw}
   }
 
   /* ---- a field is a block, never a tint ---- */
@@ -382,6 +382,7 @@
   .opener-scroll{height:100svh}
   .ride{height:auto}
   .ride-stage{position:static;height:auto;min-height:100svh}
+  .ride-plane{transform:none!important}
   .dino-img,.dino-track::after{animation:none}
   html{scroll-behavior:auto}
 }
