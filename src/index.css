@@ -213,6 +213,10 @@
   .typed-rule{font-family:var(--data);font-size:13.5px;line-height:1;
     color:var(--grey-dim);white-space:nowrap;overflow:hidden;user-select:none}
 
+  /* The Swiss variant's list rows. Hover is a tint of the ground, not a colour. */
+  .swiss-row{transition:background .15s ease}
+  .swiss-row:hover{background:#F0F0EC}
+
   /* ---- a field is a block, never a tint ---- */
   .field{background:var(--klein);color:#fff;padding:clamp(1.6rem,4vw,2.6rem);
     position:relative;isolation:isolate;overflow:hidden}

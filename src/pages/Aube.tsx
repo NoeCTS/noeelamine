@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 /**
@@ -21,16 +20,6 @@ const T = {
   info: "hsl(212 76% 63%)",
   beta: "hsl(243 52% 50%)",
 };
-
-const CITIES = ["Sydney", "Lagos", "Jakarta", "São Paulo", "Seoul", "Cairo", "Mumbai"];
-
-const TERMS: [string, string, string][] = [
-  ["Cultural appropriation", "5%", "10%"], ["Tokenism", "63%", "7%"],
-  ["Stereotyping", "76%", "18%"], ["Colour symbolism", "3%", "27%"],
-  ["Religious insensitivity", "68%", "32%"], ["Translation error", "72%", "70%"],
-  ["Gesture misread", "4%", "76%"], ["Historical blindspot", "56%", "84%"],
-  ["Gender norms", "13%", "89%"], ["Visual taboo", "42%", "93%"],
-];
 
 const FOUNDATIONS: [string, string][] = [
   ["Hofstede cultural dimensions", "A comparative lens for how cultural values vary between markets."],
@@ -70,71 +59,18 @@ const CHECKS: [string, string, string][] = [
 ];
 
 export default function Aube() {
-  const [city, setCity] = useState(0);
-  useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const id = window.setInterval(() => setCity((c) => (c + 1) % CITIES.length), 2600);
-    return () => window.clearInterval(id);
-  }, []);
-
-  const pill = {
-    background: `linear-gradient(180deg, ${T.accentHi} 0%, ${T.accent} 100%)`,
-    boxShadow: `0 0 28px hsl(28 79% 57% / .32)`,
-  };
-
   return (
     <main className="min-h-screen overflow-x-hidden" style={{ background: T.bg, color: T.text }}>
       <div className="mx-auto w-full max-w-[1120px] px-5 sm:px-8">
 
-        <nav className="flex flex-wrap items-center gap-3 py-4 sm:py-6" aria-label="Aube case study">
-          <span className="h-4 w-4 flex-none rounded-full"
-            style={{ background: `conic-gradient(from 180deg, ${T.accent3}, ${T.accent} 40%, hsl(240 5% 12%) 75%, ${T.accent3})` }} />
-          <span className="text-[.95rem]">Aube</span>
-          <span className="ml-3 hidden gap-5 text-[.85rem] md:flex" style={{ color: T.text2 }}>
-            <a href="#how">How it works</a><a href="#checks">What it checks</a><a href="#access">For NGOs</a>
-          </span>
-          <Link to="/#index" className="ml-auto inline-flex min-h-11 items-center rounded-md px-3.5 py-2 text-[.82rem]"
-            style={{ border: `1px solid ${T.border}`, color: T.text2 }}>Archive</Link>
-          <a href="https://aube-ai.com" target="_blank" rel="noreferrer"
-            className="inline-flex min-h-11 items-center rounded-md px-3.5 py-2 text-[.82rem]" style={{ ...pill, color: "hsl(240 5% 3%)" }}>
-            Visit Aube
-          </a>
-        </nav>
-
-        {/* Hero */}
-        <section className="relative flex min-h-[calc(100svh-5rem)] flex-col items-center justify-center gap-6 text-center">
-          {TERMS.map(([t, l, top]) => (
-            <span key={t} aria-hidden="true"
-              className="pointer-events-none absolute hidden whitespace-nowrap text-[9px] uppercase tracking-[.14em] md:block"
-              style={{ left: l, top, color: T.text3 }}>{t}</span>
-          ))}
-          <span className="flex max-w-[38ch] items-center justify-center gap-2 text-[10px] uppercase tracking-[.16em]" style={{ color: T.text2 }}>
-            <i className="block h-1.5 w-1.5 rounded-full" style={{ background: T.accent }} />
-            Cultural intelligence for global brands · powered by peer reviewed research
-          </span>
-          <h1 className="m-0 max-w-[20ch] text-[clamp(1.9rem,5.4vw,3.4rem)] font-normal leading-[1.14] tracking-[-.012em]"
+        {/* No hero. This is a case study, not a second landing page for the
+            product, so it opens on the reason the thing exists. */}
+        <section className="pt-16 pb-24 sm:pt-24">
+          <p className="mb-3 text-[10px] uppercase tracking-[.16em]" style={{ color: T.text2 }}>Aube · why I built it</p>
+          <h1 className="m-0 max-w-[24ch] text-[clamp(1.7rem,4.4vw,2.9rem)] font-normal leading-[1.14] tracking-[-.012em]"
             style={{ fontFamily: '"abacaxi-latin-variable", Abacaxi, "range-sans-variable", sans-serif' }}>
-            Your campaign launched in{" "}
-            <span style={{ color: T.accent }}>{CITIES[city]}</span>
-          </h1>
-          <p className="m-0 max-w-[48ch] text-[1rem] leading-relaxed" style={{ color: T.text2 }}>
-            Aube analyses campaigns for cultural blind spots across 92 markets.
-            Catch what you would otherwise miss before launch.
-          </p>
-          <a href="https://aube-ai.com" target="_blank" rel="noreferrer"
-            className="rounded-full px-7 py-3.5 text-[.95rem]" style={{ ...pill, color: "hsl(240 5% 3%)" }}>
-            Get your first analysis
-          </a>
-          <span className="text-[.8rem]" style={{ color: T.text2 }}>Results in under 2 minutes</span>
-        </section>
-
-        {/* What it is */}
-        <section className="py-24">
-          <p className="mb-3 text-[10px] uppercase tracking-[.16em]" style={{ color: T.text2 }}>What it is</p>
-          <h2 className="m-0 max-w-[24ch] text-[clamp(1.5rem,3.6vw,2.4rem)] font-normal leading-tight"
-            style={{ fontFamily: '"abacaxi-latin-variable", Abacaxi, sans-serif' }}>
             A campaign fails in a market nobody in the room is from.
-          </h2>
+          </h1>
           <p className="mt-5 max-w-[62ch] leading-relaxed" style={{ color: T.text2 }}>
             Global brands ship creative into markets they do not live in, and the
             problems only surface after launch, when the cost is a public apology.

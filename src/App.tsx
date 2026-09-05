@@ -4,6 +4,7 @@ import { Grain, DotScreen, TreeField } from "@/components/Texture";
 import Index from "@/pages/Index";
 import Photography from "@/pages/Photography";
 import GraphicDesign from "@/pages/GraphicDesign";
+import Swiss from "@/pages/Swiss";
 import Archive from "@/pages/Archive";
 import Colophon from "@/pages/Colophon";
 import Google from "@/pages/Google";
@@ -48,7 +49,7 @@ function ScrollTop() {
  * disagree, and a light Google page with film grain over it would be neither
  * one thing nor the other.
  */
-const ZONES = ["/google", "/aube", "/betteride", "/nothing", "/berlin"];
+const ZONES = ["/google", "/aube", "/betteride", "/nothing", "/berlin", "/swiss"];
 
 /**
  * Pages that are already a dense field of type. The tree is meant to be the
@@ -88,6 +89,7 @@ export default function App() {
         <Route path="/" element={<Index />} />
         <Route path="/photography" element={<Photography />} />
         <Route path="/graphic-design" element={<GraphicDesign />} />
+        <Route path="/swiss" element={<Swiss />} />
         <Route path="/archive" element={<Archive />} />
         <Route path="/index.txt" element={<Colophon />} />
         <Route path="/google" element={<Google />} />
