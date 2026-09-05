@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { TreeField } from "@/components/Texture";
 
 /**
@@ -9,6 +10,9 @@ export default function TreeBare() {
   return (
     <main className="h-screen w-screen overflow-hidden" style={{ background: "var(--void)" }}>
       <TreeField cell={8} className="tree-full" life />
+      {/* A way out that will not appear in the recording: invisible until it is
+          pointed at or tabbed to. */}
+      <Link to="/#index" className="bare-exit">Back to the index</Link>
     </main>
   );
 }

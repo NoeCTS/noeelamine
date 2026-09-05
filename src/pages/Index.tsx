@@ -52,7 +52,6 @@ export default function Index() {
               <img src="/portrait.jpg" alt="Noe Elamine"
                 className="w-full object-cover" style={{ aspectRatio: "1 / 1" }} />
             </span>
-            <figcaption className="mono mt-2">Noé Elamine · London</figcaption>
           </figure>
         </div>
         {/* The sections themselves are the landing page. The work sits inside

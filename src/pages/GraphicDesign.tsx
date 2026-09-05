@@ -18,8 +18,8 @@ export default function GraphicDesign() {
   // Split on what the piece is rather than when it was made: a poster is set
   // to be read at distance, a graphic or a study is not.
   const sets: [string, string, Frame[]][] = useMemo(() => [
-    ["01", "Posters", works.filter((f) => f.kind === "poster")],
-    ["02", "Graphics and studies", works.filter((f) => f.kind !== "poster")],
+    ["01", "Graphics and studies", works.filter((f) => f.kind !== "poster")],
+    ["02", "Posters", works.filter((f) => f.kind === "poster")],
   ], [works]);
 
   return (
