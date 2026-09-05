@@ -186,12 +186,22 @@
      Set in the pixel face on one measure so the front of the site reads as a
      document that was written, not a page that was laid out. The display face
      still carries the headings; only the prose changes. */
+  /* Lighter than the site's grey. This is body copy sitting over the tree, and
+     --grey against a lit glyph comes out at 1.6:1, which is the grey on grey
+     you get when a character lands inside a letter. */
   .typed{font-family:var(--data);font-size:13.5px;line-height:1.8;
-    letter-spacing:.012em;color:var(--grey)}
+    letter-spacing:.012em;color:#C4C4CB}
   .typed p{margin:0}
   /* The landing page's own copy runs larger: it is the first thing read, and
      13.5px is a caption size, not an opening statement. */
-  .typed-lead{font-size:clamp(15px,1.35vw,17.5px);line-height:1.75}
+  .typed-lead{font-size:clamp(16px,1.35vw,17.5px);line-height:1.78}
+
+  /* On a phone the column is the whole screen, so the tree is behind every line
+     rather than beside most of them, and the type is at its smallest. The tree
+     steps back there; on a wide screen it stays where it reads. */
+  @media (max-width:640px){
+    :root{--tree:.16}
+  }
   .typed strong{font-weight:400;color:var(--ink)}
   .typed a{color:var(--ink);text-decoration:underline;text-decoration-thickness:1px;
     text-underline-offset:3px}
