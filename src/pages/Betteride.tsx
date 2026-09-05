@@ -1,6 +1,10 @@
 import { Link } from "react-router-dom";
 import { FRAMES } from "@/data/frames";
-import { Ride } from "@/components/Ride";
+import { Suspense, lazy } from "react";
+
+// three.js is a third of a megabyte and only this page uses it, so it is not in
+// the bundle everyone else downloads.
+const Ride = lazy(() => import("@/components/Ride").then((m) => ({ default: m.Ride })));
 
 /**
  * Betteride runs two palettes and the case study carries both rather than
@@ -22,7 +26,9 @@ export default function Betteride() {
       {/* The ride comes first: the work arrives along it rather than in a grid,
           and the grid below is the same pieces for anyone who wants them all at
           once. */}
-      <Ride frames={frames} />
+      <Suspense fallback={<div className="ride"><div className="ride-stage" /></div>}>
+        <Ride frames={frames} />
+      </Suspense>
 
       <div className="mx-auto w-[min(1120px,100%-2.5rem)] py-8">
         <div className="flex items-center justify-between gap-4">
