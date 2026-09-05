@@ -48,6 +48,7 @@
     --tree:0.42;
 
     --sheet:min(1180px,100% - 2.5rem);
+    color-scheme:dark;
   }
 
   *{box-sizing:border-box}
@@ -64,9 +65,10 @@
 
 @layer components {
   .wrap{width:var(--sheet);margin-inline:auto}
-  /* The landing page, inverted. Same drawing, same type, same tree — the ground
-     and the ink swap places and everything downstream follows, because nothing
-     above this point states a colour of its own any more. */
+  /* Light runs on the device's own setting, and an explicit choice overrides it
+     in either direction. The values live here once and are applied twice: CSS
+     has no way to share a declaration block between a media query and an
+     attribute, and two copies that can drift is worse than one that repeats. */
   :root[data-theme="light"]{
     --void:#F4F2EE;
     --void-2:#E7E4DE;
@@ -83,6 +85,27 @@
     --grain:.10;
     --screen:.03;
     --tree:.34;
+    color-scheme:light;
+  }
+  @media (prefers-color-scheme:light){
+    :root:not([data-theme="dark"]){
+    --void:#F4F2EE;
+    --void-2:#E7E4DE;
+    --ink:#0B0B0D;
+    --grey:#5C5C63;
+    --grey-dim:#C2C0BA;
+    --rule:rgba(11,11,13,.16);
+    --wash:rgba(11,11,13,.045);
+    --read:#33333A;
+    --glyph:#0B0B0D;
+    --on-block:#F4F2EE;
+    --klein:hsl(var(--kh) 5% 74%);
+    --klein-lift:hsl(var(--kh) 6% 32%);
+    --grain:.10;
+    --screen:.03;
+    --tree:.34;
+    color-scheme:light;
+    }
   }
 
   /* Reading pages let the texture step back. This has to be set on the root:
@@ -239,6 +262,18 @@
   /* The Swiss variant's list rows. Hover is a tint of the ground, not a colour. */
   .swiss-row{transition:background .15s ease}
   .swiss-row:hover{background:#F0F0EC}
+
+  /* A control, not chrome: it sits at the foot of the page in the corner, in
+     the same dot face as every other label on the site. */
+  .theme-toggle{position:fixed;right:1.1rem;bottom:1.1rem;z-index:60;
+    display:inline-flex;align-items:center;gap:.5rem;min-height:2.5rem;
+    padding:.5rem .85rem;cursor:pointer;background:var(--void);
+    border:1px solid var(--rule);color:var(--grey);
+    font-family:var(--dot);font-size:12px;letter-spacing:.06em;text-transform:uppercase;
+    transition:color .15s ease,border-color .15s ease}
+  .theme-toggle:hover{color:var(--ink);border-color:var(--klein-lift)}
+  .theme-toggle b{display:inline-block;width:.62rem;height:.62rem;border-radius:50%;
+    background:var(--ink);flex:none}
 
   /* ---- a field is a block, never a tint ---- */
   .field{background:var(--klein);color:#fff;padding:clamp(1.6rem,4vw,2.6rem);

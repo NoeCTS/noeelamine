@@ -29,6 +29,14 @@
 
   <body>
     <div id="root"></div>
+    <script>
+      // Before first paint: an explicit choice wins, otherwise the stylesheet's
+      // prefers-color-scheme query decides. Inline so there is no flash.
+      try {
+        var t = localStorage.getItem("theme");
+        if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t);
+      } catch (e) {}
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
