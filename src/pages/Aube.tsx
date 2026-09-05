@@ -40,6 +40,26 @@ const FOUNDATIONS: [string, string][] = [
   ["Indigenous perspectives", "Checks for appropriation, context and authorship across Indigenous cultures."],
 ];
 
+/** Public record, and the reason the product exists. Taken from Aube's own
+ *  page, where the same list carries the argument. */
+const COST: [string, string, string][] = [
+  ["Dolce & Gabbana", "2018", "China campaign pulled, Shanghai show cancelled"],
+  ["H&M", "2018", "“Coolest monkey” hoodie: stores attacked in South Africa"],
+  ["Pepsi", "2017", "Kendall Jenner protest ad withdrawn inside a day"],
+  ["Nivea", "2017", "“White is purity” pulled after global backlash"],
+  ["Dove", "2017", "Body wash ad withdrawn, apology issued"],
+  ["Burger King", "2021", "“Women belong in the kitchen” deleted within hours"],
+];
+
+/** The market groups the product organises its coverage around. */
+const MARKETS: [string, string][] = [
+  ["Confucian", "Japan, China, South Korea, Vietnam, Singapore, Malaysia, Indonesia"],
+  ["Arab", "The Middle East and North Africa"],
+  ["Ubuntu-influenced", "Sub-Saharan Africa"],
+  ["Indigenous sensitivity", "The Americas and Oceania"],
+  ["Western", "Europe, North America, Australia"],
+];
+
 const CHECKS: [string, string, string][] = [
   ["Cultural appropriation", "Sacred and traditional imagery used decoratively, outside its context and without credit.", T.danger],
   ["Tokenism", "Representation that is present but powerless: background casting, no agency, no lines.", T.danger],
@@ -122,6 +142,20 @@ export default function Aube() {
             risk, the framework it comes from, and what to change. It is not
             sentiment analysis and it is not a vibe check.
           </p>
+
+          <ul className="m-0 mt-10 list-none p-0">
+            {COST.map(([brand, year, what]) => (
+              <li key={brand} className="grid grid-cols-[1fr_auto] items-baseline gap-x-4 gap-y-1 border-t py-3.5 sm:grid-cols-[13rem_1fr_auto]"
+                style={{ borderColor: T.border }}>
+                <span className="text-[.98rem] font-medium">{brand}</span>
+                <span className="col-span-2 text-[.9rem] leading-relaxed sm:col-span-1" style={{ color: T.text2 }}>{what}</span>
+                <span className="text-[.85rem] tabular-nums" style={{ color: T.accent }}>{year}</span>
+              </li>
+            ))}
+          </ul>
+          <p className="mt-4 text-[.82rem]" style={{ color: T.text3 }}>
+            Every one of these cleared a marketing department first.
+          </p>
         </section>
 
         {/* How it works */}
@@ -153,6 +187,19 @@ export default function Aube() {
                   <h3 className="m-0 text-[1rem] font-medium">{name}</h3>
                   <p className="m-0 mt-1 text-[.9rem] leading-relaxed" style={{ color: T.text2 }}>{what}</p>
                 </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Where those frameworks get applied. */}
+        <section className="py-8">
+          <p className="mb-6 text-[10px] uppercase tracking-[.16em]" style={{ color: T.text2 }}>Market coverage</p>
+          <div className="grid gap-x-10 gap-y-5 md:grid-cols-2">
+            {MARKETS.map(([group, where]) => (
+              <div key={group} className="border-t pt-4" style={{ borderColor: T.border }}>
+                <h3 className="m-0 text-[1rem] font-medium" style={{ color: T.accent }}>{group}</h3>
+                <p className="m-0 mt-1 text-[.9rem] leading-relaxed" style={{ color: T.text2 }}>{where}</p>
               </div>
             ))}
           </div>
