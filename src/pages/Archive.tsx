@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { Link } from "react-router-dom";
 import { Masthead, Foot } from "@/components/Chrome";
+import { AsciiName } from "@/components/AsciiName";
 import { byAdded, publicFrames, GROUP_LABEL, NEWEST } from "@/data/frames";
 import { Lightbox } from "@/components/Lightbox";
 import { useFrameParam } from "@/lib/useFrameParam";
@@ -24,7 +25,7 @@ export default function Archive() {
 
   return (
     <div className="wrap page-top relative z-[1]">
-      <Masthead title="The archive" note="Everything, dated" />
+      <Masthead ascii title={<AsciiName text="THE ARCHIVE" />} note="Everything, dated" />
       <p className="mt-9 max-w-[56ch] text-[clamp(1.02rem,1.5vw,1.2rem)] leading-snug">
         Every frame carries two dates: when it was made, and when it entered the
         archive. <span className="text-grey">This list is ordered by the second one,

@@ -26,9 +26,12 @@ export function Opener({ src, label }: { src: string; label: string }) {
       // up, so the grid has to run fine enough for a face to become legible in
       // it. Small type alone would only flatten the tone, so contrast is lifted
       // in step with the column count to keep the glyphs separating.
+      // A shorter scroll wants a shorter journey. The grid still refines, it
+      // just does not chase the last stretch of detail that took a second
+      // screen of scrolling to reach.
       const narrow = window.innerWidth < 640;
-      const cols = Math.round((narrow ? 52 : 88) + progress * (narrow ? 116 : 212));
-      const contrast = 1 + progress * 0.55;
+      const cols = Math.round((narrow ? 50 : 84) + progress * (narrow ? 78 : 136));
+      const contrast = 1 + progress * 0.5;
       if (Math.abs(cols - lastCols) >= 2) {
         p.textContent = toAscii(i, cols, undefined, contrast);
         p.style.fontSize = `${fitSize(box.getBoundingClientRect().width || 360, cols).toFixed(2)}px`;

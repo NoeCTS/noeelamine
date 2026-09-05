@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { NEWEST, publicFrames } from "@/data/frames";
+import { AsciiName } from "./AsciiName";
 
 const NAV = [
   { to: "/google", label: "Google" },
@@ -49,10 +50,13 @@ export function SiteNav({ scale = "foot" }: { scale?: "foot" | "main" }) {
             <span className={main ? "num text-[14px]" : "num text-[12px]"} aria-hidden="true">
               {String(i + 1).padStart(2, "0")}
             </span>
-            <span className="font-display uppercase leading-none"
-              style={{ fontSize: main ? "clamp(1.7rem,5.5vw,3rem)" : "clamp(1rem,2.2vw,1.3rem)", fontWeight: 400 }}>
-              {n.label}
-            </span>
+            {main ? (
+              <AsciiName text={n.label} still size="clamp(2.6px,0.62vw,5.2px)" />
+            ) : (
+              <span className="mono" style={{ fontSize: "clamp(.8rem,1.5vw,1rem)", letterSpacing: ".06em" }}>
+                {n.label}
+              </span>
+            )}
           </Link>
         );
       })}

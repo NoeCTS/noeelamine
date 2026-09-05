@@ -173,7 +173,7 @@
 
   /* CSS owns the opener's pinning. ScrollTrigger only reads its progress;
      it never wraps or moves a node that React may need to unmount. */
-  .opener-scroll{height:280svh}
+  .opener-scroll{height:190svh}
   .opener-stage{height:100svh}
 
   /* Entrances are CSS, not a JS state flip. Content that starts at opacity 0
