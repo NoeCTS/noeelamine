@@ -2,9 +2,7 @@ import { Link } from "react-router-dom";
 import { FRAMES } from "@/data/frames";
 import { Suspense, lazy } from "react";
 
-// three.js is a third of a megabyte and only this page uses it, so it is not in
-// the bundle everyone else downloads.
-const Ride = lazy(() => import("@/components/Ride").then((m) => ({ default: m.Ride })));
+const RouteMap = lazy(() => import("@/components/RouteMap").then((m) => ({ default: m.RouteMap })));
 
 /**
  * Betteride runs two palettes and the case study carries both rather than
@@ -23,11 +21,11 @@ export default function Betteride() {
 
   return (
     <main className="min-h-screen bg-[#0C0902] text-[#FFC000]">
-      {/* The ride comes first: the work arrives along it rather than in a grid,
-          and the grid below is the same pieces for anyone who wants them all at
-          once. */}
-      <Suspense fallback={<div className="ride"><div className="ride-stage" /></div>}>
-        <Ride frames={frames} />
+      {/* The ride comes first and the work sits on it, at the point on the route
+          where it happened. The grid below is the same pieces together, for
+          anyone who would rather not ride for them. */}
+      <Suspense fallback={<div className="route"><div className="route-stage" /></div>}>
+        <RouteMap frames={frames} />
       </Suspense>
 
       <div className="mx-auto w-[min(1120px,100%-2.5rem)] py-8">

@@ -1,4 +1,18 @@
 <!doctype html>
+<!--
+                   ##
+                  ##
+##   ##  #####  #######         ####### ##       #####  ##   ## ####### ##   ## #######
+###  ## ##   ## ##              ##      ##      ##   ## ### ###   ###   ###  ## ##
+#### ## ##   ## ##              ##      ##      ##   ## #######   ###   #### ## ##
+## #### ##   ## #####           #####   ##      ####### ## # ##   ###   ## #### #####
+##  ### ##   ## ##              ##      ##      ##   ## ##   ##   ###   ##  ### ##
+##   ## ##   ## ##              ##      ##      ##   ## ##   ##   ###   ##   ## ##
+##   ##  #####  #######         ####### ####### ##   ## ##   ## ####### ##   ## #######
+
+     An archive of my work.  noeelamine.com
+     Everything here is drawn out of characters, including this.
+-->
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -35,6 +49,20 @@
       try {
         var t = localStorage.getItem("theme");
         if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t);
+      } catch (e) {}
+    </script>
+    <script>
+      // The first thing in the document is the name, drawn the way the whole
+      // site is drawn. Same again here, for whoever opens the console.
+      try {
+        console.log(
+          "%c" + "                   ##\n                  ##\n##   ##  #####  #######         ####### ##       #####  ##   ## ####### ##   ## #######\n###  ## ##   ## ##              ##      ##      ##   ## ### ###   ###   ###  ## ##\n#### ## ##   ## ##              ##      ##      ##   ## #######   ###   #### ## ##\n## #### ##   ## #####           #####   ##      ####### ## # ##   ###   ## #### #####\n##  ### ##   ## ##              ##      ##      ##   ## ##   ##   ###   ##  ### ##\n##   ## ##   ## ##              ##      ##      ##   ## ##   ##   ###   ##   ## ##\n##   ##  #####  #######         ####### ####### ##   ## ##   ## ####### ##   ## #######",
+          "color:#F2F0EC;font-family:ui-monospace,monospace;font-size:9px;line-height:1"
+        );
+        console.log(
+          "%cAn archive of my work. noeelamine.com",
+          "color:#8A8A92;font-family:ui-monospace,monospace;font-size:11px"
+        );
       } catch (e) {}
     </script>
     <script type="module" src="/src/main.tsx"></script>

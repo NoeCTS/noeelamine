@@ -326,38 +326,60 @@
     color:var(--grey);transition:opacity .18s ease}
   .bare-exit:hover,.bare-exit:focus-visible{opacity:1;color:var(--ink)}
 
-  /* ---- the Betteride ride ----
-     Eight screens of scroll driving one sticky stage. The scene is a plane in
-     CSS 3D so the camera can genuinely tilt and swing around it; everything on
-     the plane moves together, which is what makes it read as a camera rather
-     than as several things animating at once. */
-  .ride{height:800svh;position:relative}
-  .ride-stage{position:sticky;top:0;height:100svh;overflow:hidden;background:#0C0902}
-  .ride-canvas{position:absolute;inset:0}
-  .ride-canvas canvas{display:block;width:100%;height:100%}
+  /* ---- the Betteride route ----
+     A ride drawn on the city rather than a map of it: a faint armature of the
+     Ringbahn and the Spree, ghosts of other rides underneath, and the ride
+     itself running violet to acid over the top. */
+  .route{height:700svh;position:relative}
+  .route-stage{position:sticky;top:0;height:100svh;overflow:hidden;background:#08060B}
+  .route-svg{position:absolute;inset:0;width:100%;height:100%}
 
-  .ride-cards{position:absolute;inset:0;pointer-events:none;z-index:2}
-  .ride-card{position:absolute;width:min(300px,32vw);opacity:0;
-    background:#0C0902;border:1px solid #3A2F16;padding:.5rem}
-  .ride-card img{display:block;width:100%}
-  .ride-card span{display:block;padding-top:.4rem;font-family:var(--data);
-    font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#8C7A46}
-  .ride-card.is-left{left:5vw}
-  .ride-card.is-right{right:5vw}
-  .ride-card:nth-child(1){top:14%}
-  .ride-card:nth-child(2){top:30%}
-  .ride-card:nth-child(3){top:46%}
-  .ride-card:nth-child(4){top:16%}
-  .ride-card:nth-child(5){top:32%}
-  .ride-card:nth-child(6){top:48%}
-  .ride-card:nth-child(7){top:22%}
-  .ride-card:nth-child(8){top:38%}
+  .route-city path{fill:none;stroke:#241C3A;stroke-width:1.6}
+  .route-city .route-water{stroke:#2A3358;stroke-width:5;stroke-linecap:round}
+  .route-ghosts path{fill:none;stroke:#6B3FE4;stroke-width:3;opacity:.10}
+
+  .route-glow{fill:none;stroke:url(#ride);stroke-width:22;opacity:.42;
+    stroke-linecap:round;stroke-linejoin:round}
+  .route-line{fill:none;stroke:url(#ride);stroke-width:5.5;
+    stroke-linecap:round;stroke-linejoin:round}
+
+  .route-pin circle{fill:none;stroke:#FFE400;stroke-width:1.6}
+  .route-pin .route-pin-core{fill:#FFE400;stroke:none}
+  .route-pin{transition:opacity .3s ease}
+  .route-head circle{fill:#FFF6C2}
+  .route-head .route-head-halo{fill:#FFE400;opacity:.22}
+
+  /* the numbers, which are what make a line read as a ride */
+  .route-hud{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:1.4rem clamp(1rem,4vw,3rem)}
+  .route-stats{display:flex;gap:clamp(1.4rem,5vw,4rem);align-items:baseline}
+  .route-label{display:block;font-family:var(--data);font-size:10px;letter-spacing:.16em;
+    text-transform:uppercase;color:#7A6BA8}
+  .route-value{display:block;font-family:var(--dot);font-size:clamp(1.2rem,3.4vw,2.1rem);
+    letter-spacing:.02em;color:#FFE400}
+  .route-profile{display:block;width:100%;height:46px;margin-top:.7rem}
+  .route-profile path{fill:#1B1530}
+
+  .route-cards{position:absolute;inset:0;pointer-events:none;z-index:3}
+  .route-card{position:absolute;width:min(260px,28vw);opacity:0;
+    background:#0B0814;border:1px solid #2C2247;padding:.45rem}
+  .route-card img{display:block;width:100%}
+  .route-card span{display:block;padding-top:.35rem;font-family:var(--data);font-size:10px;
+    letter-spacing:.08em;text-transform:uppercase;color:#8878B8}
+  .route-card.is-left{left:4vw}
+  .route-card.is-right{right:4vw}
+  .route-card:nth-child(1){top:10%}
+  .route-card:nth-child(2){top:24%}
+  .route-card:nth-child(3){top:38%}
+  .route-card:nth-child(4){top:12%}
+  .route-card:nth-child(5){top:26%}
+  .route-card:nth-child(6){top:40%}
+  .route-card:nth-child(7){top:16%}
+  .route-card:nth-child(8){top:30%}
   @media (max-width:640px){
-    .ride{height:620svh}
-    .ride-camera{perspective:800px}
-    .ride-card{width:46vw}
-    .ride-card.is-left{left:2vw}
-    .ride-card.is-right{right:2vw}
+    .route{height:560svh}
+    .route-card{width:42vw}
+    .route-card.is-left{left:2vw}
+    .route-card.is-right{right:2vw}
   }
 
   /* ---- a field is a block, never a tint ---- */
@@ -379,8 +401,8 @@
   .lightbox,.lb-img{animation:none}
   .index-row > span:nth-child(2){transition:none}
   .opener-scroll{height:100svh}
-  .ride{height:auto}
-  .ride-stage{position:static;height:auto;min-height:100svh}
+  .route{height:auto}
+  .route-stage{position:static;height:auto;min-height:100svh}
 
   .dino-img,.dino-track::after{animation:none}
   html{scroll-behavior:auto}
