@@ -12,9 +12,118 @@ const RING =
 const SPREE =
   "M96 596 C214 560 288 630 386 606 C482 582 520 500 606 498 C700 496 742 566 838 540 " +
   "C888 526 918 500 946 470";
-const RADIALS = [
-  "M500 120 L500 862", "M170 380 L830 620", "M170 620 L830 380",
-  "M300 160 L700 820", "M700 160 L300 820",
+const STREETS = [
+  "M-418 60 L-518 940",
+  "M-356 60 L-456 940",
+  "M-294 60 L-394 940",
+  "M-232 60 L-332 940",
+  "M-170 60 L-270 940",
+  "M-108 60 L-208 940",
+  "M-46 60 L-146 940",
+  "M16 60 L-84 940",
+  "M78 60 L-22 940",
+  "M140 60 L40 940",
+  "M202 60 L102 940",
+  "M264 60 L164 940",
+  "M326 60 L226 940",
+  "M388 60 L288 940",
+  "M450 60 L350 940",
+  "M512 60 L412 940",
+  "M574 60 L474 940",
+  "M636 60 L536 940",
+  "M698 60 L598 940",
+  "M30 -466 L970 -606",
+  "M30 -392 L970 -532",
+  "M30 -318 L970 -458",
+  "M30 -244 L970 -384",
+  "M30 -170 L970 -310",
+  "M30 -96 L970 -236",
+  "M30 -22 L970 -162",
+  "M30 52 L970 -88",
+  "M30 126 L970 -14",
+  "M30 200 L970 60",
+  "M30 274 L970 134",
+  "M30 348 L970 208",
+  "M30 422 L970 282",
+  "M30 496 L970 356",
+  "M30 570 L970 430",
+  "M30 644 L970 504",
+  "M30 718 L970 578",
+  "M30 792 L970 652",
+  "M30 866 L970 726",
+  "M500 500 L1120 500",
+  "M500 500 L1066 752",
+  "M500 500 L915 961",
+  "M500 500 L692 1090",
+  "M500 500 L435 1117",
+  "M500 500 L190 1037",
+  "M500 500 L-2 864",
+  "M500 500 L-106 629",
+  "M500 500 L-106 371",
+  "M500 500 L-2 136",
+  "M500 500 L190 -37",
+  "M500 500 L435 -117",
+  "M500 500 L692 -90",
+  "M500 500 L915 39",
+  "M500 500 L1066 248",
+];
+
+/** City blocks, so the grid has something between its lines. */
+const BLOCKS = [
+  "M421 264 h76 v61 h-76 Z",
+  "M139 184 h94 v26 h-94 Z",
+  "M464 706 h33 v52 h-33 Z",
+  "M309 148 h37 v47 h-37 Z",
+  "M518 181 h56 v25 h-56 Z",
+  "M654 544 h33 v72 h-33 Z",
+  "M669 236 h54 v60 h-54 Z",
+  "M732 706 h33 v56 h-33 Z",
+  "M689 516 h32 v34 h-32 Z",
+  "M137 680 h43 v38 h-43 Z",
+  "M519 257 h95 v27 h-95 Z",
+  "M674 425 h49 v26 h-49 Z",
+  "M685 694 h50 v43 h-50 Z",
+  "M189 670 h34 v56 h-34 Z",
+  "M151 743 h52 v51 h-52 Z",
+  "M786 654 h80 v69 h-80 Z",
+  "M411 586 h84 v43 h-84 Z",
+  "M396 364 h49 v64 h-49 Z",
+  "M339 193 h64 v53 h-64 Z",
+  "M596 461 h83 v38 h-83 Z",
+  "M713 184 h41 v52 h-41 Z",
+  "M518 278 h69 v29 h-69 Z",
+  "M590 541 h31 v62 h-31 Z",
+  "M169 681 h66 v41 h-66 Z",
+  "M801 468 h89 v57 h-89 Z",
+  "M557 180 h37 v37 h-37 Z",
+  "M575 823 h34 v23 h-34 Z",
+  "M838 828 h65 v61 h-65 Z",
+  "M681 807 h83 v38 h-83 Z",
+  "M823 505 h70 v21 h-70 Z",
+  "M562 473 h47 v59 h-47 Z",
+  "M209 615 h33 v33 h-33 Z",
+  "M876 404 h42 v67 h-42 Z",
+  "M343 517 h76 v51 h-76 Z",
+  "M172 280 h83 v45 h-83 Z",
+  "M652 394 h43 v72 h-43 Z",
+  "M530 673 h61 v65 h-61 Z",
+  "M515 477 h74 v34 h-74 Z",
+  "M244 194 h48 v29 h-48 Z",
+  "M327 784 h55 v20 h-55 Z",
+  "M586 713 h49 v36 h-49 Z",
+  "M378 114 h44 v46 h-44 Z",
+  "M637 488 h66 v28 h-66 Z",
+  "M797 637 h32 v49 h-32 Z",
+  "M786 682 h76 v45 h-76 Z",
+  "M498 513 h39 v50 h-39 Z",
+];
+
+/** The park, and the districts anyone from Berlin would name. */
+const PARK = "M300 392 C300 350 372 336 452 340 C536 344 596 356 596 396 C596 438 522 452 444 448 C360 444 300 434 300 392 Z";
+const PLACES: [string, number, number][] = [
+  ["Mitte", 512, 470], ["Tiergarten", 372, 398], ["Prenzlauer Berg", 636, 320],
+  ["Friedrichshain", 706, 512], ["Kreuzberg", 566, 640], ["Neukölln", 604, 760],
+  ["Charlottenburg", 236, 470], ["Wedding", 402, 262], ["Treptow", 762, 668],
 ];
 
 /** The ride. Out of Mitte, along the water, round the park and back. */
@@ -50,6 +159,7 @@ export function RouteMap({ frames }: { frames: Frame[] }) {
   const stats = useRef<(HTMLSpanElement | null)[]>([]);
   const profile = useRef<SVGRectElement>(null);
   const pins = useRef<(SVGGElement | null)[]>([]);
+  const city = useRef<SVGGElement>(null);
   const cards = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
@@ -76,15 +186,25 @@ export function RouteMap({ frames }: { frames: Frame[] }) {
         head.current.style.opacity = t > 0.002 && t < 0.999 ? "1" : "0";
       }
 
-      // the camera: wide over the city, in close on the rider, wide again to
-      // show what the whole ride looked like
-      const inClose = ease(clamp(t / 0.18));
-      const pullOut = ease(clamp((t - 0.80) / 0.20));
-      const zoom = 1 - inClose * 0.62 + pullOut * 0.62;
+      // The camera works the whole way rather than moving once at each end:
+      // establish the city, drop to street level, lift to see where the ride is
+      // going, drop again, and only then pull back over the finished route.
+      const keys: [number, number][] = [
+        [0.00, 1.00], [0.10, 0.94], [0.20, 0.30], [0.36, 0.30],
+        [0.46, 0.58], [0.56, 0.26], [0.74, 0.26], [0.86, 0.62], [1.00, 1.00],
+      ];
+      let zoom = keys[keys.length - 1][1];
+      for (let i = 0; i < keys.length - 1; i++) {
+        const [a, za] = keys[i], [bK, zb] = keys[i + 1];
+        if (t >= a && t <= bK) { zoom = za + (zb - za) * ease((t - a) / (bK - a)); break; }
+      }
+      // how tightly it holds the rider: loose when wide, locked when close
+      const hold = clamp((1.0 - zoom) / 0.7);
       const w = 1000 * zoom, h = 1000 * zoom;
-      const cx = 500 + (at.x - 500) * (inClose * (1 - pullOut));
-      const cy = 500 + (at.y - 500) * (inClose * (1 - pullOut));
+      const cx = 500 + (at.x - 500) * hold;
+      const cy = 500 + (at.y - 500) * hold;
       box.setAttribute("viewBox", `${cx - w / 2} ${cy - h / 2} ${w} ${h}`);
+      if (city.current) city.current.style.opacity = `${0.35 + hold * 0.65}`;
 
       // the numbers under it
       const km = (t * 34.6).toFixed(1);
@@ -102,11 +222,16 @@ export function RouteMap({ frames }: { frames: Frame[] }) {
         if (!pin) return;
         pin.style.opacity = t >= stops[i] ? "1" : "0.22";
       });
+      // Each piece has the frame to itself: it arrives as the rider reaches its
+      // segment and leaves before the next one comes, so nothing ever stacks.
       cards.current.forEach((c, i) => {
         if (!c) return;
-        const k = ease(clamp((t - stops[i]) / 0.06));
+        const span = stops.length > 1 ? stops[1] - stops[0] : 0.1;
+        const inK = ease(clamp((t - stops[i] + span * 0.34) / (span * 0.34)));
+        const outK = ease(clamp((t - stops[i] - span * 0.52) / (span * 0.34)));
+        const k = inK * (1 - outK);
         c.style.opacity = `${k}`;
-        c.style.transform = `translateY(${(1 - k) * 26}px)`;
+        c.style.transform = `translateY(${(1 - inK) * 30 - outK * 22}px)`;
       });
     };
 
@@ -156,12 +281,20 @@ export function RouteMap({ frames }: { frames: Frame[] }) {
             <filter id="soft" x="-40%" y="-40%" width="180%" height="180%">
               <feGaussianBlur stdDeviation="9" />
             </filter>
+            <clipPath id="city"><path d={RING} /></clipPath>
           </defs>
 
-          <g className="route-city">
-            {RADIALS.map((d) => <path key={d} d={d} />)}
-            <path d={RING} />
+          <g ref={city} className="route-city" clipPath="url(#city)">
+            {BLOCKS.map((d) => <path key={d} className="route-block" d={d} />)}
+            {STREETS.map((d) => <path key={d} className="route-street" d={d} />)}
+            <path className="route-park" d={PARK} />
+            <path className="route-ring" d={RING} />
             <path className="route-water" d={SPREE} />
+          </g>
+          <g className="route-places">
+            {PLACES.map(([name, x, y]) => (
+              <text key={name} x={x} y={y}>{name.toUpperCase()}</text>
+            ))}
           </g>
 
           <g className="route-ghosts">

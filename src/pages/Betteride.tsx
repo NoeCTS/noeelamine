@@ -51,29 +51,37 @@ export default function Betteride() {
           </div>
         </header>
 
-        <section>
-          <h2 className="mb-5 text-[.8rem] uppercase tracking-[.14em] text-[#D7BD72]">The flyers</h2>
-          <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fill,minmax(230px,1fr))" }}>
-            {flyers.map((f) => (
-              <figure key={f.n} className="m-0">
-                <img src={`/frames/${f.n}.jpg`} alt={f.title} loading="lazy" className="block w-full" />
-                <figcaption className="pt-2 text-[.75rem] uppercase tracking-[.1em] text-[#8C7A46]">{f.n} · {f.title}</figcaption>
-              </figure>
-            ))}
-          </div>
-        </section>
+        {/* The route does not stop at the map: a line runs on down the page,
+            swerving, with the work set out on a grid either side of it. */}
+        <div className="bt-run" aria-hidden="true">
+          <svg viewBox="0 0 100 1000" preserveAspectRatio="none">
+            <path d="M50 0 C50 90 22 130 22 210 C22 292 78 320 78 404 C78 488 20 512 20 596
+                     C20 680 80 704 80 790 C80 872 50 906 50 1000" />
+          </svg>
+        </div>
 
-        <section className="py-16">
-          <h2 className="mb-5 text-[.8rem] uppercase tracking-[.14em] text-[#D7BD72]">Banners and campaign images</h2>
-          <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fill,minmax(280px,1fr))" }}>
-            {rest.map((f) => (
-              <figure key={f.n} className="m-0">
-                <img src={`/frames/${f.n}.jpg`} alt={f.title} loading="lazy" className="block w-full" />
-                <figcaption className="pt-2 text-[.75rem] uppercase tracking-[.1em] text-[#8C7A46]">{f.n} · {f.title}</figcaption>
-              </figure>
-            ))}
-          </div>
-        </section>
+        {([["01", "The flyers", flyers], ["02", "Banners and campaign images", rest]] as const)
+          .map(([n, title, set]) => (
+          <section key={n} className="bt-band">
+            <div className="bt-grid">
+              <span className="bt-num">{n}</span>
+              <h2 className="bt-head">{title}</h2>
+              <span className="bt-count">{set.length} pieces</span>
+            </div>
+            <div className="bt-grid bt-work">
+              {set.map((f, i) => (
+                <figure key={f.n} className={`m-0 bt-item ${i % 2 ? "is-right" : "is-left"}`}>
+                  <img src={`/frames/${f.n}.jpg`} alt={f.title} loading="lazy" className="block w-full" />
+                  <figcaption>
+                    <span className="bt-item-n">{f.n}</span>
+                    <span>{f.title}</span>
+                    <span className="bt-item-kind">{f.kind}</span>
+                  </figcaption>
+                </figure>
+              ))}
+            </div>
+          </section>
+        ))}
 
         <div className="mb-16 bg-[#6B3FE4] p-8 text-white">
           <h3 className="m-0 mb-3 text-[clamp(1.2rem,3vw,1.8rem)] font-bold uppercase leading-tight">Two palettes, on purpose</h3>

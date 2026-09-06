@@ -18,6 +18,7 @@ export function Opener({ src, label }: { src: string; label: string }) {
     const i = img.current, p = pre.current, box = inner.current;
     if (!i || !p || !box) return;
     let lastCols = -1;
+    const viewportRef = { value: window.innerHeight };
     let lastProgress = 0;
 
     const draw = (progress: number) => {
@@ -30,9 +31,13 @@ export function Opener({ src, label }: { src: string; label: string }) {
       // just does not chase the last stretch of detail that took a second
       // screen of scrolling to reach.
       const narrow = window.innerWidth < 640;
-      const cols = Math.round((narrow ? 50 : 84) + progress * (narrow ? 78 : 136));
+      // Quantised. A phone's address bar collapsing mid-scroll nudges the
+      // progress, and an unquantised column count turns that nudge into a
+      // visible reshuffle of every character on screen.
+      const step = narrow ? 6 : 4;
+      const cols = Math.round(((narrow ? 50 : 84) + progress * (narrow ? 78 : 136)) / step) * step;
       const contrast = 1 + progress * 0.5;
-      if (Math.abs(cols - lastCols) >= 2) {
+      if (cols !== lastCols) {
         p.textContent = toAscii(i, cols, undefined, contrast);
         p.style.fontSize = `${fitSize(box.getBoundingClientRect().width || 360, cols).toFixed(2)}px`;
         lastCols = cols;
@@ -58,8 +63,11 @@ export function Opener({ src, label }: { src: string; label: string }) {
       // The element is 280svh tall with a 100svh sticky child, so it develops
       // over the 180svh between its top meeting the top of the screen and its
       // bottom meeting the bottom.
+      // Held, not read live. window.innerHeight grows and shrinks as a phone
+      // hides its address bar, and measuring progress against a moving
+      // denominator makes the picture jump while the page is standing still.
       const measure = () => {
-        const run = el.offsetHeight - window.innerHeight;
+        const run = el.offsetHeight - viewportRef.value;
         if (run <= 0) return 0;
         return Math.min(1, Math.max(0, -el.getBoundingClientRect().top / run));
       };
@@ -90,7 +98,14 @@ export function Opener({ src, label }: { src: string; label: string }) {
     };
 
     let raf = 0;
+    let lastWidth = window.innerWidth;
     const onResize = () => {
+      // A real resize changes the width, or moves the height a long way. An
+      // address bar sliding is neither, and must not restart the drawing.
+      if (window.innerWidth === lastWidth
+        && Math.abs(window.innerHeight - viewportRef.value) < 120) return;
+      lastWidth = window.innerWidth;
+      viewportRef.value = window.innerHeight;
       cancelAnimationFrame(raf);
       raf = requestAnimationFrame(() => { lastCols = -1; draw(lastProgress); });
     };
@@ -118,7 +133,7 @@ export function Opener({ src, label }: { src: string; label: string }) {
       style={{ width: "100vw", marginInline: "calc(50% - 50vw)" }}>
       <div className="opener-stage sticky top-0 flex min-h-[520px] items-center justify-center overflow-hidden">
         <div ref={inner} className="relative max-w-[96vw]"
-          style={{ aspectRatio: "3 / 2", height: "min(86vh, calc(96vw / 1.5))" }}>
+          style={{ aspectRatio: "3 / 2", height: "min(86svh, calc(96vw / 1.5))" }}>
           <pre ref={pre} aria-hidden="true"
             className="absolute inset-0 m-0 flex items-center justify-center overflow-hidden whitespace-pre text-ink"
             style={{ fontFamily: "var(--data)", lineHeight: 1.15 }} />
