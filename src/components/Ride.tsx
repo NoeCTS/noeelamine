@@ -1,9 +1,9 @@
 import { useEffect, useRef } from "react";
 import {
-  AmbientLight, BoxGeometry, BufferGeometry, CatmullRomCurve3, Color, CylinderGeometry,
-  DirectionalLight, FogExp2, Group, Mesh, MeshBasicMaterial, MeshStandardMaterial,
-  PerspectiveCamera, PlaneGeometry, PointLight, Quaternion, Scene, SphereGeometry,
-  TorusGeometry, Vector3, WebGLRenderer,
+  AdditiveBlending, AmbientLight, BoxGeometry, BufferGeometry, CapsuleGeometry,
+  CatmullRomCurve3, Color, CylinderGeometry, DirectionalLight, FogExp2, Group, Mesh,
+  MeshBasicMaterial, MeshStandardMaterial, PerspectiveCamera, PlaneGeometry, PointLight,
+  Quaternion, Scene, SphereGeometry, TorusGeometry, Vector3, WebGLRenderer,
 } from "three";
 import type { Frame } from "@/data/frames";
 
@@ -15,10 +15,12 @@ const NIGHT = 0x080602;
 const UP = new Vector3(0, 1, 0);
 const q = new Quaternion();
 
-/** A unit cylinder re-aimed between two points. Cheap enough to do every frame,
- *  which is what a pedalling leg needs. */
-function bone(mat: MeshStandardMaterial, r: number) {
-  const m = new Mesh(new CylinderGeometry(r, r, 1, 8), mat);
+/** A unit-length limb re-aimed between two points. Cheap enough to do every
+ *  frame, which is what a pedalling leg needs. Capsules for the rider: a
+ *  cylinder with flat ends is exactly what makes a figure read as sticks. */
+function bone(mat: MeshStandardMaterial, r: number, round = false) {
+  const m = new Mesh(
+    round ? new CapsuleGeometry(r, 1, 4, 10) : new CylinderGeometry(r, r, 1, 8), mat);
   m.userData.set = (a: Vector3, b: Vector3) => {
     const d = b.clone().sub(a);
     const len = d.length() || 0.0001;
@@ -48,9 +50,12 @@ function knee(hip: Vector3, foot: Vector3, thigh: number, shin: number) {
  */
 function buildBike() {
   const g = new Group();
-  const steel = new MeshStandardMaterial({ color: AMBER, metalness: 0.55, roughness: 0.3 });
-  const rubber = new MeshStandardMaterial({ color: 0x121009, metalness: 0.05, roughness: 0.9 });
-  const body = new MeshStandardMaterial({ color: 0x2b2313, metalness: 0.15, roughness: 0.7 });
+  // Almost black, and polished. The shape is drawn by what the rim lights catch
+  // along its edges, which is how the campaign photographs read: a silhouette
+  // with violet down one side and acid down the other.
+  const steel = new MeshStandardMaterial({ color: 0x17140c, metalness: 0.95, roughness: 0.16 });
+  const rubber = new MeshStandardMaterial({ color: 0x0a0906, metalness: 0.2, roughness: 0.75 });
+  const body = new MeshStandardMaterial({ color: 0x100e08, metalness: 0.65, roughness: 0.3 });
 
   const R = 0.34;
   const rearHub = new Vector3(-0.50, R, 0);
@@ -106,17 +111,17 @@ function buildBike() {
   // the rider, folded over the bars
   const hip = new Vector3(-0.26, 1.06, 0);
   const shoulder = new Vector3(0.12, 1.36, 0);
-  const torso = bone(body, 0.10); (torso.userData.set as never as (a: Vector3, b: Vector3) => void)(hip, shoulder);
+  const torso = bone(body, 0.10, true); (torso.userData.set as never as (a: Vector3, b: Vector3) => void)(hip, shoulder);
   g.add(torso);
   g.add(new Mesh(new SphereGeometry(0.115, 12, 10), body).translateX(0.22).translateY(1.44));
   for (const s of [1, -1]) {
-    const arm = bone(body, 0.045);
+    const arm = bone(body, 0.045, true);
     (arm.userData.set as never as (a: Vector3, b: Vector3) => void)(
       shoulder.clone().setZ(s * 0.11), new Vector3(0.34, 1.02, s * 0.19));
     g.add(arm);
   }
   const legs = [1, -1].map((s) => {
-    const thigh = bone(body, 0.055), shin = bone(body, 0.042);
+    const thigh = bone(body, 0.065, true), shin = bone(body, 0.05, true);
     g.add(thigh); g.add(shin);
     return { s, thigh, shin, hip: hip.clone().setZ(s * 0.09) };
   });
@@ -182,10 +187,23 @@ export function Ride({ frames }: { frames: Frame[] }) {
     const bike = buildBike();
     scene.add(bike.group);
 
-    scene.add(new AmbientLight(0x6a78b8, 0.55));
-    const key = new DirectionalLight(0xfff0cc, 1.05); key.position.set(4, 9, 5); scene.add(key);
-    const rimL = new PointLight(VIOLET, 26, 16); scene.add(rimL);
-    const rimR = new PointLight(ACID, 20, 16); scene.add(rimR);
+    // The trails are the photograph. Two smears off the wheels, added rather
+    // than lit, so they blow out where they overlap the way a long exposure does.
+    const trails = [VIOLET, ACID, AMBER].map((c, i) => {
+      const m = new Mesh(new PlaneGeometry(1, 0.10 + i * 0.03),
+        new MeshBasicMaterial({ color: c, transparent: true, opacity: [0.34, 0.46, 0.30][i],
+          blending: AdditiveBlending, depthWrite: false }));
+      m.rotation.x = -Math.PI / 2;
+      scene.add(m);
+      return m;
+    });
+
+    scene.add(new AmbientLight(0x39406a, 0.35));
+    const key = new DirectionalLight(0xbfc6ff, 0.35); key.position.set(4, 9, 5); scene.add(key);
+    // hard and close: these are what draw the bike
+    const rimL = new PointLight(VIOLET, 95, 9, 1.4); scene.add(rimL);
+    const rimR = new PointLight(ACID, 165, 11, 1.35); scene.add(rimR);
+    const spark = new PointLight(AMBER, 26, 6, 1.6); scene.add(spark);
 
     // measured once: getLength walks the curve, and it does not change
     const total = Math.max(1, curve.getLength());
@@ -224,6 +242,14 @@ export function Ride({ frames }: { frames: Frame[] }) {
       dashes.forEach((d) => {
         d.position.z += dt * speed;
         if (d.position.z > at.z + 26) d.position.z -= 240;
+      });
+
+      // the smears sit behind the bike, along the way it came
+      trails.forEach((m, i) => {
+        const back = 3.2 + i * 2.1;
+        m.position.set(at.x - ahead.x * back * 0.5, 0.20 + i * 0.30, at.z - ahead.z * back * 0.5);
+        m.scale.set(back, 1, 1);
+        m.rotation.z = Math.atan2(ahead.z, ahead.x);
       });
 
       // the streaks fly past and wrap round
